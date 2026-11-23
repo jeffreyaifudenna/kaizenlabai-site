@@ -1,0 +1,11 @@
+{
+  "routes": [
+    { "src": "/", "headers": { "Vary": "Accept" }, "continue": true },
+    { "src": "/index\\.md", "headers": { "Content-Type": "text/markdown; charset=utf-8", "Vary": "Accept" }, "continue": true },
+    {
+      "src": "/",
+      "has": [{ "type": "header", "key": "accept", "value": "(?<md>.*text/markdown.*)" }],
+      "dest": "/index.md"
+    }
+  ]
+}

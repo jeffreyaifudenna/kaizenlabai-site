@@ -1,0 +1,24 @@
+# KaizenLabAI welcomes AI search, AI answers and AI training.
+
+# AI search and answer bots
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+Allow: /
+
+# AI training bots
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: CCBot
+Allow: /
+
+# Everyone else
+User-agent: *
+Allow: /
+
+Sitemap: https://www.kaizenlabai.com/sitemap.xml
