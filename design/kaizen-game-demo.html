@@ -1,0 +1,64 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Kaizen game demo</title><style>
+:root{--bg:#111;--fg:#eee;--muted:#999;--gold:#e5b84c;--tan:#d9c08a}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;padding:24px 16px;max-width:760px;margin:0 auto}
+h1{font-size:1.4rem}h2{font-size:1.1rem;margin:2rem 0 .6rem}.intro{color:var(--muted);margin:.4rem 0 1rem;line-height:1.45}
+.win{background:#0b0b0b;border:1px solid rgba(229,184,76,.6);border-radius:14px;overflow:hidden;box-shadow:0 26px 60px rgba(0,0,0,.7),0 0 30px rgba(229,184,76,.12);display:flex;flex-direction:column;height:min(560px,76vh)}
+.tb{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid #222;color:#888;font-size:.75rem;letter-spacing:.12em}.tb b{color:var(--gold);margin-left:8px}
+.tb button{margin-left:auto;background:none;border:1px solid #333;color:#aaa;border-radius:999px;padding:3px 12px;font:inherit;letter-spacing:0;cursor:pointer}
+.log{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:86%;padding:10px 14px;border-radius:14px;line-height:1.45;animation:in .45s cubic-bezier(.22,1,.36,1)}
+.k{background:#151515;border:1px solid #242424}.k b{color:var(--gold);font-weight:600}.u{align-self:flex-end;background:var(--gold);color:#050505;font-weight:600}
+.end{align-self:center;text-align:center;color:var(--tan);border:1px solid rgba(229,184,76,.4);background:#120f08;max-width:95%}
+.ch{display:flex;flex-wrap:wrap;gap:8px;padding:12px 16px 16px;border-top:1px solid #222;min-height:62px}
+.ch button{background:none;border:1px solid var(--gold);color:var(--gold);border-radius:999px;padding:8px 16px;font:inherit;font-weight:600;cursor:pointer;animation:in .45s cubic-bezier(.22,1,.36,1)}
+.ch button:hover{background:var(--gold);color:#050505}
+.dots{color:#777;letter-spacing:3px}@keyframes in{from{opacity:0;transform:translateY(8px)}}
+@media (prefers-reduced-motion:reduce){.m,.ch button{animation:none}}
+table{border-collapse:collapse;width:100%}td{padding:9px 10px;border-top:1px solid #2a2a2a;vertical-align:top;line-height:1.4}td:first-child{color:var(--gold);font-weight:600;white-space:nowrap}td:last-child{color:#bbb}
+</style></head><body>
+<h1>Kaizen: a choose-your-path chat game</h1>
+<p class="intro">This is how it would play inside the menu window. Start it, pick one of three paths, and follow a few choices to an ending. All three story directions are playable here so you can compare them. The wording is a first draft for you to change.</p>
+<div class="win"><div class="tb">⋮⋮ MENU <b>KAIZEN</b><button id="re">Restart</button></div><div class="log" id="log"></div><div class="ch" id="ch"></div></div>
+
+<h2>The three story directions</h2>
+<table>
+<tr><td>A · One Percent</td><td>A daily quest. You pick an area of life and a size of step, and leave with one tiny action to do today. Gives people a reason to come back each day.</td></tr>
+<tr><td>B · The Lab</td><td>You are handed a problem and choose how to solve it. Each ending points to the matching part of your site: Learning, Agents, Automations or Open Source. Best for showing what KaizenLabAI does.</td></tr>
+<tr><td>C · The Garden</td><td>A quiet zen path with short reflective choices that ends on a single line to keep. Best for mood and brand feel.</td></tr>
+</table>
+<script>
+const S={
+start:{t:"<b>Kaizen:</b> First question. Start Kaizen?",c:[["Yes","pick"],["Not now","no"]]},
+no:{t:"<b>Kaizen:</b> No rush. A small step waits better than a big one. Come back when you are ready.",c:[["Start Kaizen","pick"]]},
+pick:{t:"<b>Kaizen:</b> Three paths leave from here. Which do you take?",c:[["One Percent","a1"],["The Lab","b1"],["The Garden","c1"]]},
+a1:{t:"<b>Kaizen:</b> One percent better. Where do you want it today?",c:[["My work","a2w"],["My body","a2b"],["My mind","a2m"]]},
+a2w:{t:"<b>Kaizen:</b> Work. Do you fix something that annoys you, or learn something new?",c:[["Fix an annoyance","e_a1"],["Learn something","e_a2"]]},
+a2b:{t:"<b>Kaizen:</b> Body. Two minutes or ten?",c:[["Two minutes","e_a3"],["Ten minutes","e_a4"]]},
+a2m:{t:"<b>Kaizen:</b> Mind. Do you add something, or remove something?",c:[["Add","e_a5"],["Remove","e_a6"]]},
+e_a1:{e:"Today's 1%: find one task you repeated this week and write down its steps. Next time, it is half automated."},
+e_a2:{e:"Today's 1%: spend ten minutes asking an AI to teach you one thing your job depends on."},
+e_a3:{e:"Today's 1%: stand up and stretch for two minutes, now. That is the whole quest."},
+e_a4:{e:"Today's 1%: a ten minute walk without your phone. Notice three things."},
+e_a5:{e:"Today's 1%: read one page of something hard before bed."},
+e_a6:{e:"Today's 1%: turn off one notification you never act on."},
+b1:{t:"<b>Kaizen:</b> Welcome to the lab. A small shop owner answers the same five customer emails every morning. What do you do?",c:[["Understand it first","b2l"],["Build something","b2b"]]},
+b2l:{t:"<b>Kaizen:</b> Wise. You watch how they work for a day. Now you can teach them, or share what you found.",c:[["Teach them","e_b1"],["Share it openly","e_b4"]]},
+b2b:{t:"<b>Kaizen:</b> You roll up your sleeves. Do you build a helper that thinks, or a pipeline that just runs?",c:[["A helper that thinks","e_b2"],["A pipeline that runs","e_b3"]]},
+e_b1:{e:"You chose Learning. A person who understands the tool improves it every day. → Learning"},
+e_b2:{e:"You chose Agents. An AI worker drafts the replies, and the owner approves them over coffee. → Agents"},
+e_b3:{e:"You chose Automations. The five emails answer themselves, and the morning is free. → Automations"},
+e_b4:{e:"You chose Open Source. Your notes help the next hundred shop owners. → Open Source"},
+c1:{t:"<b>Kaizen:</b> You enter a garden. The path is covered in fallen leaves. A rake leans on the gate.",c:[["Rake the path","c2r"],["Walk through the leaves","c2w"]]},
+c2r:{t:"<b>Kaizen:</b> You rake slowly. One line of sand, then another. A cracked bowl sits by the pond.",c:[["Mend it with gold","e_c1"],["Leave it as it is","e_c2"]]},
+c2w:{t:"<b>Kaizen:</b> The leaves are loud under your feet. At the pond, a stone waits in your hand.",c:[["Drop it in the water","e_c3"],["Set it on the path","e_c4"]]},
+e_c1:{e:"金継ぎ. What broke is now the most beautiful part. Improve what you have."},
+e_c2:{e:"Not everything needs fixing today. Choosing what to leave is also kaizen."},
+e_c3:{e:"One small stone, and the whole pond moves. Small actions travel far."},
+e_c4:{e:"The next walker steps where you placed the stone. Leave the path a little better."}};
+const log=document.getElementById('log'),ch=document.getElementById('ch');
+function add(cls,html){const d=document.createElement('div');d.className='m '+cls;d.innerHTML=html;log.append(d);log.scrollTop=log.scrollHeight;return d}
+function go(id){ch.innerHTML='';const n=S[id],d=add('k','<span class="dots">•••</span>');
+ setTimeout(()=>{if(n.e){d.remove();add('end',n.e);btn("Play again","pick",true)}else{d.innerHTML=n.t;n.c.forEach(([l,to])=>btn(l,to))}log.scrollTop=log.scrollHeight},550)}
+function btn(l,to,quiet){const b=document.createElement('button');b.textContent=l;b.onclick=()=>{if(!quiet)add('u',l);go(to)};ch.append(b)}
+document.getElementById('re').onclick=()=>{log.innerHTML='';go('start')};go('start');
+</script></body></html>
