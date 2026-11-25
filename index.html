@@ -60,31 +60,31 @@
   .botline b { color:var(--gold); font-weight:600; }
 
   /* App menu */
-  .win { position:fixed; left:50%; top:50%; width:min(340px, 92vw); transform:translate(-50%,-50%) scale(.9); opacity:0; visibility:hidden; background:rgba(13,13,13,.96); border:1px solid rgba(229,184,76,.6); border-radius:22px; box-shadow:0 26px 60px rgba(0,0,0,.9), 0 0 30px rgba(229,184,76,.15); z-index:40; transition:opacity .3s, transform .4s cubic-bezier(.22,1,.36,1), visibility 0s linear .4s; padding:10px 16px 14px; }
+  .win { position:fixed; left:50%; top:50%; width:min(400px, 94vw); transform:translate(-50%,-50%) scale(.9); opacity:0; visibility:hidden; background:#0d0d0d; border:1px solid rgba(229,184,76,.6); border-radius:22px; box-shadow:0 26px 60px rgba(0,0,0,.9), 0 0 30px rgba(229,184,76,.15); z-index:40; transition:opacity .3s, transform .4s cubic-bezier(.22,1,.36,1), visibility 0s linear .4s; padding:10px 16px 14px; }
   .win.open { opacity:1; visibility:visible; transform:translate(-50%,-50%) scale(1); transition:opacity .3s, transform .4s cubic-bezier(.22,1,.36,1); }
-  .tb { display:flex; align-items:center; color:#777; font-size:.72rem; letter-spacing:.12em; padding:2px 0 12px; }
-  .tb button { margin-left:auto; background:none; border:0; color:#aaa; font-size:1.3rem; cursor:pointer; line-height:1; width:32px; height:32px; border-radius:8px; }
-  .tb button:hover, .tb button:focus-visible { color:var(--gold); outline:none; background:#1a1812; }
-  .grid { display:grid; grid-template-columns:repeat(4, 1fr); gap:14px 8px; }
-  .app { display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:0; color:#ddd; font:inherit; font-size:.78rem; cursor:pointer; padding:0; }
-  .ico { width:58px; height:58px; border-radius:16px; display:grid; place-items:center; font-size:1.5rem; background:linear-gradient(160deg,#1d1a12,#0c0b08); border:1px solid rgba(229,184,76,.35); color:var(--gold); transition:transform .15s, box-shadow .2s; }
+  .tb { display:flex; align-items:center; color:#999; font-size:.85rem; letter-spacing:.12em; padding:4px 0 14px; }
+  .tb button { margin-left:auto; background:#1a1a1a; border:1px solid #333; border-radius:50%; width:44px; height:44px; color:#ddd; font-size:1.5rem; cursor:pointer; line-height:1; }
+  .tb button:hover, .tb button:focus-visible { color:var(--gold); border-color:var(--gold); outline:none; }
+  .grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:22px 12px; padding:6px 0; }
+  .app { display:flex; flex-direction:column; align-items:center; gap:10px; background:none; border:0; color:#fff; font:inherit; font-size:1.15rem; font-weight:600; cursor:pointer; padding:0; min-height:44px; }
+  .ico { width:min(112px, 30vw); height:min(112px, 30vw); border-radius:28px; display:grid; place-items:center; font-size:clamp(2.4rem, 10vw, 3.2rem); background:linear-gradient(160deg,#1d1a12,#0c0b08); border:1.5px solid rgba(229,184,76,.35); color:var(--gold); transition:transform .15s, box-shadow .2s; }
   .app:hover .ico, .app:focus-visible .ico { box-shadow:0 0 18px rgba(229,184,76,.3); }
   .app:focus-visible { outline:none; }
   .app:active .ico { transform:scale(.9); }
   .app.on .ico { background:var(--gold); color:#050505; }
-  .app.soon .ico { border-style:dashed; opacity:.75; }
-  .devbtn { display:block; margin:16px auto 0; background:none; border:1px solid #333; color:#aaa; border-radius:999px; padding:6px 16px; font-family:ui-monospace, Consolas, monospace; font-size:.8rem; cursor:pointer; }
+  .app.soon .ico { border-style:dashed; }
+  .devbtn { display:block; margin:22px auto 4px; background:none; border:1px solid #555; color:#ddd; border-radius:999px; padding:12px 26px; min-height:48px; font-family:ui-monospace, Consolas, monospace; font-size:1rem; cursor:pointer; }
   .devbtn:hover, .devbtn:focus-visible { border-color:#777; color:#fff; outline:none; }
 
   /* Draw mode */
   body.drawing { user-select:none; -webkit-user-select:none; cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2232%22%20height%3D%2232%22%20viewBox%3D%220%200%2032%2032%22%3E%3Cg%20transform%3D%22rotate%2845%2016%2016%29%22%3E%3Crect%20x%3D%2212.5%22%20y%3D%22-3%22%20width%3D%227%22%20height%3D%224%22%20rx%3D%221.5%22%20fill%3D%22%23c9c9c9%22%20stroke%3D%22%23000%22%20stroke-width%3D%22.6%22/%3E%3Crect%20x%3D%2212.5%22%20y%3D%221%22%20width%3D%227%22%20height%3D%2220%22%20fill%3D%22%231c1c1c%22%20stroke%3D%22%23e5b84c%22%20stroke-width%3D%22.8%22/%3E%3Cline%20x1%3D%2216%22%20y1%3D%221%22%20x2%3D%2216%22%20y2%3D%2221%22%20stroke%3D%22%233a3a3a%22%20stroke-width%3D%221%22/%3E%3Cpath%20d%3D%22M12.5%2021%20L19.5%2021%20L16%2031%20Z%22%20fill%3D%22%23f3e2b0%22%20stroke%3D%22%23000%22%20stroke-width%3D%22.5%22/%3E%3Cpath%20d%3D%22M14.4%2026.5%20L17.6%2026.5%20L16%2031%20Z%22%20fill%3D%22%23e5b84c%22/%3E%3C/g%3E%3C/svg%3E") 5 27, crosshair; touch-action:none; }
   body.drawing .hero { pointer-events:none; }
-  .pill { position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top)); transform:translateX(-50%); z-index:45; background:#0d0d0d; border:1px solid var(--gold); border-radius:999px; padding:6px; font-size:.82rem; display:none; gap:6px; align-items:center; flex-wrap:wrap; justify-content:center; max-width:94vw; cursor:default; }
+  .pill { position:fixed; left:50%; top:calc(12px + env(safe-area-inset-top)); transform:translateX(-50%); z-index:45; background:#0d0d0d; border:1px solid var(--gold); border-radius:999px; padding:6px; font-size:.82rem; display:none; gap:6px; align-items:center; flex-wrap:nowrap; white-space:nowrap; justify-content:center; max-width:94vw; cursor:default; }
   body.drawing .pill { display:flex; }
-  .pill button { background:#1a1a1a; color:#ddd; border:1px solid #333; border-radius:999px; padding:4px 11px; font:inherit; cursor:pointer; }
+  .pill button { background:#1a1a1a; color:#fff; border:1px solid #444; border-radius:999px; padding:10px 18px; min-height:44px; font:inherit; font-size:1rem; cursor:pointer; }
   .pill button.on { border-color:var(--gold); color:var(--gold); }
   .pill .sep { width:1px; height:18px; background:#333; }
-  @media (max-width:520px) { .pill { border-radius:16px; font-size:.78rem; gap:4px; } .pill > span:first-child, .pill .sep { display:none; } .pill button { padding:4px 9px; } }
+  @media (max-width:520px) { .pill { border-radius:16px; font-size:.78rem; gap:4px; } .pill > span:first-child, .pill .sep { display:none; } .pill button { padding:10px 14px; } }
 
   /* Zen mode */
   body.zen .fade { opacity:0; pointer-events:none; }
@@ -136,10 +136,6 @@
 
   <div class="pill" role="toolbar" aria-label="Drawing tools">
     <span style="color:var(--tan);padding:0 6px">&#9998;</span>
-    <button type="button" data-fx="sparkle" class="on">Sparkle</button>
-    <button type="button" data-fx="ink">Ink</button>
-    <button type="button" data-fx="plain">Plain</button>
-    <span class="sep"></span>
     <button type="button" id="undo">Undo</button>
     <button type="button" id="clr">Clear</button>
     <button type="button" id="done">Done</button>
@@ -148,7 +144,7 @@
   <div class="win" id="win" role="dialog" aria-label="KaizenLabAI menu" aria-hidden="true">
     <div class="tb">KAIZENLABAI<button type="button" id="x" aria-label="Close menu">&times;</button></div>
     <div class="grid">
-      <button type="button" class="app" data-a="draw"><span class="ico" aria-hidden="true">&#9998;</span>Draw</button>
+      <button type="button" class="app" data-a="draw"><span class="ico" aria-hidden="true" style="font-size:clamp(3rem, 13vw, 4.2rem)">&#9998;</span>Draw</button>
       <button type="button" class="app" data-a="zen"><span class="ico" aria-hidden="true">&#9711;</span>Zen</button>
       <button type="button" class="app soon" data-a="kaizen"><span class="ico" aria-hidden="true">&#25913;</span>Kaizen</button>
       <button type="button" class="app" data-a="sound" id="snd" aria-pressed="false"><span class="ico" aria-hidden="true">&#9834;</span>Sound</button>
@@ -176,7 +172,7 @@ Sections
       var body = document.body, win = document.getElementById('win'), cv = document.getElementById('cv'), ctx = cv.getContext('2d'),
           fxc = document.getElementById('fx'), fx = fxc.getContext('2d'), toast = document.getElementById('toast'),
           dpr = Math.min(window.devicePixelRatio || 1, 2), reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var strokes = [], cur = null, mode = 'sparkle', sound = false, parts = [], raf = 0, ac = null, opener = null;
+      var strokes = [], cur = null, mode = 'plain', sound = false, parts = [], raf = 0, ac = null, opener = null;
       var W = function () { return innerWidth; }, H = function () { return innerHeight; };
 
       // ---- canvases
@@ -184,7 +180,7 @@ Sections
       function line(s) {
         var p = s.p; if (p.length < 2) return; ctx.lineCap = ctx.lineJoin = 'round';
         var sets = s.m === 'ink' ? [[10, 'rgba(229,184,76,.08)'], [4.5, 'rgba(138,106,30,.9)'], [2.6, '#e5b84c']]
-                 : s.m === 'plain' ? [[1.6, '#e5b84c']] : [[7, 'rgba(229,184,76,.14)'], [2.6, '#8a6a1e'], [1.5, '#f1cf73']];
+                 : s.m === 'plain' ? [[1.8, '#e5b84c']] : [[7, 'rgba(229,184,76,.14)'], [2.6, '#8a6a1e'], [1.5, '#f1cf73']];
         sets.forEach(function (st) {
           ctx.strokeStyle = st[1]; ctx.lineWidth = st[0]; ctx.beginPath(); ctx.moveTo(p[0].x, p[0].y);
           for (var i = 1; i < p.length - 1; i++) { var m = { x: (p[i].x + p[i + 1].x) / 2, y: (p[i].y + p[i + 1].y) / 2 }; ctx.quadraticCurveTo(p[i].x, p[i].y, m.x, m.y); }
@@ -209,7 +205,7 @@ Sections
 
       // ---- sparkle / ink particles
       function emit(p) {
-        if (mode === 'plain' || reduce) return; var n = mode === 'sparkle' ? 3 : 1;
+        return; /* design: one clean gold line, no sparkle */ var n = mode === 'sparkle' ? 3 : 1;
         for (var i = 0; i < n; i++) parts.push(mode === 'sparkle'
           ? { x: p.x, y: p.y, vx: (Math.random() - .5) * 1.4, vy: (Math.random() - .5) * 1.4 - .3, l: 1, r: .6 + Math.random() * 1.8, d: .02 + Math.random() * .02, k: 's' }
           : { x: p.x + (Math.random() - .5) * 3, y: p.y, vx: 0, vy: .25 + Math.random() * .4, l: 1, r: 1.2 + Math.random() * 1.3, d: .012, k: 'i' });
