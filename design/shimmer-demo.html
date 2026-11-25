@@ -1,0 +1,59 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gold shimmer options</title><style>
+:root{--bg:#111;--fg:#eee;--muted:#999;--gold:#e5b84c}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;padding:24px 16px;max-width:1000px;margin:0 auto}
+h1{font-size:1.4rem}.intro{color:var(--muted);margin:.4rem 0 1.5rem;line-height:1.45}
+.opt{margin-bottom:2.5rem}.opt h2{font-size:1.1rem}.note{color:var(--muted);font-size:.9rem;margin:.3rem 0 .8rem;line-height:1.4}
+.stage{position:relative;background:#050505;border:1px solid #2a2a2a;border-radius:12px;height:420px;overflow:hidden;touch-action:none}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hint{position:absolute;left:0;right:0;bottom:14px;text-align:center;color:#444;font-size:.85rem;pointer-events:none}
+.win{position:absolute;left:50%;top:50%;width:min(300px,80%);height:190px;margin:-95px 0 0 calc(min(300px,80%) / -2);background:#0d0d0d;border:1px solid rgba(229,184,76,.55);border-radius:14px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.8);z-index:2;transition:box-shadow .6s}
+.win.moving{box-shadow:0 26px 60px rgba(0,0,0,.9),0 0 34px rgba(229,184,76,.22)}
+.tb{padding:9px 12px;border-bottom:1px solid #222;color:#888;font-size:.75rem;letter-spacing:.12em;cursor:grab;user-select:none;-webkit-user-select:none}
+.win.moving .tb{cursor:grabbing}
+.row{margin:10px 12px;height:30px;border-radius:8px;background:#151515}
+.win svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.seam{fill:none;stroke:url(#g);stroke-width:1.4;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;opacity:0;transition:stroke-dashoffset 1.6s ease-in,opacity 1.6s ease-in;filter:drop-shadow(0 0 3px rgba(229,184,76,.7))}
+.win.moving .seam{stroke-dashoffset:0;opacity:1;transition:stroke-dashoffset .7s cubic-bezier(.22,1,.36,1),opacity .25s}
+@media (prefers-reduced-motion:reduce){.seam{transition:none}}
+</style></head><body>
+<h1>Gold shimmer when the window moves</h1>
+<p class="intro">Drag each window by its top bar. Each effect only shows while the window moves, then fades away to calm. All three are light enough for phones.</p>
+
+<section class="opt"><h2>A · Kintsugi seams</h2><p class="note">Kintsugi is the art of mending broken pottery with gold. While you drag, fine gold seams run across the window and shimmer, then fade when it rests.</p>
+<div class="stage" data-fx="seams"><div class="win"><div class="tb">⋮⋮ MENU</div><div class="row"></div><div class="row"></div><div class="row"></div>
+<svg viewBox="0 0 300 190" preserveAspectRatio="none"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#8a6a1e"/><stop offset=".5" stop-color="#fff1b8"><animate attributeName="offset" values="0;1;0" dur="2.4s" repeatCount="indefinite"/></stop><stop offset="1" stop-color="#e5b84c"/></linearGradient></defs>
+<path class="seam" pathLength="1" d="M0 52 L38 61 L71 48 L118 78 L150 70 L196 104 L231 96 L300 128"/>
+<path class="seam" pathLength="1" d="M118 78 L104 118 L126 150 L112 190"/>
+<path class="seam" pathLength="1" d="M196 104 L214 62 L205 30 L228 0"/>
+<path class="seam" pathLength="1" d="M231 96 L262 150 L254 190"/></svg></div><div class="hint">drag the window</div></div></section>
+
+<section class="opt"><h2>B · Kinpun gold dust</h2><p class="note">Kinpun is the gold powder used in lacquer art. The window leaves a soft trail of gold dust that drifts and fades, like powder settling.</p>
+<div class="stage" data-fx="dust"><canvas></canvas><div class="win"><div class="tb">⋮⋮ MENU</div><div class="row"></div><div class="row"></div><div class="row"></div></div><div class="hint">drag the window</div></div></section>
+
+<section class="opt"><h2>C · Zen ripples</h2><p class="note">Like a stone set in a raked sand garden, or a drop in still water. Thin gold rings spread out from the window as it moves and when it comes to rest.</p>
+<div class="stage" data-fx="ripple"><canvas></canvas><div class="win"><div class="tb">⋮⋮ MENU</div><div class="row"></div><div class="row"></div><div class="row"></div></div><div class="hint">drag the window</div></div></section>
+
+<script>
+document.querySelectorAll('.stage').forEach(stage=>{
+ const win=stage.querySelector('.win'),tb=win.querySelector('.tb'),cv=stage.querySelector('canvas'),fx=stage.dataset.fx;
+ let x=0,y=0,sx,sy,drag=false,parts=[],raf=0,last=0,ctx,dpr=Math.min(window.devicePixelRatio||1,2);
+ if(cv){ctx=cv.getContext('2d');const fit=()=>{cv.width=stage.clientWidth*dpr;cv.height=stage.clientHeight*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)};fit();addEventListener('resize',fit)}
+ const center=()=>{const a=win.getBoundingClientRect(),b=stage.getBoundingClientRect();return{cx:a.left-b.left+a.width/2,cy:a.top-b.top+a.height/2,w:a.width,h:a.height}};
+ function emit(dx,dy,settle){if(!cv)return;const c=center();
+  if(fx==='dust'){const n=Math.min(12,2+Math.hypot(dx,dy)/2|0);for(let i=0;i<n&&parts.length<280;i++){const e=Math.random()*4|0,t=Math.random();
+    const px=e<2?c.cx-c.w/2+t*c.w:(e===2?c.cx-c.w/2:c.cx+c.w/2),py=e>=2?c.cy-c.h/2+t*c.h:(e===0?c.cy-c.h/2:c.cy+c.h/2);
+    parts.push({x:px,y:py,vx:-dx*.04+(Math.random()-.5)*.5,vy:-dy*.04+Math.random()*.4,l:1,r:.7+Math.random()*1.9,d:.006+Math.random()*.012})}}
+  else{const now=performance.now();if(settle||now-last>220){last=now;parts.push({x:c.cx,y:c.cy,r:Math.max(c.w,c.h)*.45,l:settle?1:.6})}}
+  if(!raf)raf=requestAnimationFrame(tick)}
+ function tick(){raf=0;ctx.clearRect(0,0,stage.clientWidth,stage.clientHeight);
+  parts=parts.filter(p=>p.l>0);
+  for(const p of parts){if(fx==='dust'){p.x+=p.vx;p.y+=p.vy;p.vy+=.012;p.l-=p.d;ctx.globalAlpha=Math.max(p.l,0)*(.5+.5*Math.sin(p.l*40));ctx.fillStyle=p.r>1.6?'#fff1b8':'#e5b84c';ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.3);ctx.fill()}
+   else{p.r+=1.5;p.l-=.011;for(let k=0;k<3;k++){ctx.globalAlpha=Math.max(p.l,0)*(.95-k*.25);ctx.strokeStyle='#e5b84c';ctx.lineWidth=1.2;ctx.beginPath();ctx.ellipse(p.x,p.y,p.r+k*9,(p.r+k*9)*.62,0,0,6.3);ctx.stroke()}}}
+  ctx.globalAlpha=1;if(parts.length)raf=requestAnimationFrame(tick)}
+ tb.addEventListener('pointerdown',e=>{drag=true;sx=e.clientX-x;sy=e.clientY-y;tb.setPointerCapture(e.pointerId);win.classList.add('moving')});
+ tb.addEventListener('pointermove',e=>{if(!drag)return;const nx=e.clientX-sx,ny=e.clientY-sy,mx=(stage.clientWidth-win.offsetWidth)/2,my=(stage.clientHeight-win.offsetHeight)/2;
+  const cx=Math.max(-mx,Math.min(mx,nx)),cy=Math.max(-my,Math.min(my,ny));emit(cx-x,cy-y);x=cx;y=cy;win.style.transform=`translate(${x}px,${y}px)`});
+ const end=()=>{if(!drag)return;drag=false;win.classList.remove('moving');if(fx==='ripple')emit(0,0,true)};
+ tb.addEventListener('pointerup',end);tb.addEventListener('pointercancel',end);
+});
+</script></body></html>
