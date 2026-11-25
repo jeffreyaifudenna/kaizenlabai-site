@@ -53,7 +53,7 @@
   .logo-btn:focus-visible { outline:2px solid var(--gold); outline-offset:8px; }
   .logo-btn:active .logo { transform:scale(.97); }
   .logo-hint { margin-top:.6rem; color:#6f6448; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; }
-  .panel { width:min(640px, 100%); overflow:hidden; height:0; transition:height .45s cubic-bezier(.22,1,.36,1); }
+  .panel { width:min(760px, 100%); overflow:hidden; height:0; transition:height .45s cubic-bezier(.22,1,.36,1); }
   .panel-in { margin-top:18px; padding:22px 24px; border:1px solid var(--gold); border-radius:16px; background:#0d0d0b; text-align:center; opacity:0; transform:translateY(-6px); transition:opacity .3s ease .1s, transform .3s ease .1s; }
   .panel.open .panel-in { opacity:1; transform:none; }
   .panel h2 { color:var(--gold); font-size:1.6rem; }
@@ -66,6 +66,11 @@
   .panel .play { position:absolute; inset:0; margin:auto; width:60px; height:60px; border-radius:50%; background:rgba(5,5,5,.7); border:2px solid var(--gold); }
   .panel .play::after { content:""; position:absolute; left:23px; top:17px; border-style:solid; border-width:12px 0 12px 19px; border-color:transparent transparent transparent var(--gold); }
   .panel .vcap { color:#d9c08a; font-size:.9rem; margin-top:.6rem; }
+  .panel-in.media { padding:0; overflow:hidden; }
+  .panel-in.media .thumb { width:100%; margin:0; border:0; border-radius:0; }
+  .panel-in.media .play { width:76px; height:76px; }
+  .panel-in.media .play::after { left:29px; top:22px; border-width:15px 0 15px 24px; }
+  .panel-in.media .pbtn { margin:16px 0 18px; }
   nav a.active { background:var(--gold); color:#050505; }
   nav { display:grid; grid-template-columns:repeat(4, auto); gap:14px; margin-top:clamp(1.25rem, 4vh, 2.25rem); }
   nav a { display:block; padding:.75rem 1.4rem; border:1px solid var(--gold); border-radius:999px; color:var(--gold); text-decoration:none; font-size:clamp(.95rem, 1.4vw, 1.15rem); letter-spacing:.02em; transition:background .15s ease, color .15s ease; }
@@ -304,7 +309,7 @@ Sections
     // Sections open in a panel below the buttons, on the same page (links still work without JavaScript)
     (function () {
       var S = {
-        'learning': '<h2>Learning</h2><p>Educational videos on AI from our YouTube channel, KaizenLabAI.</p><a class="thumb" href="https://www.youtube.com/watch?v=KcCbkGVCFFU" aria-label="Watch our first video: 21 Layers from the Edge of the Universe"><img src="https://i.ytimg.com/vi/KcCbkGVCFFU/hqdefault.jpg" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></a><p class="vcap">First video: 21 Layers from the Edge of the Universe</p><a class="pbtn" href="https://www.youtube.com/@KaizenLabAI?sub_confirmation=1">Subscribe on YouTube</a>',
+        'learning': '<a class="thumb" href="https://www.youtube.com/watch?v=KcCbkGVCFFU" aria-label="Watch our first video: 21 Layers from the Edge of the Universe"><img src="https://i.ytimg.com/vi/KcCbkGVCFFU/maxresdefault.jpg" onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/KcCbkGVCFFU/hqdefault.jpg\'" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></a><a class="pbtn" href="https://www.youtube.com/@KaizenLabAI?sub_confirmation=1">Subscribe on YouTube</a>',
         'agents': '<h2>Agents</h2><p>AI workers.</p><span class="soon">Coming soon</span>',
         'automations': '<h2>Automations</h2><p>Automations for small businesses.</p><span class="soon">Coming soon</span>',
         'open-source': '<h2>Open Source</h2><p>Code from the lab, open for anyone to use and build on.</p><a class="pbtn" href="https://github.com/jeffreyaifudenna">View on GitHub</a>'
@@ -314,7 +319,7 @@ Sections
       function show(id, scroll) {
         Array.prototype.forEach.call(links, function (x) { var on = x.dataset.sec === id; x.classList.toggle('active', on); x.setAttribute('aria-expanded', String(on)); });
         if (!id) { cur = null; clearTimeout(show.t); clearTimeout(show.s); setH(false); history.replaceState(null, '', location.pathname); return; }
-        cur = id; inner.innerHTML = S[id]; panel.classList.remove('open'); clearTimeout(show.t); clearTimeout(show.s);
+        cur = id; inner.innerHTML = S[id]; inner.classList.toggle('media', id === 'learning'); panel.classList.remove('open'); clearTimeout(show.t); clearTimeout(show.s);
         show.t = setTimeout(function () { setH(true); if (scroll) show.s = setTimeout(function () { panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 460); }, 20);
         history.replaceState(null, '', '#' + id);
       }
