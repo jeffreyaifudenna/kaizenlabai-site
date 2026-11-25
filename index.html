@@ -46,17 +46,162 @@
   nav a { display:block; padding:.75rem 1.4rem; border:1px solid #e5b84c; border-radius:999px; color:#e5b84c; text-decoration:none; font-size:clamp(.95rem, 1.4vw, 1.15rem); letter-spacing:.02em; transition:background .15s ease, color .15s ease; }
   nav a:hover, nav a:focus-visible { background:#e5b84c; color:#050505; outline:none; }
   @media (max-width: 640px) { nav { grid-template-columns:repeat(2, 1fr); width:min(100%, 360px); gap:10px; } nav a { padding:.7rem .5rem; } }
+
+  /* Command bar */
+  .cmdbar { display:flex; align-items:center; gap:.7rem; width:min(460px, 100%); margin-top:clamp(1.5rem, 4vh, 2.5rem); padding:.7rem .9rem .7rem 1.1rem; background:#0d0d0b; border:1px solid #3a3222; border-radius:12px; color:#8a7a55; font:inherit; font-size:1rem; text-align:left; cursor:text; transition:border-color .2s ease, opacity .2s ease; }
+  .cmdbar:hover, .cmdbar:focus-visible { border-color:#e5b84c; outline:none; }
+  .cmdbar .ph { flex:1; }
+  .ic { width:18px; height:18px; flex:none; stroke:#e5b84c; fill:none; stroke-width:2; stroke-linecap:round; }
+  kbd { font:600 .72rem/1 ui-monospace, Consolas, monospace; color:#8a7a55; border:1px solid #3a3222; border-bottom-width:2px; border-radius:6px; padding:.3rem .45rem; white-space:nowrap; }
+  .cmdbar.hide { opacity:0; }
+  @media (max-width: 640px) { .cmdbar kbd { display:none; } }
+
+  .cmd-bg { position:fixed; inset:0; z-index:40; background:rgba(0,0,0,.6); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); opacity:0; transition:opacity .35s ease; }
+  .cmd-bg.on { opacity:1; }
+  .cmd { position:fixed; z-index:41; left:50%; top:16vh; width:min(560px, calc(100vw - 32px)); max-height:min(460px, 70vh); margin-left:calc(min(560px, calc(100vw - 32px)) / -2); display:flex; flex-direction:column; background:#0d0d0b; border:1px solid #e5b84c; border-radius:16px; box-shadow:0 24px 80px rgba(0,0,0,.75), 0 0 0 1px rgba(229,184,76,.08); overflow:hidden; text-align:left; transform-origin:top left; }
+  .cmd[hidden], .cmd-bg[hidden] { display:none; }
+  .cmd-in { opacity:0; transition:opacity .2s ease; display:flex; flex-direction:column; min-height:0; }
+  .cmd.ready .cmd-in { opacity:1; }
+  .cmd-top { display:flex; align-items:center; gap:.7rem; padding:.95rem 1rem .95rem 1.1rem; border-bottom:1px solid #22201a; }
+  .cmd-top input { flex:1; min-width:0; background:transparent; border:0; outline:none; color:#fff; font:inherit; font-size:16px; }
+  .cmd-top input::placeholder { color:#6f6448; }
+  .cmd ul { list-style:none; margin:0; padding:.4rem; overflow-y:auto; }
+  .cmd .grp { padding:.7rem .75rem .35rem; color:#6f6448; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; }
+  .cmd .opt { display:flex; align-items:center; gap:.75rem; padding:.7rem .75rem; border-radius:10px; color:#e9dcc0; cursor:pointer; }
+  .cmd .opt small { margin-left:auto; color:#6f6448; font-size:.8rem; }
+  .cmd .opt[aria-selected="true"] { background:#1c1912; color:#e5b84c; }
+  .cmd .opt[aria-selected="true"] small { color:#a8925e; }
+  .cmd .none { padding:1.2rem .75rem; color:#6f6448; }
+  .cmd-foot { display:flex; gap:1rem; padding:.6rem 1rem; border-top:1px solid #22201a; color:#6f6448; font-size:.75rem; }
+  @media (max-width: 640px) { .cmd { top:10vh; } .cmd-foot { display:none; } }
 </style>
 </head>
 <body>
   <img class="logo" src="logo.webp" alt="KaizenLabAI logo">
   <h1>Kaizen<span>LabAI</span></h1>
   <p>AI experiments. A little better every day.</p>
+  <button class="cmdbar" id="cmdOpen" type="button" aria-haspopup="dialog" aria-controls="cmd">
+    <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+    <span class="ph">Where do you want to go?</span>
+    <kbd id="cmdKey">Ctrl K</kbd>
+  </button>
   <nav aria-label="Sections">
     <a href="/learning/">Learning</a>
     <a href="/agents/">Agents</a>
     <a href="/automations/">Automations</a>
     <a href="/open-source/">Open Source</a>
   </nav>
+
+  <div class="cmd-bg" id="cmdBg" hidden></div>
+  <div class="cmd" id="cmd" role="dialog" aria-modal="true" aria-label="Site menu" hidden>
+    <div class="cmd-in">
+      <div class="cmd-top">
+        <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="cmdIn" type="text" placeholder="Type to search…" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="cmdList" aria-autocomplete="list">
+        <kbd>Esc</kbd>
+      </div>
+      <ul id="cmdList" role="listbox" aria-label="Options"></ul>
+      <div class="cmd-foot"><span>&uarr; &darr; to move</span><span>Enter to open</span><span>Esc to close</span></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var items = [
+        { g: 'Sections', t: 'Learning', d: 'Educational videos', href: '/learning/', k: 'youtube videos learn education' },
+        { g: 'Sections', t: 'Agents', d: 'AI workers', href: '/agents/', k: 'ai workers' },
+        { g: 'Sections', t: 'Automations', d: 'For small businesses', href: '/automations/', k: 'small business workflow' },
+        { g: 'Sections', t: 'Open Source', d: 'Code on GitHub', href: '/open-source/', k: 'code github projects' },
+        { g: 'Links', t: 'YouTube channel', d: '@KaizenLabAI', href: 'https://www.youtube.com/@KaizenLabAI', k: 'subscribe videos' },
+        { g: 'Links', t: 'Watch our first video', d: 'YouTube', href: 'https://www.youtube.com/watch?v=KcCbkGVCFFU', k: '21 layers universe' },
+        { g: 'Links', t: 'GitHub', d: 'github.com/jeffreyaifudenna', href: 'https://github.com/jeffreyaifudenna', k: 'code open source' },
+        { g: 'Links', t: 'Copy link to this site', d: 'kaizenlabai.com', copy: 'https://www.kaizenlabai.com/', k: 'share url' }
+      ];
+      var bar = document.getElementById('cmdOpen'), box = document.getElementById('cmd'), bg = document.getElementById('cmdBg'),
+          input = document.getElementById('cmdIn'), list = document.getElementById('cmdList'),
+          reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+          shown = [], sel = 0, open = false, busy = false;
+
+      if (/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)) document.getElementById('cmdKey').textContent = '⌘ K';
+
+      function render() {
+        var q = input.value.trim().toLowerCase();
+        shown = items.filter(function (it) { return !q || (it.t + ' ' + it.d + ' ' + it.k).toLowerCase().indexOf(q) !== -1; });
+        list.textContent = '';
+        if (!shown.length) { var n = document.createElement('li'); n.className = 'none'; n.textContent = 'No matches. Try "learning" or "github".'; list.appendChild(n); return; }
+        var last = '';
+        shown.forEach(function (it, i) {
+          if (it.g !== last) { var h = document.createElement('li'); h.className = 'grp'; h.setAttribute('role', 'presentation'); h.textContent = it.g; list.appendChild(h); last = it.g; }
+          var li = document.createElement('li');
+          li.className = 'opt'; li.id = 'opt' + i; li.setAttribute('role', 'option');
+          li.innerHTML = '<span></span><small></small>';
+          li.firstChild.textContent = it.t; li.lastChild.textContent = it.d;
+          li.addEventListener('mousemove', function () { if (sel !== i) { sel = i; mark(); } });
+          li.addEventListener('click', function () { sel = i; go(); });
+          list.appendChild(li);
+        });
+        if (sel >= shown.length) sel = 0;
+        mark();
+      }
+      function mark() {
+        Array.prototype.forEach.call(list.querySelectorAll('.opt'), function (el, i) { el.setAttribute('aria-selected', i === sel ? 'true' : 'false'); });
+        var cur = document.getElementById('opt' + sel);
+        if (cur) { input.setAttribute('aria-activedescendant', cur.id); cur.scrollIntoView({ block: 'nearest' }); }
+      }
+      function go() {
+        var it = shown[sel]; if (!it) return;
+        if (it.copy) {
+          var done = function () { var s = document.querySelector('#opt' + sel + ' small'); if (s) s.textContent = 'Copied!'; };
+          if (navigator.clipboard) navigator.clipboard.writeText(it.copy).then(done, done); else done();
+          return;
+        }
+        if (/^https?:/.test(it.href)) { window.open(it.href, '_blank', 'noopener'); closeMenu(); }
+        else window.location.href = it.href;
+      }
+
+      // Smooth "grow from the bar" animation (FLIP)
+      var EASE = 'cubic-bezier(.22, 1, .36, 1)';
+      function fromBar() {
+        var a = bar.getBoundingClientRect(), b = box.getBoundingClientRect();
+        return 'translate(' + (a.left - b.left) + 'px,' + (a.top - b.top) + 'px) scale(' + (a.width / b.width) + ',' + (a.height / b.height) + ')';
+      }
+      function openMenu() {
+        if (open || busy) return;
+        open = true; busy = true;
+        input.value = ''; sel = 0; render();
+        bg.hidden = false; box.hidden = false; box.classList.remove('ready');
+        requestAnimationFrame(function () { bg.classList.add('on'); });
+        if (reduce || !box.animate) { box.classList.add('ready'); busy = false; input.focus(); return; }
+        bar.classList.add('hide');
+        var anim = box.animate([{ transform: fromBar(), borderRadius: '12px', opacity: .9 }, { transform: 'none', borderRadius: '16px', opacity: 1 }], { duration: 420, easing: EASE });
+        setTimeout(function () { box.classList.add('ready'); }, 180);
+        anim.onfinish = function () { busy = false; input.focus(); };
+      }
+      function closeMenu() {
+        if (!open || busy) return;
+        open = false; busy = true;
+        bg.classList.remove('on'); box.classList.remove('ready');
+        var finish = function () { box.hidden = true; bg.hidden = true; bar.classList.remove('hide'); busy = false; bar.focus({ preventScroll: true }); };
+        if (reduce || !box.animate) { finish(); return; }
+        var anim = box.animate([{ transform: 'none', opacity: 1 }, { transform: fromBar(), opacity: .6 }], { duration: 300, easing: EASE });
+        anim.onfinish = finish;
+      }
+
+      bar.addEventListener('click', openMenu);
+      bg.addEventListener('click', closeMenu);
+      input.addEventListener('input', function () { sel = 0; render(); });
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowDown') { e.preventDefault(); if (shown.length) { sel = (sel + 1) % shown.length; mark(); } }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); if (shown.length) { sel = (sel - 1 + shown.length) % shown.length; mark(); } }
+        else if (e.key === 'Enter') { e.preventDefault(); go(); }
+        else if (e.key === 'Tab') { e.preventDefault(); }
+      });
+      document.addEventListener('keydown', function (e) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); open ? closeMenu() : openMenu(); return; }
+        if (e.key === 'Escape' && open) { e.preventDefault(); closeMenu(); return; }
+        if (e.key === '/' && !open && !/INPUT|TEXTAREA/.test(e.target.tagName)) { e.preventDefault(); openMenu(); }
+      });
+    })();
+  </script>
 </body>
 </html>
