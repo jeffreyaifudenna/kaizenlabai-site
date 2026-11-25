@@ -82,9 +82,9 @@
   .tb { display:flex; align-items:center; color:#999; font-size:.85rem; letter-spacing:.12em; padding:4px 0 14px; }
   .tb button { margin-left:auto; background:#1a1a1a; border:1px solid #333; border-radius:50%; width:44px; height:44px; color:#ddd; font-size:1.5rem; cursor:pointer; line-height:1; }
   .tb button:hover, .tb button:focus-visible { color:var(--gold); border-color:var(--gold); outline:none; }
-  .grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:22px 12px; padding:6px 0; }
+  .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:22px 10px; padding:6px 0; }
   .app { display:flex; flex-direction:column; align-items:center; gap:10px; background:none; border:0; color:#fff; font:inherit; font-size:1.15rem; font-weight:600; cursor:pointer; padding:0; min-height:44px; }
-  .ico { width:min(112px, 30vw); height:min(112px, 30vw); border-radius:28px; display:grid; place-items:center; font-size:clamp(2.4rem, 10vw, 3.2rem); background:linear-gradient(160deg,#1d1a12,#0c0b08); border:1.5px solid rgba(229,184,76,.35); color:var(--gold); transition:transform .15s, box-shadow .2s; }
+  .ico { width:min(104px, 22vw); height:min(104px, 22vw); border-radius:28px; display:grid; place-items:center; font-size:clamp(2rem, 8vw, 3rem); background:linear-gradient(160deg,#1d1a12,#0c0b08); border:1.5px solid rgba(229,184,76,.35); color:var(--gold); transition:transform .15s, box-shadow .2s; }
   .app:hover .ico, .app:focus-visible .ico { box-shadow:0 0 18px rgba(229,184,76,.3); }
   .app:focus-visible { outline:none; }
   .app:active .ico { transform:scale(.9); }
@@ -148,17 +148,10 @@
 
   <div class="zenhint">Zen mode &middot; tap anywhere to return</div>
 
-  <div class="pill" role="toolbar" aria-label="Drawing tools">
-    <span style="color:var(--tan);padding:0 6px">&#9998;</span>
-    <button type="button" id="undo">Undo</button>
-    <button type="button" id="clr">Clear</button>
-    <button type="button" id="done">Done</button>
-  </div>
-
   <div class="win" id="win" role="dialog" aria-label="KaizenLabAI menu" aria-hidden="true">
     <div class="tb">KAIZENLABAI<button type="button" id="x" aria-label="Close menu">&times;</button></div>
     <div class="grid">
-      <button type="button" class="app" data-a="draw"><span class="ico" aria-hidden="true" style="font-size:clamp(3rem, 13vw, 4.2rem)">&#9998;</span>Draw</button>
+
       <button type="button" class="app" data-a="zen"><span class="ico" aria-hidden="true">&#9711;</span>Zen</button>
       <button type="button" class="app soon" data-a="kaizen"><span class="ico" aria-hidden="true">&#25913;</span>Kaizen</button>
       <button type="button" class="app" data-a="sound" id="snd" aria-pressed="false"><span class="ico" aria-hidden="true">&#9834;</span>Sound</button>
@@ -248,41 +241,21 @@ Sections
       document.getElementById('x').addEventListener('click', function () { closeMenu(); });
       win.addEventListener('click', function (e) {
         var b = e.target.closest('[data-a]'); if (!b) return; var a = b.dataset.a;
-        if (a === 'draw') { closeMenu(false); startDraw(); chime(); }
-        else if (a === 'zen') { closeMenu(false); startZen(); chime(); }
+        if (a === 'zen') { closeMenu(false); startZen(); chime(); }
         else if (a === 'kaizen') { say('Kaizen: coming soon'); chime(); }
         else if (a === 'sound') { var on = toggleSound(); say(on ? 'Sound on' : 'Sound off'); chime(); }
         else if (a === 'dev') { closeMenu(false); startDev(); }
       });
 
-      // ---- drawing input
-      function pos(e) { return { x: e.clientX, y: e.clientY }; }
-      var lastTone = 0;
-      document.addEventListener('pointerdown', function (e) {
-        if (body.classList.contains('zen') && !body.classList.contains('drawing')) { body.classList.remove('zen'); return; }
-        if (!body.classList.contains('drawing') || e.target.closest('.pill')) return;
-        cur = { m: mode, p: [pos(e)] }; strokes.push(cur);
-        try { e.target.setPointerCapture && e.target.setPointerCapture(e.pointerId); } catch (err) {}
-      });
-      document.addEventListener('pointermove', function (e) {
-        if (!body.classList.contains('drawing')) return; var p = pos(e);
-        if (cur) { cur.p.push(p); redraw(); var t = performance.now(); if (t - lastTone > 120) { lastTone = t; tone(520 + Math.random() * 260, .25, .012); } }
-        emit(p);
-      });
-      ['pointerup', 'pointercancel'].forEach(function (n) { document.addEventListener(n, function () { cur = null; }); });
-      Array.prototype.forEach.call(document.querySelectorAll('[data-fx]'), function (b) {
-        b.addEventListener('click', function () { mode = b.dataset.fx; Array.prototype.forEach.call(document.querySelectorAll('[data-fx]'), function (x) { x.classList.toggle('on', x === b); }); });
-      });
-      document.getElementById('done').addEventListener('click', function () { body.classList.remove('drawing'); });
-      document.getElementById('clr').addEventListener('click', function () { strokes = []; redraw(); });
-      document.getElementById('undo').addEventListener('click', function () { strokes.pop(); redraw(); });
+      // Zen: tap anywhere to return
+      document.addEventListener('pointerdown', function () { if (body.classList.contains('zen')) body.classList.remove('zen'); });
 
       // ---- dev mode command window
       var tout = document.getElementById('tout'), tin = document.getElementById('tin');
       function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
       function print(html) { var o = document.createElement('div'); o.innerHTML = html + '\n'; tout.appendChild(o); tout.scrollTop = tout.scrollHeight; }
       var CMD = {
-        help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the four sections\n<b>bots</b>      bots that visited (live counts)\n<b>draw</b> &middot; <b>zen</b> &middot; <b>sound</b>   same as the menu tiles\n<b>clear</b>     clear this window\n<b>exit</b>      leave dev mode'; },
+        help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the four sections\n<b>bots</b>      bots that visited (live counts)\n<b>zen</b> &middot; <b>sound</b>   same as the menu tiles\n<b>clear</b>     clear this window\n<b>exit</b>      leave dev mode'; },
         about: function () { return 'An AI lab applying kaizen, continuous improvement, to building with AI.\nA little better every day.'; },
         sections: function () { return 'learning  agents  automations  open-source'; },
         bots: function () {
@@ -296,7 +269,6 @@ Sections
           }).catch(function () { print('<span class="err">Bot counts are not available yet.</span>'); });
           return null;
         },
-        draw: function () { startDraw(); return ''; },
         zen: function () { startZen(); return ''; },
         sound: function () { return 'sound ' + (toggleSound() ? 'on' : 'off'); },
         clear: function () { tout.innerHTML = ''; return null; },
