@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Open Source · KaizenLabAI</title>
-<meta name="description" content="Open-source projects from the lab.">
+<meta name="description" content="Code from the lab, open for anyone to use and build on.">
 <meta property="og:title" content="Open Source · KaizenLabAI">
-<meta property="og:description" content="Open-source projects from the lab.">
+<meta property="og:description" content="Code from the lab, open for anyone to use and build on.">
 <meta property="og:image" content="https://www.kaizenlabai.com/logo.webp">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.kaizenlabai.com/open-source/">
@@ -16,22 +16,32 @@
 <link rel="icon" type="image/png" href="/favicon.png">
 <style>
   * { margin:0; box-sizing:border-box; }
-  html,body { height:100%; }
-  body { background:#050505; color:#fff; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:16px; text-align:center; }
+  html { height:100%; } body { min-height:100%; }
+  body { background:#050505; color:#fff; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:72px 16px 32px; text-align:center; }
   .home { position:absolute; top:16px; left:16px; display:flex; align-items:center; gap:.5rem; color:#d9c08a; text-decoration:none; font-size:.95rem; }
   .home img { width:36px; height:auto; }
   .home:hover, .home:focus-visible { color:#e5b84c; }
   h1 { font-size:clamp(2.5rem, 10vw, 5.5rem); font-weight:700; color:#e5b84c; letter-spacing:-0.01em; }
   p { color:#d9c08a; font-size:clamp(1.05rem, 3.6vw, 1.6rem); margin-top:1rem; }
   .soon { display:inline-block; margin-top:2rem; padding:.4rem 1rem; border:1px solid #3a3222; border-radius:999px; color:#8a7a55; font-size:.85rem; letter-spacing:.08em; text-transform:uppercase; }
-  .cta { display:block; margin-top:1.25rem; color:#e5b84c; }
+  .btn { display:inline-block; margin-top:1.75rem; padding:.75rem 1.5rem; border:1px solid #e5b84c; border-radius:999px; color:#e5b84c; text-decoration:none; font-size:1rem; transition:background .15s ease, color .15s ease; }
+  .btn:hover, .btn:focus-visible { background:#e5b84c; color:#050505; outline:none; }
+  .video { display:block; position:relative; width:min(520px, 100%); aspect-ratio:16/9; margin-top:2rem; border:1px solid #e5b84c; border-radius:14px; overflow:hidden; }
+  .video img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .3s ease; }
+  .video:hover img, .video:focus-visible img { transform:scale(1.03); }
+  .video:focus-visible { outline:2px solid #e5b84c; outline-offset:4px; }
+  .play { position:absolute; inset:0; margin:auto; width:68px; height:68px; border-radius:50%; background:rgba(5,5,5,.7); border:2px solid #e5b84c; }
+  .play::after { content:""; position:absolute; left:26px; top:20px; border-style:solid; border-width:13px 0 13px 21px; border-color:transparent transparent transparent #e5b84c; }
+  .vcap { margin-top:.75rem; color:#d9c08a; font-size:.95rem; }
+  .soon { margin-top:1.5rem; }
 </style>
 </head>
 <body>
   <a class="home" href="/"><img src="/logo.webp" alt="">KaizenLabAI</a>
   <h1>Open Source</h1>
-  <p>Open-source projects from the lab.</p>
-  <span class="soon">Coming soon</span>
+  <p>Code from the lab, open for anyone to use and build on.</p>
+  <a class="btn" href="https://github.com/jeffreyaifudenna">View on GitHub</a>
+  <span class="soon">More projects coming soon</span>
   
 </body>
 </html>
