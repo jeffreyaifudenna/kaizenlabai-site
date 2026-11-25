@@ -183,10 +183,10 @@
       <button type="button" class="app" data-a="xray"><span class="ico" aria-hidden="true" style="font-family:ui-monospace,Consolas,monospace;font-size:clamp(1.3rem,5vw,1.8rem)">[&#8201;]</span>X-ray</button>
       <button type="button" class="app" data-a="radar"><span class="ico" aria-hidden="true">&#9678;</span>Bot radar</button>
     </div>
-    <button type="button" class="devbtn" data-a="dev">&lt;/&gt; Dev mode</button>
+    <button type="button" class="devbtn" data-a="dev">&gt;_ Terminal</button>
   </div>
 
-  <section class="devview" id="dev" aria-label="Dev mode">
+  <section class="devview" id="dev" aria-label="Terminal">
 <div>KaizenLabAI
 AI experiments. A little better every day.
 
@@ -195,7 +195,7 @@ Sections
   - <a href="/agents/">Agents</a>        AI workers (coming soon)
   - <a href="/automations/">Automations</a>   For small businesses (coming soon)
   - <a href="/open-source/">Open Source</a>   github.com/jeffreyaifudenna
-</div><div class="term"><div class="tout" id="tout">Type "help" to see commands. Esc or "exit" to leave dev mode.
+</div><div class="term"><div class="tout" id="tout">KaizenLabAI terminal. Type "help" to see commands. Esc or "exit" to leave.
 </div><form id="tf" autocomplete="off"><label for="tin">kaizen@lab:~$</label><input id="tin" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="go"></form></div>
   </section>
 
@@ -286,9 +286,20 @@ Sections
       function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
       function print(html) { var o = document.createElement('div'); o.innerHTML = html + '\n'; tout.appendChild(o); tout.scrollTop = tout.scrollHeight; }
       var CMD = {
-        help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the four sections\n<b>bots</b>      bots that visited (live counts)\n<b>zen</b> &middot; <b>sound</b> &middot; <b>xray</b> &middot; <b>radar</b>   same as the menu tiles\n<b>clear</b>     clear this window\n<b>exit</b>      leave dev mode'; },
+        help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the four sections\n<b>ping</b>      round trip to our server, in ms\n<b>uptime</b>    how long the site has been live\n<b>bots</b>      bots that visited (live counts)\n<b>zen</b> &middot; <b>sound</b> &middot; <b>xray</b> &middot; <b>radar</b>   same as the menu tiles\n<b>clear</b>     clear this window\n<b>exit</b>      close the terminal'; },
         about: function () { return 'An AI lab applying kaizen, continuous improvement, to building with AI.\nA little better every day.'; },
         sections: function () { return 'learning  agents  automations  open-source'; },
+        ping: function () {
+          var t0 = performance.now();
+          fetch('/robots.txt?ping=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+            var ms = Math.round(performance.now() - t0); print(r.ok ? 'pong from ' + esc(location.host) + ' in <b>' + ms + ' ms</b>' : '<span class="err">no reply (' + r.status + ')</span>');
+          }).catch(function () { print('<span class="err">no reply (offline?)</span>'); });
+          return 'ping ' + esc(location.host) + '\u2026';
+        },
+        uptime: function () {
+          var live = Date.UTC(2026, 10, 22), days = Math.floor((Date.now() - live) / 864e5), open = Math.round((performance.now()) / 1000);
+          return 'kaizenlabai.com live since Nov 22, 2026 (UTC): <b>' + days + ' day' + (days === 1 ? '' : 's') + '</b>\nthis page open for <b>' + (open >= 60 ? Math.floor(open / 60) + 'm ' : '') + (open % 60) + 's</b>';
+        },
         xray: function () { body.classList.remove('devmode'); KZ.xray(true); return ''; },
         radar: function () { body.classList.remove('devmode'); KZ.radar(true); return ''; },
         bots: function () {
