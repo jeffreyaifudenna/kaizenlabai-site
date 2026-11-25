@@ -4,13 +4,15 @@
 
 KaizenLabAI is an AI lab applying kaizen (continuous, incremental improvement) to building with AI. We are pre-launch and building in stealth.
 
+## Sections (coming soon)
+
+- [Learning](https://www.kaizenlabai.com/learning/): educational content on AI, on our YouTube channel
+- [Agents](https://www.kaizenlabai.com/agents/): AI workers
+- [Automations](https://www.kaizenlabai.com/automations/): automations for small businesses
+- [Open Source](https://www.kaizenlabai.com/open-source/): open-source projects from the lab
+
 ## Status
 
 - Stage: pre-launch
 - Website: https://www.kaizenlabai.com
 - YouTube: https://www.youtube.com/@KaizenLabAI
-
-## Coming soon
-
-- Videos documenting our AI experiments
-- More on this site as we ship
