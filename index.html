@@ -32,7 +32,7 @@
 <style>
   :root { --gold:#e5b84c; --tan:#d9c08a; }
   * { margin:0; box-sizing:border-box; }
-  html,body { height:100%; }
+  html { height:100%; } body { min-height:100%; }
   body {
     background:#050505; color:#fff;
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -47,9 +47,26 @@
   h1 span { color:var(--gold); }
   .tag { color:var(--tan); font-size:clamp(1.1rem, min(4.6vw, 4vh), 2.4rem); margin-top:1rem; }
   .fade { transition:opacity 1.2s; }
-  .bar { display:flex; align-items:center; gap:.7rem; width:min(460px, 100%); margin-top:clamp(1.5rem, 4vh, 2.5rem); padding:.8rem 1.2rem; background:#0d0d0d; border:1px solid #444; border-radius:999px; color:#888; font:inherit; font-size:1rem; text-align:left; cursor:pointer; transition:border-color .2s; }
-  .bar:hover, .bar:focus-visible { border-color:var(--gold); outline:none; }
-  .bar svg { width:18px; height:18px; flex:none; stroke:var(--gold); fill:none; stroke-width:2; stroke-linecap:round; }
+  .logo-btn { background:none; border:0; padding:0; cursor:pointer; border-radius:20px; position:relative; -webkit-tap-highlight-color:transparent; }
+  .logo-btn .logo { transition:transform .25s ease, filter .25s ease; }
+  .logo-btn:hover .logo, .logo-btn:focus-visible .logo { filter:drop-shadow(0 0 18px rgba(229,184,76,.35)); transform:scale(1.03); }
+  .logo-btn:focus-visible { outline:2px solid var(--gold); outline-offset:8px; }
+  .logo-btn:active .logo { transform:scale(.97); }
+  .logo-hint { margin-top:.6rem; color:#6f6448; font-size:.75rem; letter-spacing:.14em; text-transform:uppercase; }
+  .panel { width:min(640px, 100%); overflow:hidden; height:0; transition:height .45s cubic-bezier(.22,1,.36,1); }
+  .panel-in { margin-top:18px; padding:22px 24px; border:1px solid var(--gold); border-radius:16px; background:#0d0d0b; text-align:center; opacity:0; transform:translateY(-6px); transition:opacity .3s ease .1s, transform .3s ease .1s; }
+  .panel.open .panel-in { opacity:1; transform:none; }
+  .panel h2 { color:var(--gold); font-size:1.6rem; }
+  .panel p { color:var(--tan); font-size:1rem; margin-top:.5rem; }
+  .panel .soon { display:inline-block; margin-top:1rem; padding:.3rem .8rem; border:1px solid #3a3222; border-radius:999px; color:#8a7a55; font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; }
+  .panel .pbtn { display:inline-block; margin-top:1rem; padding:.65rem 1.3rem; border:1px solid var(--gold); border-radius:999px; color:var(--gold); text-decoration:none; font-size:.95rem; min-height:44px; }
+  .panel .pbtn:hover, .panel .pbtn:focus-visible { background:var(--gold); color:#050505; outline:none; }
+  .panel .thumb { position:relative; display:block; width:min(400px,100%); margin:1rem auto 0; aspect-ratio:16/9; border:1px solid var(--gold); border-radius:12px; overflow:hidden; }
+  .panel .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+  .panel .play { position:absolute; inset:0; margin:auto; width:60px; height:60px; border-radius:50%; background:rgba(5,5,5,.7); border:2px solid var(--gold); }
+  .panel .play::after { content:""; position:absolute; left:23px; top:17px; border-style:solid; border-width:12px 0 12px 19px; border-color:transparent transparent transparent var(--gold); }
+  .panel .vcap { color:#d9c08a; font-size:.9rem; margin-top:.6rem; }
+  nav a.active { background:var(--gold); color:#050505; }
   nav { display:grid; grid-template-columns:repeat(4, auto); gap:14px; margin-top:clamp(1.25rem, 4vh, 2.25rem); }
   nav a { display:block; padding:.75rem 1.4rem; border:1px solid var(--gold); border-radius:999px; color:var(--gold); text-decoration:none; font-size:clamp(.95rem, 1.4vw, 1.15rem); letter-spacing:.02em; transition:background .15s ease, color .15s ease; }
   nav a:hover, nav a:focus-visible { background:var(--gold); color:#050505; outline:none; }
@@ -114,21 +131,18 @@
   <canvas class="layer" id="fx" aria-hidden="true"></canvas>
 
   <main class="hero">
-    <img class="logo" src="logo.webp" alt="KaizenLabAI logo" draggable="false">
+    <button class="logo-btn" id="logoBtn" type="button" aria-haspopup="dialog" aria-controls="win" aria-label="KaizenLabAI: open menu"><img class="logo" src="logo.webp" alt="" draggable="false"></button>
     <div class="fade">
       <h1>Kaizen<span>LabAI</span></h1>
       <p class="tag">AI experiments. A little better every day.</p>
     </div>
-    <button class="bar fade" id="bar" type="button" aria-haspopup="dialog" aria-controls="win">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-      What do you want to do?
-    </button>
     <nav class="fade" aria-label="Sections">
-      <a href="/learning/">Learning</a>
-      <a href="/agents/">Agents</a>
-      <a href="/automations/">Automations</a>
-      <a href="/open-source/">Open Source</a>
+      <a href="/learning/" data-sec="learning" aria-controls="panel" aria-expanded="false">Learning</a>
+      <a href="/agents/" data-sec="agents" aria-controls="panel" aria-expanded="false">Agents</a>
+      <a href="/automations/" data-sec="automations" aria-controls="panel" aria-expanded="false">Automations</a>
+      <a href="/open-source/" data-sec="open-source" aria-controls="panel" aria-expanded="false">Open Source</a>
     </nav>
+    <div class="panel fade" id="panel" role="region" aria-live="polite"><div class="panel-in" id="panelIn"></div></div>
     <p class="botline fade" id="botline" aria-live="polite"></p>
   </main>
 
@@ -230,7 +244,7 @@ Sections
       function startDev() { body.classList.remove('drawing', 'zen'); body.classList.add('devmode'); setTimeout(function () { document.getElementById('tin').focus(); }, 50); }
       function exitAll() { body.classList.remove('drawing', 'zen', 'devmode'); closeMenu(false); }
 
-      document.getElementById('bar').addEventListener('click', openMenu);
+      document.getElementById('logoBtn').addEventListener('click', openMenu);
       document.getElementById('x').addEventListener('click', function () { closeMenu(); });
       win.addEventListener('click', function (e) {
         var b = e.target.closest('[data-a]'); if (!b) return; var a = b.dataset.a;
@@ -286,7 +300,7 @@ Sections
         zen: function () { startZen(); return ''; },
         sound: function () { return 'sound ' + (toggleSound() ? 'on' : 'off'); },
         clear: function () { tout.innerHTML = ''; return null; },
-        exit: function () { body.classList.remove('devmode'); document.getElementById('bar').focus({ preventScroll: true }); return ''; }
+        exit: function () { body.classList.remove('devmode'); document.getElementById('logoBtn').focus({ preventScroll: true }); return ''; }
       };
       document.getElementById('tf').addEventListener('submit', function (e) {
         e.preventDefault(); var v = tin.value.trim().toLowerCase(); tin.value = ''; if (!v) return;
@@ -314,5 +328,30 @@ Sections
       }).catch(function () {});
     })();
   </script>
-</body>
+  <script>
+    // Sections open in a panel below the buttons, on the same page (links still work without JavaScript)
+    (function () {
+      var S = {
+        'learning': '<h2>Learning</h2><p>Educational videos on AI from our YouTube channel, KaizenLabAI.</p><a class="thumb" href="https://www.youtube.com/watch?v=KcCbkGVCFFU" aria-label="Watch our first video: 21 Layers from the Edge of the Universe"><img src="https://i.ytimg.com/vi/KcCbkGVCFFU/hqdefault.jpg" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></a><p class="vcap">First video: 21 Layers from the Edge of the Universe</p><a class="pbtn" href="https://www.youtube.com/@KaizenLabAI?sub_confirmation=1">Subscribe on YouTube</a>',
+        'agents': '<h2>Agents</h2><p>AI workers.</p><span class="soon">Coming soon</span>',
+        'automations': '<h2>Automations</h2><p>Automations for small businesses.</p><span class="soon">Coming soon</span>',
+        'open-source': '<h2>Open Source</h2><p>Code from the lab, open for anyone to use and build on.</p><a class="pbtn" href="https://github.com/jeffreyaifudenna">View on GitHub</a>'
+      };
+      var panel = document.getElementById('panel'), inner = document.getElementById('panelIn'), links = document.querySelectorAll('nav a[data-sec]'), cur = null;
+      function setH(open) { panel.style.height = open ? (inner.offsetHeight + 18) + 'px' : '0px'; panel.classList.toggle('open', open); }
+      function show(id, scroll) {
+        Array.prototype.forEach.call(links, function (x) { var on = x.dataset.sec === id; x.classList.toggle('active', on); x.setAttribute('aria-expanded', String(on)); });
+        if (!id) { cur = null; clearTimeout(show.t); clearTimeout(show.s); setH(false); history.replaceState(null, '', location.pathname); return; }
+        cur = id; inner.innerHTML = S[id]; panel.classList.remove('open'); clearTimeout(show.t); clearTimeout(show.s);
+        show.t = setTimeout(function () { setH(true); if (scroll) show.s = setTimeout(function () { panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 460); }, 20);
+        history.replaceState(null, '', '#' + id);
+      }
+      Array.prototype.forEach.call(links, function (a) {
+        a.addEventListener('click', function (e) { if (e.ctrlKey || e.metaKey || e.shiftKey) return; e.preventDefault(); show(cur === a.dataset.sec ? null : a.dataset.sec, true); });
+      });
+      window.addEventListener('resize', function () { if (cur) setH(true); });
+      window.addEventListener('hashchange', function () { var k = location.hash.slice(1); if (S[k] && k !== cur) show(k, true); });
+      var h = location.hash.slice(1); if (S[h]) show(h, false);
+    })();
+  </script></body>
 </html>
