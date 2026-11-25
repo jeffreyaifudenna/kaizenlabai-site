@@ -91,7 +91,12 @@
   @property --a { syntax:'<angle>'; inherits:false; initial-value:0deg; }
   @keyframes trace { 0% { opacity:1; --a:0deg; } 85% { opacity:1; } 100% { opacity:0; --a:360deg; } }
   @media (prefers-reduced-motion: reduce) { .cmd.lines::before { animation:none; } }
-</style></head>
+  .botline { margin-top:1.4rem; color:#8a7a55; font-size:.85rem; min-height:1.3em; position:relative; z-index:1; }
+  .botline a { color:#d9c08a; text-decoration:none; border-bottom:1px solid #3a3222; }
+  .botline a:hover, .botline a:focus-visible { color:#e5b84c; border-color:#e5b84c; outline:none; }
+  .botline b { color:#e5b84c; font-weight:600; }
+</style>
+</head>
 <body>
   <canvas class="seams" id="seams" aria-hidden="true"></canvas>
   <canvas class="seams" id="seamsLive" aria-hidden="true"></canvas>
@@ -109,6 +114,7 @@
     <a href="/automations/">Automations</a>
     <a href="/open-source/">Open Source</a>
   </nav>
+  <p class="botline" id="botline" aria-live="polite"></p>
 
   <div class="cmd" id="cmd" role="dialog" aria-modal="false" aria-label="Site menu" hidden>
     <div class="cmd-head" id="cmdHead"><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="t">Menu</span><button class="cmd-x" id="cmdX" type="button" aria-label="Close menu">&times;</button></div>
@@ -326,5 +332,18 @@
   <script>
     // Dev mode: the command window loads only when the site runs on this computer (localhost)
     if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) { var s = document.createElement('script'); s.src = '/dev/terminal.js'; document.body.appendChild(s); }
+  </script>  <script>
+    // Public bot counter: filled from /api/bots. Shows nothing if counts are unavailable (never a made-up number).
+    (function () {
+      var el = document.getElementById('botline'); if (!el || !window.fetch) return;
+      fetch('/api/bots').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        if (!d || !d.since || !d.allTime) return;
+        var f = function (n) { return Number(n).toLocaleString('en-US'); };
+        var since = new Date(d.since + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+        el.innerHTML = '<b></b> self-identified bots visited in the last 7 days &middot; <b></b> since <span></span> &middot; <a href="/bots/">which bots?</a>';
+        var b = el.querySelectorAll('b'); b[0].textContent = f(d.last7.total); b[1].textContent = f(d.allTime.total);
+        el.querySelector('span').textContent = since;
+      }).catch(function () {});
+    })();
   </script></body>
 </html>

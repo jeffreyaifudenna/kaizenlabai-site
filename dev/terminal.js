@@ -60,6 +60,7 @@
        '  seams clear       wipe the gold seams off the page',
        '  info              page, viewport and device details',
        '  links             YouTube, GitHub, live site',
+       '  bots              bot counts from /api/bots',
        '  reload            reload this page',
        '  clear             clear this window',
        '  exit              close (also Esc or the ` key)'].forEach(function (s) { line(s); });
@@ -83,6 +84,14 @@
       line('agent     ' + navigator.userAgent);
     },
     links: function () { link('youtube.com/@KaizenLabAI', 'https://www.youtube.com/@KaizenLabAI'); link('github.com/jeffreyaifudenna', 'https://github.com/jeffreyaifudenna'); link('www.kaizenlabai.com (live)', 'https://www.kaizenlabai.com/'); },
+    bots: function () {
+      line('fetching /api/bots ...', 'dim');
+      fetch('/api/bots').then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); }).then(function (x) {
+        if (!x.ok || !x.d.allTime) { line('not available: ' + (x.d.error || 'no data') + ' (runs on Vercel only)', 'err'); return; }
+        line('since ' + x.d.since + ': ' + x.d.allTime.total + ' all time, ' + x.d.last7.total + ' last 7 days', 'gold');
+        x.d.last7.bots.slice(0, 10).forEach(function (b) { line('  ' + b.name + '  ' + b.count); });
+      }).catch(function () { line('not available (the API runs on Vercel, not the local server)', 'err'); });
+    },
     reload: function () { location.reload(); },
     clear: function () { out.textContent = ''; },
     exit: function () { closeTerm(); }

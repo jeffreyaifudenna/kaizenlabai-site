@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bots · KaizenLabAI</title>
+<meta name="description" content="Self-identified bots that visited kaizenlabai.com, counted by our server.">
+<meta property="og:title" content="Bots · KaizenLabAI">
+<meta property="og:description" content="Self-identified bots that visited kaizenlabai.com, counted by our server.">
+<meta property="og:image" content="https://www.kaizenlabai.com/logo.webp">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.kaizenlabai.com/bots/">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#050505">
+<link rel="canonical" href="https://www.kaizenlabai.com/bots/">
+<link rel="icon" type="image/png" href="/favicon.png">
+<style>
+  * { margin:0; box-sizing:border-box; }
+  html { height:100%; } body { min-height:100%; }
+  body { background:#050505; color:#fff; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; display:flex; flex-direction:column; align-items:center; padding:88px 16px 48px; text-align:center; }
+  .home { position:absolute; top:16px; left:16px; display:flex; align-items:center; gap:.5rem; color:#d9c08a; text-decoration:none; font-size:.95rem; }
+  .home img { width:36px; height:auto; }
+  .home:hover, .home:focus-visible { color:#e5b84c; }
+  h1 { font-size:clamp(2.5rem, 9vw, 4.5rem); font-weight:700; color:#e5b84c; letter-spacing:-0.01em; }
+  .lead { color:#d9c08a; font-size:clamp(1rem, 3.2vw, 1.3rem); margin-top:.8rem; max-width:560px; }
+  .totals { display:flex; gap:14px; margin-top:2rem; flex-wrap:wrap; justify-content:center; }
+  .stat { border:1px solid #3a3222; border-radius:14px; padding:1rem 1.4rem; min-width:170px; }
+  .stat b { display:block; font-size:2.2rem; color:#e5b84c; font-variant-numeric:tabular-nums; }
+  .stat span { color:#8a7a55; font-size:.85rem; }
+  .cols { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:18px; width:min(720px, 100%); margin-top:2rem; text-align:left; }
+  @media (max-width: 600px) { .cols { grid-template-columns:1fr; } }
+  h2 { color:#d9c08a; font-size:.8rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:.5rem; }
+  table { width:100%; border-collapse:collapse; font-size:.95rem; }
+  td { padding:.45rem .2rem; border-bottom:1px solid #1d1b16; color:#e9dcc0; }
+  td.n { text-align:right; color:#e5b84c; font-variant-numeric:tabular-nums; }
+  .empty { color:#6f6448; font-size:.9rem; padding:.5rem 0; }
+  .src { margin-top:2rem; color:#6f6448; font-size:.8rem; max-width:560px; line-height:1.5; }
+</style>
+</head>
+<body>
+  <a class="home" href="/"><img src="/logo.webp" alt="">KaizenLabAI</a>
+  <h1>Bots</h1>
+  <p class="lead">Bots that visited this site and said who they are.</p>
+  <div class="totals" id="totals" hidden>
+    <div class="stat"><b id="t7"></b><span>last 7 days</span></div>
+    <div class="stat"><b id="tAll"></b><span id="sinceLbl">all time</span></div>
+  </div>
+  <div class="cols" id="cols" hidden>
+    <div><h2>Last 7 days</h2><table id="list7"></table></div>
+    <div><h2>All time</h2><table id="listAll"></table></div>
+  </div>
+  <p class="empty" id="status">Loading counts&hellip;</p>
+  <p class="src" id="src">Source: our own server log of page requests whose browser name (user agent) identifies a bot, such as GPTBot or Googlebot. Bots that pretend to be a normal browser are not counted. Counts are page requests, not unique bots.</p>
+  <script>
+    (function () {
+      var f = function (n) { return Number(n).toLocaleString('en-US'); };
+      function fill(tbl, list) {
+        if (!list.length) { var r = tbl.insertRow(), c = r.insertCell(); c.className = 'empty'; c.textContent = 'None yet'; return; }
+        list.forEach(function (b) { var r = tbl.insertRow(); r.insertCell().textContent = b.name; var c = r.insertCell(); c.className = 'n'; c.textContent = f(b.count); });
+      }
+      var status = document.getElementById('status');
+      fetch('/api/bots').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+        if (!d || !d.allTime) { status.textContent = 'Counts are not available right now.'; return; }
+        if (!d.since) { status.textContent = 'No bots counted yet.'; return; }
+        var since = new Date(d.since + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+        document.getElementById('t7').textContent = f(d.last7.total);
+        document.getElementById('tAll').textContent = f(d.allTime.total);
+        document.getElementById('sinceLbl').textContent = 'since ' + since;
+        fill(document.getElementById('list7'), d.last7.bots);
+        fill(document.getElementById('listAll'), d.allTime.bots);
+        document.getElementById('totals').hidden = false; document.getElementById('cols').hidden = false;
+        var upd = new Date(d.updated).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
+        status.textContent = 'Counting since ' + since + ' (UTC). Updated ' + upd + '.';
+      }).catch(function () { status.textContent = 'Counts are not available right now.'; });
+    })();
+  </script>
+  <script>
+    if (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) { var s = document.createElement('script'); s.src = '/dev/terminal.js'; document.body.appendChild(s); }
+  </script>
+</body>
+</html>
