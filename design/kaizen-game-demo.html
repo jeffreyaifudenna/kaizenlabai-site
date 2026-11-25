@@ -17,7 +17,7 @@ h1{font-size:1.4rem}h2{font-size:1.1rem;margin:2rem 0 .6rem}.intro{color:var(--m
 table{border-collapse:collapse;width:100%}td{padding:9px 10px;border-top:1px solid #2a2a2a;vertical-align:top;line-height:1.4}td:first-child{color:var(--gold);font-weight:600;white-space:nowrap}td:last-child{color:#bbb}
 </style></head><body>
 <h1>Kaizen: a choose-your-path chat game</h1>
-<p class="intro">This is how it would play inside the menu window. It starts with your two steps: “Start Kaizen?” (any answer gets the thank you), then “What does that mean?” with three answers. After that it continues into the three draft paths. All three story directions are playable here so you can compare them. The wording is a first draft for you to change.</p>
+<p class="intro">This is how it would play inside the menu window. It starts with “Start Kaizen?”. Any answer gets the thank you, and then you choose one of three replies. After that it continues into the three draft paths. All three story directions are playable here so you can compare them. The wording is a first draft for you to change.</p>
 <div class="win"><div class="tb">⋮⋮ MENU <b>KAIZEN</b><button id="re">Restart</button></div><div class="log" id="log"></div><div class="ch" id="ch"></div></div>
 
 <h2>The three story directions</h2>
@@ -29,12 +29,10 @@ table{border-collapse:collapse;width:100%}td{padding:9px 10px;border-top:1px sol
 <script>
 const S={
 start:{t:"<b>Kaizen:</b> First question. Start Kaizen?",c:[["Yes","thanks"],["No","thanks"],["Maybe later","thanks"]]},
-thanks:{t:"<b>Kaizen:</b> Thank you for finishing Kaizen's first step.",next:"mean"},
-mean:{t:"<b>Kaizen:</b> What does that mean?",c:[["Small steps, every day.","m1"],["Finding the better way.","m2"],["A promise to keep improving.","m3"]]},
-m1:{t:"<b>Kaizen:</b> Yes. You answered one small question, and that was the step. Tomorrow, one more.",next:"pick"},
-m2:{t:"<b>Kaizen:</b> Yes. Even “No” and “Maybe later” moved you forward. There is always a better way, and you just looked for it.",next:"pick"},
-m3:{t:"<b>Kaizen:</b> Yes. Kaizen is a promise, and showing up is how it is kept. You showed up.",next:"pick"},
-pick:{t:"<b>Kaizen:</b> Three paths leave from here. Which do you take?",c:[["One Percent","a1"],["The Lab","b1"],["The Garden","c1"]]},
+thanks:{t:"<b>Kaizen:</b> Thank you for finishing Kaizen's first step.",c:[["What does that mean?","mean"],["What's the second step?","pick"],["Who is Kaizen?","who"]]},
+mean:{t:"<b>Kaizen:</b> Kaizen means “change for the better”. Small steps, every day. You answered one question, and that was the step.",c:[["What's the second step?","pick"],["Who is Kaizen?","who"]]},
+who:{t:"<b>Kaizen:</b> I am the voice of this lab. I ask small questions, and each answer makes something a little better.",c:[["What's the second step?","pick"],["What does that mean?","mean"]]},
+pick:{t:"<b>Kaizen:</b> The second step is yours to choose. Three paths leave from here.",c:[["One Percent","a1"],["The Lab","b1"],["The Garden","c1"]]},
 a1:{t:"<b>Kaizen:</b> One percent better. Where do you want it today?",c:[["My work","a2w"],["My body","a2b"],["My mind","a2m"]]},
 a2w:{t:"<b>Kaizen:</b> Work. Do you fix something that annoys you, or learn something new?",c:[["Fix an annoyance","e_a1"],["Learn something","e_a2"]]},
 a2b:{t:"<b>Kaizen:</b> Body. Two minutes or ten?",c:[["Two minutes","e_a3"],["Ten minutes","e_a4"]]},
