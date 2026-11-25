@@ -1,0 +1,60 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pens and experiment card</title><style>
+:root{--bg:#111;--fg:#eee;--muted:#999;--gold:#e5b84c;--tan:#d9c08a}
+*{box-sizing:border-box;margin:0}body{background:var(--bg);color:var(--fg);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;padding:24px 16px;max-width:820px;margin:0 auto}
+h1{font-size:1.4rem}h2{font-size:1.15rem;margin:2.2rem 0 .4rem}.intro{color:var(--muted);margin:.4rem 0 1rem;line-height:1.45}
+.pens{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px}
+.pen{min-height:64px;border-radius:16px;border:1.5px solid #333;background:#141414;color:#fff;font:inherit;font-size:1.05rem;font-weight:700;cursor:pointer;padding:8px}.pen small{display:block;color:#999;font-weight:400;font-size:.8rem;margin-top:2px}
+.pen.on{border-color:var(--gold);color:var(--gold)}
+.pad{position:relative;height:340px;background:#050505;border:1px solid #2a2a2a;border-radius:14px;touch-action:none;overflow:hidden}
+.pad canvas{position:absolute;inset:0;width:100%;height:100%}
+.pad .tip{position:absolute;left:0;right:0;top:44%;text-align:center;color:#333;pointer-events:none}
+.bar{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}.bar button{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid #444;background:#141414;color:#ddd;font:inherit;cursor:pointer}
+.P-fine{cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Cg%20transform%3D%22rotate%2845%2016%2016%29%22%3E%3Crect%20x%3D%2213.5%22%20y%3D%22-2%22%20width%3D%225%22%20height%3D%2222%22%20rx%3D%222.5%22%20fill%3D%22%23111%22%20stroke%3D%22%23e5b84c%22%20stroke-width%3D%221%22/%3E%3Cpath%20d%3D%22M13.5%2020%20L18.5%2020%20L16%2030%20Z%22%20fill%3D%22%23e5b84c%22/%3E%3C/g%3E%3C/svg%3E") 5 27, crosshair}.P-brush{cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Cg%20transform%3D%22rotate%2845%2016%2016%29%22%3E%3Crect%20x%3D%2214%22%20y%3D%22-4%22%20width%3D%224%22%20height%3D%2218%22%20rx%3D%222%22%20fill%3D%22%232a1e0c%22%20stroke%3D%22%23e5b84c%22%20stroke-width%3D%22.8%22/%3E%3Crect%20x%3D%2213%22%20y%3D%2213%22%20width%3D%226%22%20height%3D%223%22%20fill%3D%22%23e5b84c%22/%3E%3Cpath%20d%3D%22M13%2016%20Q12%2024%2016%2031%20Q20%2024%2019%2016%20Z%22%20fill%3D%22%23111%22%20stroke%3D%22%23e5b84c%22%20stroke-width%3D%22.8%22/%3E%3C/g%3E%3C/svg%3E") 5 27, crosshair}.P-nib{cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Cg%20transform%3D%22rotate%2845%2016%2016%29%22%3E%3Crect%20x%3D%2212.5%22%20y%3D%22-3%22%20width%3D%227%22%20height%3D%2216%22%20rx%3D%223%22%20fill%3D%22%230d0d0d%22%20stroke%3D%22%23e5b84c%22%20stroke-width%3D%221%22/%3E%3Cpath%20d%3D%22M12.5%2013%20L19.5%2013%20L17%2026%20L16%2031%20L15%2026%20Z%22%20fill%3D%22%23e5b84c%22/%3E%3Cline%20x1%3D%2216%22%20y1%3D%2218%22%20x2%3D%2216%22%20y2%3D%2230%22%20stroke%3D%22%230d0d0d%22%20stroke-width%3D%22.7%22/%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2218%22%20r%3D%221%22%20fill%3D%22%230d0d0d%22/%3E%3C/g%3E%3C/svg%3E") 5 27, crosshair}
+.card{background:#0d0d0d;border:1px solid rgba(229,184,76,.55);border-radius:20px;overflow:hidden}
+.vid{aspect-ratio:16/9;background:linear-gradient(135deg,#17140c,#050505);display:grid;place-items:center;color:#555;border-bottom:1px solid #222}.vid b{width:64px;height:64px;border-radius:50%;border:1.5px solid var(--gold);display:grid;place-items:center;color:var(--gold);font-size:1.4rem}
+.cb{padding:18px 20px 20px}.tag{font-family:ui-monospace,Consolas,monospace;font-size:.75rem;color:var(--gold);letter-spacing:.08em}
+.cb h3{font-size:1.5rem;margin:.3rem 0 .2rem}.what{color:#ccc;line-height:1.45}
+.sec{margin-top:16px}.sec h4{font-size:.75rem;color:#888;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.stack{display:flex;flex-wrap:wrap;gap:6px}.stack span{font-family:ui-monospace,Consolas,monospace;font-size:.8rem;border:1px solid #333;border-radius:6px;padding:3px 8px;color:#ccc}
+ol{padding-left:1.2rem;color:#ccc;line-height:1.6}code{font-family:ui-monospace,Consolas,monospace;color:var(--tan);font-size:.88em}
+.acts{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}.acts button{min-height:48px;padding:0 22px;border-radius:999px;font:inherit;font-weight:700;cursor:pointer}
+.try{background:var(--gold);color:#050505;border:0}.src{background:none;color:#ddd;border:1px solid #444}
+.notes{color:var(--muted);line-height:1.5;margin-top:10px}.notes li{margin-bottom:4px}
+@media (max-width:520px){.pens{grid-template-columns:1fr}.pen{min-height:56px}}
+</style></head><body>
+<h1>Draw: three pens</h1>
+<p class="intro">Pick a pen and draw below. Each has its own cursor and its own stroke. All are clean gold lines with no sparkle.</p>
+<div class="pens"><button class="pen on" data-p="fine">Fine-liner<small>Even, precise line</small></button><button class="pen" data-p="brush">Sumi brush<small>Thick when slow, thin when fast</small></button><button class="pen" data-p="nib">Gold nib<small>Calligraphy, angled tip</small></button></div>
+<div class="pad P-fine" id="pad"><canvas id="cv"></canvas><div class="tip" id="tip">draw here</div></div>
+<div class="bar"><button id="undo">Undo</button><button id="clr">Clear</button></div>
+
+<h2>Experiment card</h2>
+<p class="intro">Every app on KaizenLabAI opens as one of these first: what it is, how it was made, the recipe and a video, then a Try it button. Example with Draw:</p>
+<div class="card"><div class="vid"><b>▶</b></div><div class="cb">
+<div class="tag">EXPERIMENT 001 · 2026-11-25</div><h3>Draw</h3>
+<p class="what">A gold pen that turns the homepage into a canvas. Testing how one simple tool can make a page feel alive.</p>
+<div class="sec"><h4>How it was made</h4><div class="stack"><span>HTML canvas</span><span>Pointer Events</span><span>SVG cursor</span><span>Claude</span><span>~120 lines JS</span></div></div>
+<div class="sec"><h4>Recipe</h4><ol><li>Lay a full-page <code>&lt;canvas&gt;</code> behind the content.</li><li>Record pointer points while the button is down.</li><li>Smooth them with quadratic curves and stroke in gold.</li><li>Brush pen: width follows speed. Nib pen: width follows angle.</li></ol></div>
+<div class="acts"><button class="try">Try it</button><button class="src">View source</button></div>
+</div></div>
+<ul class="notes"><li>Zen, Sound, Kaizen and Dev mode each get the same card, numbered as experiments.</li><li>Rule: no story, no app. A tile only ships with a filled card.</li><li>The video slot can stay empty until a video exists. The card still works.</li></ul>
+<script>
+const pad=document.getElementById('pad'),cv=document.getElementById('cv'),ctx=cv.getContext('2d'),dpr=Math.min(devicePixelRatio||1,2);let pen='fine',strokes=[],cur=null;
+function fit(){cv.width=pad.clientWidth*dpr;cv.height=pad.clientHeight*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);redraw()}
+const G='#e5b84c';
+function seg(a,b,w){ctx.strokeStyle=G;ctx.fillStyle=G;ctx.lineCap='round';ctx.lineWidth=w;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke()}
+function render(s){const p=s.p;if(p.length<2)return;
+ if(s.k==='fine'){ctx.strokeStyle=G;ctx.lineWidth=1.8;ctx.lineCap=ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(p[0].x,p[0].y);for(let i=1;i<p.length-1;i++){const m={x:(p[i].x+p[i+1].x)/2,y:(p[i].y+p[i+1].y)/2};ctx.quadraticCurveTo(p[i].x,p[i].y,m.x,m.y)}ctx.lineTo(p.at(-1).x,p.at(-1).y);ctx.stroke();return}
+ let w=s.k==='brush'?8:3;for(let i=1;i<p.length;i++){const a=p[i-1],b=p[i],dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy);
+  if(s.k==='brush'){const t=Math.max(1.2,Math.min(12,13-d*.55));w+=(t-w)*.25;seg(a,b,w)}
+  else{const ang=Math.atan2(dy,dx),nibA=-Math.PI/4,k=Math.abs(Math.sin(ang-nibA));const ww=1+7*k;w+=(ww-w)*.5;
+   const ox=Math.cos(nibA)*w/2,oy=Math.sin(nibA)*w/2;ctx.fillStyle=G;ctx.beginPath();ctx.moveTo(a.x-ox,a.y-oy);ctx.lineTo(a.x+ox,a.y+oy);ctx.lineTo(b.x+ox,b.y+oy);ctx.lineTo(b.x-ox,b.y-oy);ctx.closePath();ctx.fill()}}}
+function redraw(){ctx.clearRect(0,0,pad.clientWidth,pad.clientHeight);strokes.forEach(render)}
+fit();addEventListener('resize',fit);
+const pos=e=>{const r=pad.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};
+pad.addEventListener('pointerdown',e=>{document.getElementById('tip').style.display='none';cur={k:pen,p:[pos(e)]};strokes.push(cur);pad.setPointerCapture(e.pointerId)});
+pad.addEventListener('pointermove',e=>{if(!cur)return;cur.p.push(pos(e));const n=cur.p.length;if(cur.k==='fine')redraw();else render({k:cur.k,p:cur.p.slice(Math.max(0,n-2))})});
+const up=()=>{if(cur){cur=null;redraw()}};pad.addEventListener('pointerup',up);pad.addEventListener('pointercancel',up);
+document.querySelectorAll('.pen').forEach(b=>b.onclick=()=>{pen=b.dataset.p;document.querySelectorAll('.pen').forEach(x=>x.classList.toggle('on',x===b));pad.className='pad P-'+pen});
+document.getElementById('undo').onclick=()=>{strokes.pop();redraw()};document.getElementById('clr').onclick=()=>{strokes=[];redraw()};
+</script></body></html>
