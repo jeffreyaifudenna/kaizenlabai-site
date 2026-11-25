@@ -1,0 +1,92 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lab remote apps</title>
+<style>
+:root{--bg:#050505;--gold:#e5b84c;--tan:#d9c08a;--ink:#eee;--mut:#8a8370;--line:#2a2416}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 48px}h1{font-size:1.3rem;margin:0 0 4px}.intro{color:var(--mut);margin:0 0 16px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}.tabs button{flex:1;min-height:48px;border-radius:14px;border:1px solid var(--line);background:#0d0d0d;color:var(--tan);font:600 1rem system-ui;cursor:pointer}
+.tabs button.on{border-color:var(--gold);color:var(--gold)}
+.pane{display:none}.pane.on{display:block}
+.box{position:relative;height:min(62vh,520px);border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#070604;touch-action:none}
+canvas{display:block;width:100%;height:100%}
+.mono{font-family:ui-monospace,Consolas,monospace}
+.read{position:absolute;left:12px;top:10px;font-size:.72rem;color:#bfa25a;line-height:1.6;pointer-events:none}.read b{color:var(--gold);font-weight:400}
+.leg{position:absolute;right:12px;top:10px;font-size:.68rem;color:var(--mut);text-align:right;line-height:1.6}.leg i{display:inline-block;width:14px;height:2px;vertical-align:middle;margin-right:6px}
+.bar{display:flex;gap:8px;margin-top:10px}.bar button{min-height:46px;padding:0 18px;border-radius:999px;border:1px solid var(--gold);background:transparent;color:var(--gold);font:600 .95rem system-ui;cursor:pointer}
+.bar span{color:var(--mut);font-size:.85rem;align-self:center}
+h2{font-size:1.05rem;margin:28px 0 8px}table{width:100%;border-collapse:collapse;font-size:.92rem}td{padding:8px 6px;border-top:1px solid #1a1712;vertical-align:top}td:first-child{color:var(--gold);white-space:nowrap;font-weight:600;width:1%}
+.tag{font-size:.7rem;color:var(--mut);border:1px solid #333;border-radius:999px;padding:1px 7px;margin-left:6px;white-space:nowrap}
+</style></head><body><div class="wrap">
+<h1>Lab remote apps</h1>
+<p class="intro">Two playable samples, one techie and one creative. Each would be a key on the lab remote. Ideas for more are below.</p>
+<div class="tabs"><button class="on" data-p="scope">Lab scope</button><button data-p="rake">Zen rake</button></div>
+
+<div class="pane on" id="scope">
+ <div class="box" id="sbox"><canvas id="sc"></canvas>
+  <div class="read mono" id="rd"></div>
+  <div class="leg mono"><div><i style="background:#e5b84c"></i>frame rate</div><div><i style="background:#d9c08a;opacity:.6"></i>your pointer speed</div></div>
+ </div>
+ <div class="bar"><button id="freeze">Freeze</button><span>Move your mouse or finger over the scope. Every number is real, read from your own browser.</span></div>
+</div>
+
+<div class="pane" id="rake">
+ <div class="box" id="rbox"><canvas id="rc"></canvas></div>
+ <div class="bar"><button id="smooth">Smooth sand</button><button id="stone">Place stone</button><span>Drag to rake.</span></div>
+</div>
+
+<h2>More ideas</h2>
+<table>
+<tr><td colspan="2" style="color:var(--tan);font-weight:600;padding-top:4px">Techie</td></tr>
+<tr><td>Lab scope</td><td>Live oscilloscope of real signals from the visitor's browser: frame rate, pointer speed, load time, page size. <span class="tag">sample above</span></td></tr>
+<tr><td>Bot radar</td><td>A slow radar sweep. A blip appears when a self-identified bot visits, labeled with its name. Uses the bot counter.<span class="tag">needs Upstash</span></td></tr>
+<tr><td>X-ray</td><td>Outlines every part of the page with its size and load cost, like seeing the site's skeleton.</td></tr>
+<tr><td>Terminal</td><td>Dev mode commands: <span class="mono">ping</span>, <span class="mono">uptime</span>, <span class="mono">bots</span>, <span class="mono">whoami</span> (your browser and screen, never stored).</td></tr>
+<tr><td colspan="2" style="color:var(--tan);font-weight:600;padding-top:14px">Creative</td></tr>
+<tr><td>Zen rake</td><td>Rake patterns in a sand garden. Smooth it out and start again. <span class="tag">sample above</span></td></tr>
+<tr><td>Kaizen 1%</td><td>Each visitor adds one gold tile to a shared mosaic, so the site gets a little better every day.<span class="tag">needs Upstash</span></td></tr>
+<tr><td>Sound garden</td><td>Tap to place notes on a grid that loops, a tiny sequencer in gold and black.</td></tr>
+<tr><td>Guest seam</td><td>Leave one gold crack on a shared wall. Everyone sees everyone's seams.<span class="tag">needs Upstash</span></td></tr>
+</table>
+</div>
+<script>
+const dpr=Math.min(devicePixelRatio||1,2);
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tabs button,.pane').forEach(e=>e.classList.remove('on'));b.classList.add('on');document.getElementById(b.dataset.p).classList.add('on');fitAll()});
+function fitC(c){const r=c.getBoundingClientRect();if(!r.width)return false;c.width=r.width*dpr;c.height=r.height*dpr;c.getContext('2d').setTransform(dpr,0,0,dpr,0,0);return true}
+
+// ---- Lab scope ----
+const sc=document.getElementById('sc'),sx=sc.getContext('2d'),rd=document.getElementById('rd');
+const N=240,fps=new Array(N).fill(null),spd=new Array(N).fill(null);let last=performance.now(),px=null,py=null,pv=0,frozen=false,acc=0,fr=0,curF=60;
+sc.parentElement.addEventListener('pointermove',e=>{if(px!=null){pv+=Math.hypot(e.clientX-px,e.clientY-py)}px=e.clientX;py=e.clientY});
+document.getElementById('freeze').onclick=e=>{frozen=!frozen;e.target.textContent=frozen?'Run':'Freeze'};
+const nav=performance.getEntriesByType('navigation')[0],load=nav&&nav.duration>0?Math.round(nav.duration):null;
+function drawScope(now){const dt=now-last;last=now;acc+=dt;fr++;
+ if(acc>=100&&!frozen){curF=fr*1000/acc;fps.push(curF);fps.shift();spd.push(pv*1000/acc);spd.shift();pv=0;acc=0;fr=0}else if(acc>=100){acc=0;fr=0;pv=0}
+ const w=sc.width/dpr,h=sc.height/dpr;sx.clearRect(0,0,w,h);
+ sx.strokeStyle='#15120b';sx.lineWidth=1;for(let i=1;i<10;i++){sx.beginPath();sx.moveTo(w*i/10,0);sx.lineTo(w*i/10,h);sx.stroke()}for(let i=1;i<6;i++){sx.beginPath();sx.moveTo(0,h*i/6);sx.lineTo(w,h*i/6);sx.stroke()}
+ const line=(arr,max,col,a)=>{sx.globalAlpha=a;sx.strokeStyle=col;sx.lineWidth=1.6;sx.beginPath();let st=false;arr.forEach((v,i)=>{if(v==null)return;const x=i/(N-1)*w,y=h-8-Math.min(v/max,1)*(h-60);st?sx.lineTo(x,y):sx.moveTo(x,y);st=true});sx.stroke();sx.globalAlpha=1};
+ line(spd,4000,'#d9c08a',.6);line(fps,75,'#e5b84c',1);
+ rd.innerHTML=`FPS <b>${curF.toFixed(0)}</b><br>POINTER <b>${Math.round(spd[N-1]||0)}</b> px/s<br>LOAD <b>${load??'–'}</b> ms<br>ELEMENTS <b>${document.getElementsByTagName('*').length}</b><br>SCREEN <b>${screen.width}×${screen.height}</b>`;
+ requestAnimationFrame(drawScope)}
+
+// ---- Zen rake ----
+const rc=document.getElementById('rc'),rx=rc.getContext('2d');let stones=[],strokes=[],cur=null,placing=false;
+function sand(){const w=rc.width/dpr,h=rc.height/dpr;rx.fillStyle='#16120b';rx.fillRect(0,0,w,h);
+ // fine grain, seeded so redraws match
+ let s=7;const rnd=()=>(s=(s*16807)%2147483647)/2147483647;for(let i=0;i<w*h/18;i++){rx.fillStyle=rnd()<.5?'rgba(217,192,138,.05)':'rgba(0,0,0,.25)';rx.fillRect(rnd()*w,rnd()*h,1,1)}}
+function rakeSeg(a,b){const dx=b.x-a.x,dy=b.y-a.y,l=Math.hypot(dx,dy)||1,nx=-dy/l,ny=dx/l;rx.lineCap='round';
+ for(let k=-2;k<=2;k++){const o=k*8;rx.strokeStyle='rgba(0,0,0,.55)';rx.lineWidth=3.2;rx.beginPath();rx.moveTo(a.x+nx*o,a.y+ny*o);rx.lineTo(b.x+nx*o,b.y+ny*o);rx.stroke();
+  rx.strokeStyle='rgba(217,192,138,.22)';rx.lineWidth=1.2;rx.beginPath();rx.moveTo(a.x+nx*(o+2.6),a.y+ny*(o+2.6));rx.lineTo(b.x+nx*(o+2.6),b.y+ny*(o+2.6));rx.stroke()}}
+function stone(st){const g=rx.createRadialGradient(st.x-st.r*.3,st.y-st.r*.35,st.r*.1,st.x,st.y,st.r);g.addColorStop(0,'#3a3a36');g.addColorStop(1,'#111');
+ for(let i=1;i<=3;i++){const R=st.r+i*9;rx.strokeStyle='rgba(0,0,0,.55)';rx.lineWidth=3.2;rx.beginPath();rx.arc(st.x,st.y,R,0,7);rx.stroke();rx.strokeStyle='rgba(217,192,138,.22)';rx.lineWidth=1.2;rx.beginPath();rx.arc(st.x,st.y,R+2.6,0,7);rx.stroke()}
+ rx.fillStyle=g;rx.beginPath();rx.ellipse(st.x,st.y,st.r,st.r*.82,0,0,7);rx.fill();rx.strokeStyle='rgba(229,184,76,.35)';rx.lineWidth=1;rx.stroke()}
+function redraw(){sand();strokes.forEach(p=>{for(let i=1;i<p.length;i++)rakeSeg(p[i-1],p[i])});stones.forEach(stone)}
+const pt=e=>{const r=rc.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}};
+rc.addEventListener('pointerdown',e=>{const p=pt(e);if(placing){stones.push({...p,r:18+Math.random()*10});placing=false;document.getElementById('stone').classList.remove('on');redraw();return}cur=[p];strokes.push(cur);rc.setPointerCapture(e.pointerId)});
+rc.addEventListener('pointermove',e=>{if(!cur)return;const p=pt(e),q=cur[cur.length-1];if(Math.hypot(p.x-q.x,p.y-q.y)<4)return;cur.push(p);rakeSeg(q,p)});
+const up=()=>{if(cur){cur=null;redraw()}};rc.addEventListener('pointerup',up);rc.addEventListener('pointercancel',up);
+document.getElementById('smooth').onclick=()=>{strokes=[];redraw()};
+document.getElementById('stone').onclick=()=>{placing=true};
+
+function fitAll(){if(fitC(sc));if(fitC(rc))redraw()}
+fitAll();addEventListener('resize',fitAll);requestAnimationFrame(drawScope);
+</script></body></html>
