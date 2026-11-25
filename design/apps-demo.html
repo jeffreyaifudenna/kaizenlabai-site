@@ -38,17 +38,17 @@ canvas{display:block;width:100%;height:100%}
 .xtoast{position:absolute;left:50%;bottom:14px;transform:translate(-50%,8px);background:var(--gold);color:#050505;font-weight:600;font-size:.85rem;padding:6px 14px;border-radius:999px;opacity:0;transition:all .3s;pointer-events:none}.xtoast.show{opacity:1;transform:translate(-50%,0)}
 </style></head><body><div class="wrap">
 <h1>Lab remote apps</h1>
-<p class="intro">Three demos, each meant to be a key on the lab remote.</p>
-<div class="tabs"><button class="on" data-p="rake">Zen rake</button><button data-p="radar">Bot radar</button><button data-p="xray">X-ray</button></div>
+<p class="intro">Two demos, each meant to be a key on the lab remote.</p>
+<div class="tabs"><button class="on" data-p="radar">Bot radar</button><button data-p="xray">X-ray</button></div>
 
-<div class="pane on" id="rake">
+<div class="pane" id="rake" hidden>
  <div class="box" id="rbox"><canvas id="rc"></canvas></div>
  <div class="opts" id="rstyle"><button class="on" data-s="classic">A · Classic</button><button data-s="fine">B · Fine</button><button data-s="gold">C · Gold seam</button></div>
  <div class="bar"><button id="smooth">Smooth sand</button><button id="stone">Place stone</button></div>
  <p class="note">Drag to rake. Switch A, B and C to restyle the same garden. Lines are now smooth curves with no joints.</p>
 </div>
 
-<div class="pane" id="radar">
+<div class="pane on" id="radar">
  <div class="radar"><div class="box" id="dbox"><canvas id="dc"></canvas><div class="demo mono">DEMO · SIMULATED VISITS</div></div>
  <div class="log mono" id="log"><h3>LAST SEEN</h3></div></div>
  <p class="note">Each slice is a kind of bot. The center is now and the edge is 7 days ago, so blips drift outward as they age. A blip lights up when the sweep passes. On the real site these come from the bot counter.</p>
