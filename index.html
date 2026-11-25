@@ -79,9 +79,22 @@
   .cmd .none { padding:1.2rem .75rem; color:#6f6448; }
   .cmd-foot { display:flex; gap:1rem; padding:.6rem 1rem; border-top:1px solid #22201a; color:#6f6448; font-size:.75rem; }
   @media (max-width: 640px) { .cmd-foot { display:none; } }
-</style>
-</head>
+
+  /* Kintsugi seams: gold cracks left on the page where the menu is dragged */
+  .logo { mix-blend-mode:lighten; }
+  body > .logo, body > h1, body > p, body > .cmdbar, body > nav { position:relative; z-index:1; }
+  .seams { position:fixed; inset:0; width:100vw; height:100vh; z-index:0; pointer-events:none; }
+  .cmd::before { content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; pointer-events:none; z-index:2;
+    background:conic-gradient(from var(--a, 0deg), transparent 0 70%, #ffe29a 80%, #e5b84c 88%, transparent 96%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; opacity:0; }
+  .cmd.lines::before { animation:trace 1.1s cubic-bezier(.4,0,.2,1) forwards; }
+  @property --a { syntax:'<angle>'; inherits:false; initial-value:0deg; }
+  @keyframes trace { 0% { opacity:1; --a:0deg; } 85% { opacity:1; } 100% { opacity:0; --a:360deg; } }
+  @media (prefers-reduced-motion: reduce) { .cmd.lines::before { animation:none; } }
+</style></head>
 <body>
+  <canvas class="seams" id="seams" aria-hidden="true"></canvas>
+  <canvas class="seams" id="seamsLive" aria-hidden="true"></canvas>
   <img class="logo" src="logo.webp" alt="KaizenLabAI logo">
   <h1>Kaizen<span>LabAI</span></h1>
   <p>AI experiments. A little better every day.</p>
@@ -174,7 +187,7 @@
         if (open || busy) return;
         open = true; busy = true;
         input.value = ''; sel = 0; render();
-        box.hidden = false; box.classList.remove('ready'); place();
+        box.hidden = false; box.classList.remove('ready'); place(); box.classList.remove('lines'); void box.offsetWidth; box.classList.add('lines');
         if (reduce || !box.animate) { box.classList.add('ready'); busy = false; input.focus(); return; }
         bar.classList.add('hide');
         var anim = box.animate([{ transform: fromBar(), borderRadius: '12px', opacity: .9 }, { transform: 'none', borderRadius: '16px', opacity: 1 }], { duration: 420, easing: EASE });
@@ -207,14 +220,16 @@
       head.addEventListener('pointerdown', function (e) {
         if (e.target.closest('.cmd-x') || busy) return;
         drag = { dx: e.clientX - box.offsetLeft, dy: e.clientY - box.offsetTop, id: e.pointerId };
+        if (window.KZSeams) KZSeams.start(box.getBoundingClientRect());
         try { head.setPointerCapture(e.pointerId); } catch (err) {} box.classList.add('dragging'); e.preventDefault();
       });
       head.addEventListener('pointermove', function (e) {
         if (!drag || e.pointerId !== drag.id) return;
         var p = clamp(e.clientX - drag.dx, e.clientY - drag.dy);
         box.style.left = p.x + 'px'; box.style.top = p.y + 'px'; pos = p;
+        if (window.KZSeams) KZSeams.move(box.getBoundingClientRect());
       });
-      function endDrag(e) { if (drag && e.pointerId === drag.id) { drag = null; box.classList.remove('dragging'); } }
+      function endDrag(e) { if (drag && e.pointerId === drag.id) { drag = null; box.classList.remove('dragging'); if (window.KZSeams) KZSeams.end(); } }
       head.addEventListener('pointerup', endDrag);
       head.addEventListener('pointercancel', endDrag);
       window.addEventListener('resize', function () { if (open) place(); });
@@ -232,6 +247,55 @@
         if (e.key === 'Escape' && open) { e.preventDefault(); closeMenu(); return; }
         if (e.key === '/' && !open && !/INPUT|TEXTAREA/.test(e.target.tagName)) { e.preventDefault(); openMenu(); }
       });
+    })();
+  </script>
+  <script>
+    // Kintsugi seams (from design/kintsugi-trail.html): the menu cracks gold seams across the page as it moves
+    (function () {
+      var pc = document.getElementById('seams'), lc = document.getElementById('seamsLive'), P = pc.getContext('2d'), Lx = lc.getContext('2d'),
+          dpr = Math.min(window.devicePixelRatio || 1, 2), reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      function W() { return innerWidth; } function H() { return innerHeight; }
+      function fit() {
+        var keep = null; try { if (pc.width) { keep = document.createElement('canvas'); keep.width = pc.width; keep.height = pc.height; keep.getContext('2d').drawImage(pc, 0, 0); } } catch (e) {}
+        [pc, lc].forEach(function (c) { c.width = W() * dpr; c.height = H() * dpr; c.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0); });
+        if (keep) { P.save(); P.setTransform(1, 0, 0, 1, 0, 0); P.drawImage(keep, 0, 0); P.restore(); }
+      }
+      fit(); window.addEventListener('resize', fit);
+      var raf = 0, tip = null, path = [], fresh = [], grow = [], sweep = null;
+      function R(a, b) { return a + Math.random() * (b - a); }
+      function centre(r) { return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }
+      function seg(ctx, a, b, w, al, bright) {
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        ctx.strokeStyle = 'rgba(229,184,76,' + al * .18 + ')'; ctx.lineWidth = w * 5; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+        ctx.strokeStyle = 'rgba(138,106,30,' + al + ')'; ctx.lineWidth = w * 1.9; ctx.stroke();
+        ctx.strokeStyle = (bright ? 'rgba(255,241,184,' : 'rgba(229,184,76,') + al + ')'; ctx.lineWidth = w; ctx.stroke();
+      }
+      function lay(a, b, w) { seg(P, a, b, w, .9); if (!reduce) { fresh.push({ a: a, b: b, w: w, l: 1 }); kick(); } }
+      function branch(from, ang, w) {
+        var p = from, n = 2 + (Math.random() * 4 | 0), pts = [];
+        for (var i = 0; i < n; i++) { ang += R(-.7, .7); var q = { x: p.x + Math.cos(ang) * R(12, 30), y: p.y + Math.sin(ang) * R(12, 30) }; pts.push([p, q, w * (1 - i / n * .6)]); p = q; }
+        if (reduce) pts.forEach(function (s) { seg(P, s[0], s[1], s[2], .9); }); else grow.push({ pts: pts, i: 0, t: 0 });
+      }
+      function kick() { if (!raf) raf = requestAnimationFrame(tick); }
+      function tick() {
+        raf = 0; Lx.clearRect(0, 0, W(), H());
+        grow = grow.filter(function (g) { if (++g.t % 3) return true; var s = g.pts[g.i++]; lay(s[0], s[1], s[2]); return g.i < g.pts.length; });
+        fresh = fresh.filter(function (f) { f.l -= .02; if (f.l <= 0) return false; seg(Lx, f.a, f.b, f.w * 1.3, f.l, true); return true; });
+        if (sweep) { sweep.i -= 1.2; var k = Math.round(sweep.i); for (var n = -3; n <= 3; n++) { var s = sweep.path[k + n]; if (s) seg(Lx, s[0], s[1], 2, 1 - Math.abs(n) / 4, true); } if (sweep.i < -3) sweep = null; }
+        if (grow.length || fresh.length || sweep) raf = requestAnimationFrame(tick);
+      }
+      window.KZSeams = {
+        start: function (r) { tip = centre(r); path = []; },
+        move: function (r) {
+          var c = centre(r); if (!tip) { tip = c; return; }
+          var dx = c.x - tip.x, dy = c.y - tip.y, d = Math.hypot(dx, dy); if (d < 22) return;
+          var ang = Math.atan2(dy, dx), j = R(-9, 9), q = { x: c.x - Math.sin(ang) * j, y: c.y + Math.cos(ang) * j }, w = R(1.1, 1.9);
+          lay(tip, q, w); path.push([tip, q]); if (path.length > 400) path.shift();
+          if (Math.random() < .3) branch(q, ang + (Math.random() < .5 ? 1 : -1) * R(.6, 1.4), w * .75);
+          tip = q;
+        },
+        end: function () { if (!reduce && path.length > 2) { sweep = { path: path.slice(), i: path.length + 3 }; kick(); } tip = null; }
+      };
     })();
   </script>
 </body>
