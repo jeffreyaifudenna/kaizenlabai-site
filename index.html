@@ -129,6 +129,26 @@
 
   .toast { position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translate(-50%,20px); background:var(--gold); color:#050505; font-weight:600; padding:8px 16px; border-radius:999px; opacity:0; transition:all .3s; z-index:60; pointer-events:none; white-space:nowrap; }
   .toast.show { opacity:1; transform:translate(-50%,0); }
+  /* X-ray mode */
+  body.xray > *:not(#xr-layer):not(.win):not(.toast):not(#xrExit):not(#radar) { filter:grayscale(1) brightness(.55) contrast(1.1); transition:filter .6s; }
+  #xr-layer { position:absolute; left:0; top:0; width:100%; pointer-events:none; z-index:30; font:10px/1.2 ui-monospace, Consolas, monospace; text-align:left; }
+  #xr-layer .g { position:fixed; inset:0; background-image:linear-gradient(rgba(229,184,76,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(229,184,76,.06) 1px, transparent 1px); background-size:24px 24px; }
+  #xr-layer .b { position:absolute; border:1px solid; border-radius:3px; opacity:0; animation:xr .5s ease forwards; }
+  #xr-layer .b span { position:absolute; left:-1px; top:-14px; padding:1px 4px; background:#050505; border:1px solid currentColor; border-radius:3px; white-space:nowrap; }
+  #xr-layer .sum { position:fixed; left:12px; bottom:calc(12px + env(safe-area-inset-bottom)); padding:8px 10px; background:rgba(5,5,5,.92); border:1px solid var(--gold); border-radius:8px; color:var(--gold); line-height:1.6; font-size:11px; }
+  #xr-layer .sum i { color:#8a8370; font-style:normal; }
+  @keyframes xr { to { opacity:1; } }
+  #xrExit { position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top)); z-index:31; display:none; min-height:44px; padding:0 18px; border-radius:999px; border:1px solid var(--gold); background:#0d0d0d; color:var(--gold); font:600 .95rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; }
+  body.xray #xrExit { display:block; }
+  /* Bot radar */
+  #radar { position:fixed; inset:0; z-index:48; background:rgba(5,5,5,.97); display:none; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:16px; }
+  body.radar #radar { display:flex; }
+  #radar .rtop { width:min(560px, 100%); display:flex; align-items:center; color:#999; font-size:.85rem; letter-spacing:.12em; }
+  #radar .rtop button { margin-left:auto; background:#1a1a1a; border:1px solid #333; border-radius:50%; width:44px; height:44px; color:#ddd; font-size:1.5rem; cursor:pointer; line-height:1; }
+  #radar canvas { width:min(560px, 92vw, 62vh); height:min(560px, 92vw, 62vh); }
+  #radar .rnote { width:min(560px, 100%); color:#bfa25a; font-size:.85rem; text-align:center; }
+  #radar .rnote a { color:var(--tan); }
+  @media (prefers-reduced-motion: reduce) { body.xray > * { transition:none; } #xr-layer .b { animation:none; opacity:1; } }
   @media (prefers-reduced-motion: reduce) { body.zen .logo { animation:none; } .win, .win.open, .fade, .logo { transition:none; } }
 </style>
 </head><body>
@@ -160,6 +180,8 @@
       <button type="button" class="app" data-a="zen"><span class="ico" aria-hidden="true">&#9711;</span>Zen</button>
       <button type="button" class="app soon" data-a="kaizen"><span class="ico" aria-hidden="true">&#25913;</span>Kaizen</button>
       <button type="button" class="app" data-a="sound" id="snd" aria-pressed="false"><span class="ico" aria-hidden="true">&#9834;</span>Sound</button>
+      <button type="button" class="app" data-a="xray"><span class="ico" aria-hidden="true" style="font-family:ui-monospace,Consolas,monospace;font-size:clamp(1.3rem,5vw,1.8rem)">[&#8201;]</span>X-ray</button>
+      <button type="button" class="app" data-a="radar"><span class="ico" aria-hidden="true">&#9678;</span>Bot radar</button>
     </div>
     <button type="button" class="devbtn" data-a="dev">&lt;/&gt; Dev mode</button>
   </div>
@@ -177,6 +199,8 @@ Sections
 </div><form id="tf" autocomplete="off"><label for="tin">kaizen@lab:~$</label><input id="tin" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="go"></form></div>
   </section>
 
+  <button type="button" id="xrExit">Exit X-ray</button>
+  <section id="radar" role="dialog" aria-label="Bot radar"><div class="rtop">BOT RADAR<button type="button" id="radarX" aria-label="Close bot radar">&times;</button></div><canvas id="radarC"></canvas><p class="rnote" id="radarNote"></p></section>
   <div class="toast" id="toast" role="status"></div>
 
   <script>
@@ -240,7 +264,7 @@ Sections
       function startZen() { body.classList.remove('devmode', 'drawing'); setTimeout(function () { body.classList.add('zen'); }, 50); }
       function toggleSound() { sound = !sound; var b = document.getElementById('snd'); b.classList.toggle('on', sound); b.setAttribute('aria-pressed', String(sound)); return sound; }
       function startDev() { body.classList.remove('drawing', 'zen'); body.classList.add('devmode'); setTimeout(function () { document.getElementById('tin').focus(); }, 50); }
-      function exitAll() { body.classList.remove('drawing', 'zen', 'devmode'); closeMenu(false); }
+      function exitAll() { body.classList.remove('drawing', 'zen', 'devmode'); closeMenu(false); if (window.KZ) { KZ.xray(false); KZ.radar(false); } }
 
       document.getElementById('logoBtn').addEventListener('click', openMenu);
       document.getElementById('x').addEventListener('click', function () { closeMenu(); });
@@ -250,6 +274,8 @@ Sections
         else if (a === 'kaizen') { say('Kaizen: coming soon'); chime(); }
         else if (a === 'sound') { var on = toggleSound(); say(on ? 'Sound on' : 'Sound off'); chime(); }
         else if (a === 'dev') { closeMenu(false); startDev(); }
+        else if (a === 'xray') { closeMenu(false); window.KZ && KZ.xray(true); chime(); }
+        else if (a === 'radar') { closeMenu(false); window.KZ && KZ.radar(true); chime(); }
       });
 
       // Zen: tap anywhere to return
@@ -260,9 +286,11 @@ Sections
       function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
       function print(html) { var o = document.createElement('div'); o.innerHTML = html + '\n'; tout.appendChild(o); tout.scrollTop = tout.scrollHeight; }
       var CMD = {
-        help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the four sections\n<b>bots</b>      bots that visited (live counts)\n<b>zen</b> &middot; <b>sound</b>   same as the menu tiles\n<b>clear</b>     clear this window\n<b>exit</b>      leave dev mode'; },
+        help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the four sections\n<b>bots</b>      bots that visited (live counts)\n<b>zen</b> &middot; <b>sound</b> &middot; <b>xray</b> &middot; <b>radar</b>   same as the menu tiles\n<b>clear</b>     clear this window\n<b>exit</b>      leave dev mode'; },
         about: function () { return 'An AI lab applying kaizen, continuous improvement, to building with AI.\nA little better every day.'; },
         sections: function () { return 'learning  agents  automations  open-source'; },
+        xray: function () { body.classList.remove('devmode'); KZ.xray(true); return ''; },
+        radar: function () { body.classList.remove('devmode'); KZ.radar(true); return ''; },
         bots: function () {
           print('fetching live counts&hellip;');
           fetch('/api/bots').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
@@ -292,6 +320,102 @@ Sections
     })();
   </script>
   <script>
+    // X-ray and Bot radar (menu tiles + Dev mode commands). All numbers are real; the radar shows only real bot visits.
+    window.KZ = (function () {
+      var body = document.body;
+      // ---------- X-ray ----------
+      var xrOn = false, xrTimer = 0;
+      function kb(n) { return n >= 1024 ? (n / 1024).toFixed(1) + ' KB' : n + ' B'; }
+      function xrDraw() {
+        var old = document.getElementById('xr-layer'); if (old) old.remove();
+        if (!xrOn) return;
+        var layer = document.createElement('div'); layer.id = 'xr-layer'; layer.setAttribute('aria-hidden', 'true');
+        layer.style.height = document.documentElement.scrollHeight + 'px'; layer.innerHTML = '<div class="g"></div>';
+        var res = performance.getEntriesByType('resource'), navE = performance.getEntriesByType('navigation')[0];
+        function cost(url) { for (var i = 0; i < res.length; i++) if (res[i].name === url) return res[i].encodedBodySize || res[i].transferSize || 0; return 0; }
+        var n = 0, delay = 0;
+        Array.prototype.forEach.call(document.body.querySelectorAll('*'), function (el) {
+          if (/^(SCRIPT|STYLE|LINK|META|BR|CANVAS)$/.test(el.tagName) || el.closest('#xr-layer, .win, #radar, #xrExit, .toast, .devview, .zenhint')) return;
+          var cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return;
+          var r = el.getBoundingClientRect(); if (r.width < 8 || r.height < 8) return;
+          var kind = el.tagName === 'IMG' ? 'media' : (el.tagName === 'A' || el.tagName === 'BUTTON') ? 'action' : /^(H1|H2|P|SPAN|B)$/.test(el.tagName) ? 'text' : 'box';
+          var col = { media: '#e5b84c', action: '#9fd18b', text: '#d9c08a', box: '#5f7f9a' }[kind];
+          var label = el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + ' ' + Math.round(r.width) + '\u00d7' + Math.round(r.height);
+          if (el.tagName === 'IMG') { var c = cost(el.currentSrc); if (c) label += ' \u00b7 ' + kb(c); }
+          var d = document.createElement('div'); d.className = 'b';
+          d.style.cssText = 'left:' + (r.left + scrollX) + 'px;top:' + (r.top + scrollY) + 'px;width:' + r.width + 'px;height:' + r.height + 'px;color:' + col + ';border-color:' + col + ';animation-delay:' + (delay += 25) + 'ms';
+          if (kind !== 'box' || r.width > 200) { var s = document.createElement('span'); s.textContent = label; d.appendChild(s); }
+          layer.appendChild(d); n++;
+        });
+        var total = (navE ? (navE.encodedBodySize || navE.transferSize || 0) : 0) + res.reduce(function (a, e) { return a + (e.encodedBodySize || e.transferSize || 0); }, 0);
+        var sum = document.createElement('div'); sum.className = 'sum';
+        sum.innerHTML = 'X-RAY<br><i>parts on screen</i> ' + n + '<br><i>page weight</i> ' + kb(total) + '<br><i>files loaded</i> ' + (res.length + 1) +
+          '<br><i>load time</i> ' + (navE && navE.duration ? Math.round(navE.duration) + ' ms' : '\u2013') + '<br><i>screen</i> ' + innerWidth + '\u00d7' + innerHeight;
+        layer.appendChild(sum); document.body.appendChild(layer);
+      }
+      function xrLater() { clearTimeout(xrTimer); xrTimer = setTimeout(xrDraw, 550); }
+      function xray(on) {
+        if (on === xrOn) return; xrOn = on; body.classList.toggle('xray', on);
+        if (on) { xrDraw(); addEventListener('resize', xrLater); document.addEventListener('click', xrLater); }
+        else { xrDraw(); removeEventListener('resize', xrLater); document.removeEventListener('click', xrLater); }
+      }
+      document.getElementById('xrExit').addEventListener('click', function (e) { e.stopPropagation(); xray(false); });
+
+      // ---------- Bot radar ----------
+      var rOn = false, raf = 0, c = document.getElementById('radarC'), ctx = c.getContext('2d'), note = document.getElementById('radarNote'),
+          blips = [], angle = 0, last = 0, W = 0, loaded = false, reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var GROUPS = { AI: ['GPTBot', 'ChatGPT-User', 'OAI-SearchBot', 'ClaudeBot', 'Claude-User', 'Claude-SearchBot', 'Anthropic (other)', 'PerplexityBot', 'Perplexity-User', 'Bytespider', 'CCBot', 'Amazonbot', 'cohere-ai', 'Mistral', 'DeepSeek', 'Google-CloudVertexBot'],
+                     Search: ['Googlebot', 'Bingbot', 'Applebot', 'DuckDuckBot', 'YandexBot', 'Baiduspider'], Social: ['Slackbot', 'Discordbot', 'LinkedInBot', 'Twitterbot', 'Meta', 'Telegram', 'WhatsApp'] };
+      var COL = { AI: '#e5b84c', Search: '#9fd18b', Social: '#d9a0e0', Other: '#8a8370' };
+      function group(nm) { for (var g in GROUPS) if (GROUPS[g].indexOf(nm) !== -1) return g; return 'Other'; }
+      function hash(s) { var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h; }
+      function fit() { var r = c.getBoundingClientRect(); if (!r.width) return; var dpr = Math.min(devicePixelRatio || 1, 2); W = r.width; c.width = W * dpr; c.height = W * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+      function load() {
+        if (loaded) return; loaded = true;
+        note.textContent = 'Listening for bots\u2026';
+        fetch('/api/bots').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+          if (!d || !d.since || !d.last7) { note.textContent = 'The radar wakes up once the bot counter is live. No bots shown until then.'; return; }
+          if (!d.last7.bots.length) { note.textContent = 'No self-identified bots in the last 7 days (counting since ' + d.since + ').'; return; }
+          d.last7.bots.slice(0, 24).forEach(function (b) {
+            var g = group(b.name); blips.push({ name: b.name + ' \u00d7' + b.count, g: g, a: (hash(b.name) % 360) * Math.PI / 180, d: .25 + (hash(b.name + 'd') % 65) / 100, lit: 0, born: performance.now() });
+          });
+          note.innerHTML = '';
+          note.appendChild(document.createTextNode(d.last7.total.toLocaleString('en-US') + ' self-identified bot visits in the last 7 days (counting since ' + d.since + ', UTC). '));
+          var a = document.createElement('a'); a.href = '/bots/'; a.textContent = 'Full list'; note.appendChild(a);
+        }).catch(function () { note.textContent = 'The radar wakes up once the bot counter is live. No bots shown until then.'; });
+      }
+      function draw(now) {
+        raf = 0; if (!rOn) return;
+        var dt = last ? now - last : 16; last = now; if (!reduce) angle = (angle + dt * .0016) % (Math.PI * 2);
+        if (!W) fit();
+        var cx = W / 2, cy = W / 2, R = W / 2 - 14; ctx.clearRect(0, 0, W, W);
+        ctx.strokeStyle = '#2a2416'; ctx.lineWidth = 1;
+        for (var i = 1; i <= 4; i++) { ctx.beginPath(); ctx.arc(cx, cy, R * i / 4, 0, 7); ctx.stroke(); }
+        ctx.beginPath(); ctx.moveTo(cx - R, cy); ctx.lineTo(cx + R, cy); ctx.moveTo(cx, cy - R); ctx.lineTo(cx, cy + R); ctx.stroke();
+        if (!reduce) {
+          if (ctx.createConicGradient) { var g = ctx.createConicGradient(angle - .9, cx, cy); g.addColorStop(0, 'rgba(229,184,76,0)'); g.addColorStop(.14, 'rgba(229,184,76,.28)'); g.addColorStop(.1433, 'rgba(229,184,76,0)'); ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fill(); }
+          ctx.strokeStyle = 'rgba(255,226,150,.8)'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(angle) * R, cy + Math.sin(angle) * R); ctx.stroke();
+        }
+        ctx.font = '11px ui-monospace, Consolas, monospace'; ctx.textBaseline = 'middle';
+        blips.forEach(function (b) {
+          var diff = (angle - b.a + Math.PI * 4) % (Math.PI * 2); b.lit = (diff < .08 || reduce) ? 1 : Math.max(.22, b.lit - dt / 3500);
+          var x = cx + Math.cos(b.a) * R * b.d, y = cy + Math.sin(b.a) * R * b.d;
+          ctx.globalAlpha = b.lit; ctx.fillStyle = COL[b.g]; ctx.beginPath(); ctx.arc(x, y, 3.4, 0, 7); ctx.fill();
+          if (b.lit > .5) ctx.fillText(b.name, x + 7, y); ctx.globalAlpha = 1;
+        });
+        var ly = 16; ['AI', 'Search', 'Social', 'Other'].forEach(function (k) { ctx.fillStyle = COL[k]; ctx.beginPath(); ctx.arc(14, ly, 3.5, 0, 7); ctx.fill(); ctx.fillStyle = '#8a8370'; ctx.fillText(k, 24, ly); ly += 16; });
+        raf = requestAnimationFrame(draw);
+      }
+      function radar(on) {
+        if (on === rOn) return; rOn = on; body.classList.toggle('radar', on);
+        if (on) { W = 0; last = 0; load(); raf = requestAnimationFrame(draw); setTimeout(function () { document.getElementById('radarX').focus({ preventScroll: true }); }, 50); }
+        else if (raf) { cancelAnimationFrame(raf); raf = 0; }
+      }
+      document.getElementById('radarX').addEventListener('click', function () { radar(false); });
+      addEventListener('resize', function () { if (rOn) W = 0; });
+      return { xray: xray, radar: radar };
+    })();
+  </script>  <script>
     // Public bot counter: filled from /api/bots. Shows nothing if counts are unavailable (never a made-up number).
     (function () {
       var el = document.getElementById('botline'); if (!el || !window.fetch) return;
