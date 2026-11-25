@@ -56,10 +56,15 @@
   .cmdbar.hide { opacity:0; }
   @media (max-width: 640px) { .cmdbar kbd { display:none; } }
 
-  .cmd-bg { position:fixed; inset:0; z-index:40; background:rgba(0,0,0,.6); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); opacity:0; transition:opacity .35s ease; }
-  .cmd-bg.on { opacity:1; }
-  .cmd { position:fixed; z-index:41; left:50%; top:16vh; width:min(560px, calc(100vw - 32px)); max-height:min(460px, 70vh); margin-left:calc(min(560px, calc(100vw - 32px)) / -2); display:flex; flex-direction:column; background:#0d0d0b; border:1px solid #e5b84c; border-radius:16px; box-shadow:0 24px 80px rgba(0,0,0,.75), 0 0 0 1px rgba(229,184,76,.08); overflow:hidden; text-align:left; transform-origin:top left; }
-  .cmd[hidden], .cmd-bg[hidden] { display:none; }
+  .cmd { position:fixed; z-index:41; left:0; top:0; width:min(520px, calc(100vw - 32px)); max-height:min(460px, 70vh); display:flex; flex-direction:column; background:#0d0d0b; border:1px solid #e5b84c; border-radius:16px; box-shadow:0 24px 80px rgba(0,0,0,.75), 0 0 0 1px rgba(229,184,76,.08); overflow:hidden; text-align:left; transform-origin:top left; }
+  .cmd.dragging { user-select:none; box-shadow:0 30px 90px rgba(0,0,0,.85), 0 0 0 1px rgba(229,184,76,.2); }
+  .cmd-head { display:flex; align-items:center; gap:.5rem; padding:.45rem .5rem .45rem .9rem; border-bottom:1px solid #22201a; color:#6f6448; font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; cursor:grab; touch-action:none; user-select:none; }
+  .cmd.dragging .cmd-head { cursor:grabbing; }
+  .cmd-head .grip { display:inline-grid; grid-template-columns:repeat(3, 3px); gap:3px; margin-right:.2rem; }
+  .cmd-head .grip i { width:3px; height:3px; border-radius:50%; background:#4a4230; }
+  .cmd-head span.t { flex:1; }
+  .cmd-x { background:none; border:0; color:#8a7a55; font:18px/1 ui-sans-serif, system-ui, sans-serif; width:28px; height:28px; border-radius:8px; cursor:pointer; }
+  .cmd-x:hover, .cmd-x:focus-visible { color:#e5b84c; background:#1c1912; outline:none; }  .cmd[hidden] { display:none; }
   .cmd-in { opacity:0; transition:opacity .2s ease; display:flex; flex-direction:column; min-height:0; }
   .cmd.ready .cmd-in { opacity:1; }
   .cmd-top { display:flex; align-items:center; gap:.7rem; padding:.95rem 1rem .95rem 1.1rem; border-bottom:1px solid #22201a; }
@@ -73,7 +78,7 @@
   .cmd .opt[aria-selected="true"] small { color:#a8925e; }
   .cmd .none { padding:1.2rem .75rem; color:#6f6448; }
   .cmd-foot { display:flex; gap:1rem; padding:.6rem 1rem; border-top:1px solid #22201a; color:#6f6448; font-size:.75rem; }
-  @media (max-width: 640px) { .cmd { top:10vh; } .cmd-foot { display:none; } }
+  @media (max-width: 640px) { .cmd-foot { display:none; } }
 </style>
 </head>
 <body>
@@ -92,8 +97,8 @@
     <a href="/open-source/">Open Source</a>
   </nav>
 
-  <div class="cmd-bg" id="cmdBg" hidden></div>
-  <div class="cmd" id="cmd" role="dialog" aria-modal="true" aria-label="Site menu" hidden>
+  <div class="cmd" id="cmd" role="dialog" aria-modal="false" aria-label="Site menu" hidden>
+    <div class="cmd-head" id="cmdHead"><span class="grip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="t">Menu</span><button class="cmd-x" id="cmdX" type="button" aria-label="Close menu">&times;</button></div>
     <div class="cmd-in">
       <div class="cmd-top">
         <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
@@ -101,7 +106,7 @@
         <kbd>Esc</kbd>
       </div>
       <ul id="cmdList" role="listbox" aria-label="Options"></ul>
-      <div class="cmd-foot"><span>&uarr; &darr; to move</span><span>Enter to open</span><span>Esc to close</span></div>
+      <div class="cmd-foot"><span>&uarr; &darr; to move</span><span>Enter to open</span><span>Drag the top bar to move</span></div>
     </div>
   </div>
 
@@ -117,7 +122,7 @@
         { g: 'Links', t: 'GitHub', d: 'github.com/jeffreyaifudenna', href: 'https://github.com/jeffreyaifudenna', k: 'code open source' },
         { g: 'Links', t: 'Copy link to this site', d: 'kaizenlabai.com', copy: 'https://www.kaizenlabai.com/', k: 'share url' }
       ];
-      var bar = document.getElementById('cmdOpen'), box = document.getElementById('cmd'), bg = document.getElementById('cmdBg'),
+      var bar = document.getElementById('cmdOpen'), box = document.getElementById('cmd'),
           input = document.getElementById('cmdIn'), list = document.getElementById('cmdList'),
           reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches,
           shown = [], sel = 0, open = false, busy = false;
@@ -169,32 +174,58 @@
         if (open || busy) return;
         open = true; busy = true;
         input.value = ''; sel = 0; render();
-        bg.hidden = false; box.hidden = false; box.classList.remove('ready');
-        requestAnimationFrame(function () { bg.classList.add('on'); });
+        box.hidden = false; box.classList.remove('ready'); place();
         if (reduce || !box.animate) { box.classList.add('ready'); busy = false; input.focus(); return; }
         bar.classList.add('hide');
         var anim = box.animate([{ transform: fromBar(), borderRadius: '12px', opacity: .9 }, { transform: 'none', borderRadius: '16px', opacity: 1 }], { duration: 420, easing: EASE });
         setTimeout(function () { box.classList.add('ready'); }, 180);
-        anim.onfinish = function () { busy = false; input.focus(); };
+        var done = false, fin = function () { if (done) return; done = true; busy = false; box.classList.add('ready'); input.focus(); };
+        anim.onfinish = fin; setTimeout(fin, 470);
       }
       function closeMenu() {
         if (!open || busy) return;
         open = false; busy = true;
-        bg.classList.remove('on'); box.classList.remove('ready');
-        var finish = function () { box.hidden = true; bg.hidden = true; bar.classList.remove('hide'); busy = false; bar.focus({ preventScroll: true }); };
+        box.classList.remove('ready');
+        var ended = false, finish = function () { if (ended) return; ended = true; box.hidden = true; bar.classList.remove('hide'); busy = false; bar.focus({ preventScroll: true }); };
         if (reduce || !box.animate) { finish(); return; }
         var anim = box.animate([{ transform: 'none', opacity: 1 }, { transform: fromBar(), opacity: .6 }], { duration: 300, easing: EASE });
-        anim.onfinish = finish;
+        anim.onfinish = finish; setTimeout(finish, 350);
       }
 
+      // Position: centred near the top the first time, then wherever it was dragged
+      var pos = null;
+      function clamp(x, y) {
+        var w = box.offsetWidth, h = box.offsetHeight, m = 8;
+        return { x: Math.min(Math.max(m, x), Math.max(m, innerWidth - w - m)), y: Math.min(Math.max(m, y), Math.max(m, innerHeight - h - m)) };
+      }
+      function place() {
+        var p = pos || { x: (innerWidth - box.offsetWidth) / 2, y: innerHeight * (innerWidth < 641 ? 0.08 : 0.14) };
+        p = clamp(p.x, p.y);
+        box.style.left = p.x + 'px'; box.style.top = p.y + 'px';
+      }
+      var head = document.getElementById('cmdHead'), drag = null;
+      head.addEventListener('pointerdown', function (e) {
+        if (e.target.closest('.cmd-x') || busy) return;
+        drag = { dx: e.clientX - box.offsetLeft, dy: e.clientY - box.offsetTop, id: e.pointerId };
+        try { head.setPointerCapture(e.pointerId); } catch (err) {} box.classList.add('dragging'); e.preventDefault();
+      });
+      head.addEventListener('pointermove', function (e) {
+        if (!drag || e.pointerId !== drag.id) return;
+        var p = clamp(e.clientX - drag.dx, e.clientY - drag.dy);
+        box.style.left = p.x + 'px'; box.style.top = p.y + 'px'; pos = p;
+      });
+      function endDrag(e) { if (drag && e.pointerId === drag.id) { drag = null; box.classList.remove('dragging'); } }
+      head.addEventListener('pointerup', endDrag);
+      head.addEventListener('pointercancel', endDrag);
+      window.addEventListener('resize', function () { if (open) place(); });
+
       bar.addEventListener('click', openMenu);
-      bg.addEventListener('click', closeMenu);
+      document.getElementById('cmdX').addEventListener('click', closeMenu);
       input.addEventListener('input', function () { sel = 0; render(); });
       input.addEventListener('keydown', function (e) {
         if (e.key === 'ArrowDown') { e.preventDefault(); if (shown.length) { sel = (sel + 1) % shown.length; mark(); } }
         else if (e.key === 'ArrowUp') { e.preventDefault(); if (shown.length) { sel = (sel - 1 + shown.length) % shown.length; mark(); } }
         else if (e.key === 'Enter') { e.preventDefault(); go(); }
-        else if (e.key === 'Tab') { e.preventDefault(); }
       });
       document.addEventListener('keydown', function (e) {
         if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) { e.preventDefault(); open ? closeMenu() : openMenu(); return; }
