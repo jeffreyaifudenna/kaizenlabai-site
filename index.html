@@ -84,11 +84,11 @@
   .panel-in.media .play::after { left:29px; top:22px; border-width:15px 0 15px 24px; }
   .panel-in.media .pbtn { margin:16px 0 18px; }
   nav a.active { background:var(--gold); color:#050505; }
-  nav { display:grid; grid-template-columns:repeat(4, auto); gap:14px; margin-top:clamp(1.25rem, 4vh, 2.25rem); }
+  nav { display:grid; grid-template-columns:repeat(3, auto); gap:14px; margin-top:clamp(1.25rem, 4vh, 2.25rem); }
   nav a { display:flex; align-items:center; justify-content:center; min-height:48px; padding:0 1.4rem; border:1px solid var(--gold); border-radius:999px; color:var(--gold); text-decoration:none; font-size:clamp(1rem, 1.4vw, 1.15rem); letter-spacing:.02em; transition:background .15s ease, color .15s ease; }
   nav a:focus-visible { background:var(--gold); color:#050505; }
   @media (hover:hover) { nav a:hover { background:var(--gold); color:#050505; } }
-  @media (max-width: 640px) { nav { grid-template-columns:repeat(2, 1fr); width:min(100%, 380px); gap:10px; } nav a { padding:0 .5rem; } }
+  @media (max-width: 640px) { nav { grid-template-columns:repeat(3, 1fr); width:min(100%, 380px); gap:10px; } nav a { padding:0 .5rem; } }
   .botline { margin-top:1.4rem; color:#a8996f; font-size:.9rem; line-height:1.5; max-width:36em; min-height:1.3em; }
   .botline a { display:inline-block; padding:.6rem .25rem; color:var(--tan); text-decoration:underline; text-decoration-color:#4a4232; text-underline-offset:4px; }
   .botline a:focus-visible { color:var(--gold); }
@@ -341,7 +341,6 @@
     <nav class="fade" aria-label="Sections">
       <a href="/learning/" data-sec="learning" aria-controls="panel" aria-expanded="false">Learning</a>
       <a href="/agents/" data-sec="agents" aria-controls="panel" aria-expanded="false">Agents</a>
-      <a href="/automations/" data-sec="automations" aria-controls="panel" aria-expanded="false">Automations</a>
       <a href="/open-source/" data-sec="open-source" aria-controls="panel" aria-expanded="false">Open Source</a>
     </nav>
     <div class="panel fade" id="panel" role="region" aria-live="polite"><div class="panel-in" id="panelIn"></div></div>
@@ -378,7 +377,7 @@
   <section class="kwin devview" id="dev" role="dialog" aria-label="Terminal"><div class="kw-bar"><span class="kw-t">TERMINAL</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b txt" data-kw="close" id="devX" aria-label="Exit the terminal">Exit</button></div><div class="kw-body" id="devBody"><div>KaizenLabAI
 AI experiments. A little better every day.
 
-Sections<dl class="dsec"><dt>Learning</dt><dd>Educational AI videos on YouTube<br>Video: <a href="https://www.youtube.com/watch?v=KcCbkGVCFFU">21 Layers from the Edge of the Universe</a></dd><dt>Agents</dt><dd>AI workers (coming soon)</dd><dt>Automations</dt><dd>For small businesses (coming soon)</dd><dt>Open Source</dt><dd><a href="https://github.com/jeffreyaifudenna">github.com/jeffreyaifudenna</a></dd></dl>
+Sections<dl class="dsec"><dt>Learning</dt><dd>Educational AI videos on YouTube<br>Video: <a href="https://www.youtube.com/watch?v=KcCbkGVCFFU">21 Layers from the Edge of the Universe</a></dd><dt>Agents</dt><dd>AI workers (coming soon)</dd><dt>Open Source</dt><dd><a href="https://github.com/jeffreyaifudenna">github.com/jeffreyaifudenna</a></dd></dl>
 Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class="tout" id="tout">Type a command below. Esc or "exit" to leave.
 </div><form id="tf" autocomplete="off"><label for="tin">kaizen@lab:~$</label><input id="tin" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="go"></form></div></div>
   </section>
@@ -942,9 +941,9 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       function print(html) { var o = document.createElement('div'); o.innerHTML = html + '\n'; tout.appendChild(o); devBody.scrollTop = devBody.scrollHeight; }
       function leaveDev() { body.classList.remove('devmode'); KW.close($('dev')); }
       var CMD = {
-        help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the four sections\n<b>ping</b>      round trip to our server, in ms\n<b>uptime</b>    how long the site has been live\n<b>bots</b>      bots that visited (live counts)\n<b>draw</b> &middot; <b>kintsugi</b> &middot; <b>zen</b> &middot; <b>xray</b> &middot; <b>radar</b>   same as the remote keys\n<b>clear</b>     clear this window\n<b>exit</b>      close the terminal'; },
+        help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the three sections\n<b>ping</b>      round trip to our server, in ms\n<b>uptime</b>    how long the site has been live\n<b>bots</b>      bots that visited (live counts)\n<b>draw</b> &middot; <b>kintsugi</b> &middot; <b>zen</b> &middot; <b>xray</b> &middot; <b>radar</b>   same as the remote keys\n<b>clear</b>     clear this window\n<b>exit</b>      close the terminal'; },
         about: function () { return 'An AI lab applying kaizen, continuous improvement, to building with AI.\nA little better every day.'; },
-        sections: function () { return 'learning  agents  automations  open-source'; },
+        sections: function () { return 'learning  agents  open-source'; },
         ping: function () {
           var t0 = performance.now();
           fetch('/robots.txt?ping=' + Date.now(), { cache: 'no-store' }).then(function (r) {
@@ -1186,7 +1185,6 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       var S = {
         'learning': '<a class="thumb" data-yt="diDHi31MHFA" href="https://www.youtube.com/watch?v=diDHi31MHFA" aria-label="Watch our first video: 21 Layers from the Edge of the Universe"><img src="https://i.ytimg.com/vi/diDHi31MHFA/maxresdefault.jpg" onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/diDHi31MHFA/hqdefault.jpg\'" alt="" loading="lazy"><span class="play" aria-hidden="true"></span></a><a class="pbtn" href="https://www.youtube.com/@KaizenLabAI?sub_confirmation=1">Subscribe on YouTube</a>',
         'agents': '<h2>Agents</h2><p>AI workers.</p><span class="soon">Coming soon</span>',
-        'automations': '<h2>Automations</h2><p>Automations for small businesses.</p><span class="soon">Coming soon</span>',
         'open-source': '<h2>Open Source</h2><p>Code from the lab, open for anyone to use and build on.</p><a class="pbtn" href="https://github.com/jeffreyaifudenna">View on GitHub</a>'
       };
       var panel = document.getElementById('panel'), inner = document.getElementById('panelIn'), links = document.querySelectorAll('nav a[data-sec]'), cur = null;
