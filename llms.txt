@@ -4,14 +4,28 @@
 
 KaizenLabAI is an AI lab applying kaizen (continuous, incremental improvement) to building with AI. We are pre-launch and building in stealth.
 
-## Sections (coming soon)
+## Pages
 
-- [Learning](https://www.kaizenlabai.com/learning/): educational videos on AI from our YouTube channel
-- [Agents](https://www.kaizenlabai.com/agents/): AI workers
+- [Home](https://www.kaizenlabai.com/): the lab. The logo opens a remote with interactive tools (listed below).
+- [Learning](https://www.kaizenlabai.com/learning/): educational AI videos from our YouTube channel. First video: "21 Layers from the Edge of the Universe" (https://www.youtube.com/watch?v=diDHi31MHFA)
+- [Agents](https://www.kaizenlabai.com/agents/): AI workers (coming soon)
 - [Open Source](https://www.kaizenlabai.com/open-source/): code from the lab, open for anyone to use (GitHub: https://github.com/jeffreyaifudenna)
+- [Bots](https://www.kaizenlabai.com/bots/): live counts of self-identified bots (AI, search, social) that visited this site, from our own request log
+
+## Remote tools (home page)
+
+- Kaizen: a short game. Name something to get better at, review your process, add one improvement, pick the smallest action you can do now, and download a summary card. Nothing typed is stored or sent.
+- Draw: draw on the page with pens, straight lines, stamps and mirror mode; save the drawing as an image
+- Kintsugi: tap the page to grow gold cracks
+- Zen: a calm view of the page
+- X-ray: shows the HTML and CSS behind each part of the page, in plain English
+- Bot radar: the visits from the Bots page, drawn as a radar
+- Terminal: the site as plain text, with commands (help, about, ping, uptime, bots)
 
 ## Status
 
 - Stage: pre-launch
 - Website: https://www.kaizenlabai.com
 - YouTube: https://www.youtube.com/@KaizenLabAI
+- Markdown version of the home page: https://www.kaizenlabai.com/index.md
+- Sitemap: https://www.kaizenlabai.com/sitemap.xml

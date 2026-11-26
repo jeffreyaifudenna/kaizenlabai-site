@@ -117,6 +117,7 @@
   .led.on { background:var(--gold); box-shadow:0 0 8px var(--gold); }
   .screen { margin:12px 0 16px; background:linear-gradient(180deg,#0d0a05,#050403); border:1px solid #4a3a18; box-shadow:inset 0 2px 8px rgba(0,0,0,.8); border-radius:14px; padding:10px 14px; font:1.24rem/1.75 var(--rmf); letter-spacing:.04em; color:#d9c08a; font-variant-numeric:tabular-nums; }
   .screen .r { display:flex; justify-content:space-between; }
+  .screen .since { margin:-4px 0 2px; font-size:.78em; line-height:1.4; color:#a8996f; text-align:right; }
   .screen b { color:#f6dc95; font-weight:400; }
   .meter { height:6px; border-radius:3px; background:#1d1a12; margin-top:3px; overflow:hidden; }
   .meter i { display:block; height:100%; width:0; background:linear-gradient(90deg,#8a6a22,#f6dc95); }
@@ -195,9 +196,9 @@
   @media (max-width:600px) { .dsec { grid-template-columns:1fr; gap:0; } .dsec dd { padding-left:2ch; margin-bottom:6px; } }
   .tout b { color:var(--gold); font-weight:400; }
   .tout .err { color:#e08a6f; }
-  #tf { display:flex; gap:8px; align-items:center; padding-top:6px; }
+  #tf { display:flex; gap:8px; align-items:center; padding-top:6px; min-height:44px; }
   #tf label { color:var(--gold); flex:none; }
-  #tin { flex:1; min-width:0; background:none; border:0; outline:0; color:#fff; font:inherit; caret-color:var(--gold); }
+  #tin { flex:1; min-width:0; min-height:44px; background:none; border:0; outline:0; color:#fff; font:inherit; caret-color:var(--gold); }
   .toast { position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translate(-50%,20px); background:var(--gold); color:#050505; font-weight:600; padding:8px 16px; border-radius:999px; opacity:0; transition:all .3s; z-index:60; pointer-events:none; white-space:nowrap; }
   .toast.show { opacity:1; transform:translate(-50%,0); }
   /* Kaizen: one question, what kaizen means, then four small tools (review, improve, act, iterate) and a summary */
@@ -246,13 +247,13 @@
   .kz-add.full input, .kz-add.full button { opacity:.4; pointer-events:none; }
   .kz-chips { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
   .kz-chips:empty { display:none; }
-  .kz-chip { display:flex; align-items:center; gap:8px; min-height:44px; padding:0 4px 0 12px; border-radius:12px; background:rgba(229,184,76,.12); border:1px solid rgba(229,184,76,.4); color:#f2ead8; font-size:1rem; overflow-wrap:anywhere; animation:kzpop .3s cubic-bezier(.34,1.56,.64,1); }
+  .kz-chip { display:flex; align-items:center; gap:8px; min-height:48px; padding:0 2px 0 12px; border-radius:12px; background:rgba(229,184,76,.12); border:1px solid rgba(229,184,76,.4); color:#f2ead8; font-size:1rem; overflow-wrap:anywhere; animation:kzpop .3s cubic-bezier(.34,1.56,.64,1); }
   .kz-chip span { flex:1; }
-  .kz-chip button { flex:none; width:40px; height:40px; border:0; background:none; color:var(--tan); font-size:1.3rem; cursor:pointer; border-radius:10px; }
+  .kz-chip button { flex:none; width:44px; height:44px; border:0; background:none; color:var(--tan); font-size:1.3rem; cursor:pointer; border-radius:10px; }
   @keyframes kzpop { from { opacity:0; transform:scale(.85); } to { opacity:1; transform:none; } }
   .kz-sugg { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-top:10px; }
   .kz-col .kz-sugg { justify-content:flex-start; }
-  .kz-sugg button { min-height:40px; padding:0 12px; border-radius:999px; border:1px dashed #5a4a22; background:none; color:var(--tan); font:500 .95rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; }
+  .kz-sugg button { min-height:44px; padding:0 14px; border-radius:999px; border:1px dashed #5a4a22; background:none; color:var(--tan); font:500 .95rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; }
   .kz-sugg button:disabled { opacity:.35; cursor:default; }
   @media (hover:hover) { .kz-sugg button:not(:disabled):hover { border-color:var(--gold); color:var(--gold); } }
   .kz-path { position:relative; margin-top:14px; text-align:left; border:1px solid #3a3122; border-radius:16px; padding:4px 14px 4px 34px; background:#0a0907; }
@@ -353,7 +354,7 @@
     <div class="rm-top"><button type="button" class="rm-btn" id="rmMin" aria-label="Minimize the remote" title="Minimize">&ndash;</button><img class="slot" id="slot" src="logo.webp" alt="" draggable="false"><span class="rm-t">KAIZENLABAI</span><span class="led" id="led" aria-hidden="true"></span></div>
     <div class="screen" role="group" aria-label="Lab stats">
       <div class="r" id="rowBots" hidden><span>BOTS 7D</span><b id="stBots"></b></div>
-      <div class="r"><span>UPTIME</span><b id="stUp"></b></div>
+      <div class="r"><span>UPTIME</span><b id="stUp"></b></div><div class="since">live since Nov 22, 2026 (UTC)</div>
       <div class="r"><span>LAB TIME</span><b id="stClock">--:--:--</b></div>
       <div class="r"><span>TODAY</span><b id="stPct">0%</b></div><div class="meter"><i id="stBar"></i></div>
     </div>
@@ -941,7 +942,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       function print(html) { var o = document.createElement('div'); o.innerHTML = html + '\n'; tout.appendChild(o); devBody.scrollTop = devBody.scrollHeight; }
       function leaveDev() { body.classList.remove('devmode'); KW.close($('dev')); }
       var CMD = {
-        help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the three sections\n<b>ping</b>      round trip to our server, in ms\n<b>uptime</b>    how long the site has been live\n<b>bots</b>      bots that visited (live counts)\n<b>draw</b> &middot; <b>kintsugi</b> &middot; <b>zen</b> &middot; <b>xray</b> &middot; <b>radar</b>   same as the remote keys\n<b>clear</b>     clear this window\n<b>exit</b>      close the terminal'; },
+        help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the three sections\n<b>ping</b>      round trip to our server, in ms\n<b>uptime</b>    how long the site has been live\n<b>bots</b>      bots that visited (live counts)\n<b>draw</b> &middot; <b>kintsugi</b> &middot; <b>zen</b> &middot; <b>xray</b> &middot; <b>radar</b> &middot; <b>kaizen</b>   same as the remote keys\n<b>clear</b>     clear this window\n<b>exit</b>      close the terminal'; },
         about: function () { return 'An AI lab applying kaizen, continuous improvement, to building with AI.\nA little better every day.'; },
         sections: function () { return 'learning  agents  open-source'; },
         ping: function () {
@@ -959,6 +960,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
         kintsugi: function () { leaveDev(); setMode('cracking'); return ''; },
         xray: function () { KZ.xray(true); return 'x-ray on'; },
         radar: function () { KZ.radar(true); return 'bot radar open'; },
+        kaizen: function () { leaveDev(); openKaizen(); return ''; },
         bots: function () {
           print('fetching live counts&hellip;');
           fetch('/api/bots').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
