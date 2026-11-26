@@ -114,11 +114,8 @@
   .screen b { color:var(--gold); font-weight:400; }
   .meter { height:6px; border-radius:3px; background:#1d1a12; margin-top:3px; overflow:hidden; }
   .meter i { display:block; height:100%; width:0; background:var(--gold); }
-  .inst { display:flex; align-items:flex-end; justify-content:space-around; margin-bottom:18px; }
-  .knob, .sw { display:flex; flex-direction:column; align-items:center; gap:7px; font-size:.86rem; color:#bbb; letter-spacing:.08em; }
-  .dial { width:62px; height:62px; border-radius:50%; background:radial-gradient(circle at 50% 35%,#2a2a2a,#0e0e0e); border:1px solid #3a3a3a; position:relative; cursor:ns-resize; touch-action:none; }
-  .dial::after { content:""; position:absolute; left:50%; top:5px; width:3px; height:14px; margin-left:-1.5px; background:var(--gold); border-radius:2px; transform-origin:50% 26px; transform:rotate(var(--r,0deg)); }
-    .sw { background:none; border:0; font-family:inherit; cursor:pointer; padding:10px 4px 0; min-width:56px; }
+  .inst { display:flex; justify-content:center; margin-bottom:18px; }
+  .sw { display:flex; align-items:center; gap:12px; font-size:.86rem; color:#bbb; letter-spacing:.08em; background:none; border:0; font-family:inherit; cursor:pointer; padding:6px 10px; min-height:48px; }
   .sw:focus-visible { border-radius:10px; }
   .tog { width:60px; height:34px; border-radius:17px; background:#151515; border:1px solid #4a4a4a; position:relative; }
   .tog::after { content:""; position:absolute; top:3px; left:3px; width:26px; height:26px; border-radius:50%; background:#777; transition:left .2s, background .2s; }
@@ -265,8 +262,6 @@
       <div class="r"><span>TODAY</span><b id="stPct">0%</b></div><div class="meter"><i id="stBar"></i></div>
     </div>
     <div class="inst">
-      <div class="knob"><div class="dial" id="dSeams" role="slider" tabindex="0" aria-label="Seams: gold cracks per tap" aria-valuemin="1" aria-valuemax="6" title="Drag up or down"></div>SEAMS</div>
-      <div class="knob"><div class="dial" id="dInk" role="slider" tabindex="0" aria-label="Ink: pen line weight" aria-valuemin="1" aria-valuemax="5" title="Drag up or down"></div>INK</div>
       <button type="button" class="sw" id="snd" role="switch" aria-checked="false" aria-label="Sound"><span class="tog"></span>SOUND</button>
     </div>
     <div class="keys">
@@ -315,7 +310,8 @@ Sections
       var body = document.body, cv = document.getElementById('cv'), ctx = cv.getContext('2d'),
           fxc = document.getElementById('fx'), fx = fxc.getContext('2d'), toast = document.getElementById('toast'),
           dpr = Math.min(window.devicePixelRatio || 1, 2), reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var strokes = [], cur = null, pen = 'fine', ink = 2, seams = 3, cracks = [], crackRaf = 0, sound = false, ac = null, opener = null;
+      var INK = 2, SEAMS = 3; // fixed: pen line weight and gold cracks per tap
+      var strokes = [], cur = null, pen = 'fine', cracks = [], crackRaf = 0, sound = false, ac = null, opener = null;
       var W = function () { return innerWidth; }, H = function () { return innerHeight; };
       function $(id) { return document.getElementById(id); }
 
@@ -337,7 +333,7 @@ Sections
       var led = $('led');
       function blink() { led.classList.add('on'); setTimeout(function () { led.classList.remove('on'); }, 150); tone(880, .25, .03); }
 
-      // ---- Draw: three pens (Fine-liner, Sumi brush, Gold nib). INK sets the weight.
+      // ---- Draw: three pens (Fine-liner, Sumi brush, Gold nib). Line weight is fixed (INK).
       var GOLD = '#e5b84c';
       function penStyle() { ctx.strokeStyle = ctx.fillStyle = GOLD; ctx.lineCap = ctx.lineJoin = 'round'; }
       function segment(s, i) {
@@ -370,9 +366,9 @@ Sections
       $('clr').addEventListener('click', function () { strokes = []; redraw(); });
       $('done').addEventListener('click', function () { setMode(null); });
 
-      // ---- Kintsugi: tap the page to grow gold cracks; SEAMS sets how many; Mend clears them
+      // ---- Kintsugi: tap the page to grow gold cracks; SEAMS cracks per tap; Mend clears them
       function crackFrom(x, y) {
-        var w = W(), h = H(), n = seams + (Math.random() * 2 | 0), list = [];
+        var w = W(), h = H(), n = SEAMS + (Math.random() * 2 | 0), list = [];
         function walk(px, py, ang, len, lw, depth) {
           var pts = [[px, py]], a = ang, l = 0;
           while (l < len) {
@@ -417,7 +413,7 @@ Sections
       document.addEventListener('pointerdown', function (e) {
         if (body.classList.contains('zen')) { body.classList.remove('zen'); return; }
         if (!onPage(e)) return;
-        if (body.classList.contains('drawing')) { cur = { k: pen, w: ink / 2, p: [{ x: e.clientX, y: e.clientY }] }; strokes.push(cur); e.preventDefault(); }
+        if (body.classList.contains('drawing')) { cur = { k: pen, w: INK / 2, p: [{ x: e.clientX, y: e.clientY }] }; strokes.push(cur); e.preventDefault(); }
         else if (body.classList.contains('cracking')) { crackFrom(e.clientX, e.clientY); blink(); }
       });
       document.addEventListener('pointermove', function (e) {
@@ -496,22 +492,7 @@ Sections
       // the page logo shrinks while a section is open; keep the minimized mark matching it
       document.addEventListener('kz:sec', function () { setTimeout(function () { if (mini.classList.contains('show')) syncMini(); }, 480); });
 
-      // instruments: SEAMS and INK dials (drag up or down, or arrow keys), SOUND switch
-      function dial(el, min, max, val, name, onChange) {
-        var v = val, sy = 0, sv = 0, on = false;
-        function set(quiet) { el.style.setProperty('--r', (-135 + (v - min) / (max - min) * 270) + 'deg'); el.setAttribute('aria-valuenow', String(v)); onChange(v); if (!quiet) blink(); }
-        set(true);
-        el.addEventListener('pointerdown', function (e) { on = true; sy = e.clientY; sv = v; el.setPointerCapture(e.pointerId); e.stopPropagation(); });
-        el.addEventListener('pointermove', function (e) { if (!on) return; var nv = Math.round(Math.max(min, Math.min(max, sv + (sy - e.clientY) / 18))); if (nv !== v) { v = nv; set(); } });
-        el.addEventListener('pointerup', function () { if (on) { on = false; say(name + ': ' + v); } });
-        el.addEventListener('keydown', function (e) {
-          var d = (e.key === 'ArrowUp' || e.key === 'ArrowRight') ? 1 : (e.key === 'ArrowDown' || e.key === 'ArrowLeft') ? -1 : 0; if (!d) return;
-          e.preventDefault(); var nv = Math.max(min, Math.min(max, v + d)); if (nv !== v) { v = nv; set(); say(name + ': ' + v); }
-        });
-        return { reset: function () { v = val; set(true); } };
-      }
-      var dSeams = dial($('dSeams'), 1, 6, 3, 'Seams', function (v) { seams = v; });
-      var dInk = dial($('dInk'), 1, 5, 2, 'Ink', function (v) { ink = v; });
+      // SOUND switch
       function toggleSound() { sound = !sound; $('snd').setAttribute('aria-checked', String(sound)); return sound; }
       $('snd').addEventListener('click', function () { var on = toggleSound(); say(on ? 'Sound on' : 'Sound off'); chime(); blink(); });
 
@@ -542,14 +523,14 @@ Sections
       rm.addEventListener('click', function (e) { var b = e.target.closest('[data-a]'); if (b) { blink(); act(b.dataset.a); } });
 
       // Reset: back to a fresh page. Closes any open section, clears cracks and drawings,
-      // turns Draw, Kintsugi, Zen, X-ray, Radar and Terminal off, and puts the dials, pen and sound back to their defaults.
+      // turns Draw, Kintsugi, Zen, X-ray, Radar and Terminal off, and puts the pen and sound back to their defaults.
       var toutStart = $('tout').innerHTML;
       function resetAll() {
         setMode(null); cur = null; strokes = []; redraw(); cracks = []; drawCracks(true); setPen('fine'); body.classList.remove('P-fine');
         body.classList.remove('zen', 'devmode'); $('tout').innerHTML = toutStart; $('tin').value = '';
         if (window.KZ) { KZ.xray(false); KZ.radar(false); }
         if (window.kzCloseSection) kzCloseSection();
-        dSeams.reset(); dInk.reset(); if (sound) toggleSound();
+        if (sound) toggleSound();
         window.scrollTo(0, 0); blink(); say('Reset');
       }
       $('rmReset').addEventListener('click', resetAll);
