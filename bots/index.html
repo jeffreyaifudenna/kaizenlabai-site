@@ -18,7 +18,8 @@
   * { margin:0; box-sizing:border-box; }
   html { height:100%; } body { min-height:100%; }
   body { background:#050505; color:#fff; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif; display:flex; flex-direction:column; align-items:center; padding:88px 16px 48px; text-align:center; }
-  .home { position:absolute; top:16px; left:16px; display:flex; align-items:center; gap:.5rem; color:#d9c08a; text-decoration:none; font-size:.95rem; }
+  .home { position:absolute; top:12px; left:12px; display:flex; align-items:center; gap:.5rem; min-height:48px; padding:0 12px 0 4px; border-radius:999px; color:#d9c08a; text-decoration:none; font-size:1rem; }
+  :focus-visible { outline:2px solid #e5b84c; outline-offset:3px; }
   .home img { width:36px; height:auto; }
   .home:hover, .home:focus-visible { color:#e5b84c; }
   h1 { font-size:clamp(2.5rem, 9vw, 4.5rem); font-weight:700; color:#e5b84c; letter-spacing:-0.01em; }
@@ -26,15 +27,15 @@
   .totals { display:flex; gap:14px; margin-top:2rem; flex-wrap:wrap; justify-content:center; }
   .stat { border:1px solid #3a3222; border-radius:14px; padding:1rem 1.4rem; min-width:170px; }
   .stat b { display:block; font-size:2.2rem; color:#e5b84c; font-variant-numeric:tabular-nums; }
-  .stat span { color:#8a7a55; font-size:.85rem; }
+  .stat span { color:#a8996f; font-size:.85rem; }
   .cols { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:18px; width:min(720px, 100%); margin-top:2rem; text-align:left; }
   @media (max-width: 600px) { .cols { grid-template-columns:1fr; } }
   h2 { color:#d9c08a; font-size:.8rem; letter-spacing:.12em; text-transform:uppercase; margin-bottom:.5rem; }
   table { width:100%; border-collapse:collapse; font-size:.95rem; }
   td { padding:.45rem .2rem; border-bottom:1px solid #1d1b16; color:#e9dcc0; }
   td.n { text-align:right; color:#e5b84c; font-variant-numeric:tabular-nums; }
-  .empty { color:#6f6448; font-size:.9rem; padding:.5rem 0; }
-  .src { margin-top:2rem; color:#6f6448; font-size:.8rem; max-width:560px; line-height:1.5; }
+  .empty { color:#a8996f; font-size:.9rem; padding:.5rem 0; }
+  .src { margin-top:2rem; color:#a8996f; font-size:.9rem; max-width:560px; line-height:1.5; }
 </style>
 </head>
 <body>
