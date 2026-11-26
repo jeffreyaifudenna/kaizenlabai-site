@@ -433,19 +433,29 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       function dock() {
         var i = 0; all.forEach(function (el) { if (el.classList.contains('show') && el.classList.contains('min')) { el.style.left = '8px'; el.style.top = (innerHeight - 8 - (++i) * (el.offsetHeight + 8) + 8) + 'px'; } });
       }
+      // smooth moves: windows fade and grow in, fade out, and glide between normal, minimized and full size
+      var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches || !document.body.animate, EASE = 'cubic-bezier(.22,1,.36,1)';
+      function glide(el, change) {
+        if (still) { change(); return; }
+        var a = el.getBoundingClientRect(); change(); var b = el.getBoundingClientRect();
+        if (!b.width || !b.height) return;
+        el.animate([{ transformOrigin: '0 0', transform: 'translate(' + (a.left - b.left) + 'px,' + (a.top - b.top) + 'px) scale(' + (a.width / b.width) + ',' + (a.height / b.height) + ')' }, { transformOrigin: '0 0', transform: 'none' }], { duration: 300, easing: EASE });
+      }
       function setMin(el, on) {
         var st = el._kw;
         if (on === el.classList.contains('min')) return;
-        if (on) { el.classList.remove('max'); st.rect = [el.style.left, el.style.top]; el.classList.add('min'); dock(); }
-        else { el.classList.remove('min'); el.style.left = st.rect[0]; el.style.top = st.rect[1]; put(el, el.offsetLeft, el.offsetTop); dock(); }
+        glide(el, function () { setMin0(el, on, st); });
         el.querySelector('[data-kw="min"]').setAttribute('aria-label', on ? 'Restore' : 'Minimize');
         if (st.onResize) st.onResize();
       }
+      function setMin0(el, on, st) {
+        if (on) { el.classList.remove('max'); st.rect = [el.style.left, el.style.top]; el.classList.add('min'); dock(); }
+        else { el.classList.remove('min'); el.style.left = st.rect[0]; el.style.top = st.rect[1]; put(el, el.offsetLeft, el.offsetTop); dock(); }
+      }
       function setMax(el, on) {
         if (el.classList.contains('min')) setMin(el, false);
-        el.classList.toggle('max', on);
+        glide(el, function () { el.classList.toggle('max', on); if (!on) put(el, el.offsetLeft, el.offsetTop); });
         var b = el.querySelector('[data-kw="max"]'); b.setAttribute('aria-label', on ? 'Restore size' : 'Expand'); b.title = on ? 'Restore size' : 'Expand';
-        if (!on) put(el, el.offsetLeft, el.offsetTop);
         if (el._kw.onResize) el._kw.onResize();
       }
       function make(el, o) {
@@ -474,11 +484,20 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
         bar.addEventListener('pointerup', end); bar.addEventListener('pointercancel', end);
       }
       function open(el) {
+        if (el._out) { el._out.cancel(); el._out = null; } // reopened while fading out
         if (el.classList.contains('show')) { if (el.classList.contains('min')) setMin(el, false); front(el); return; }
         el.classList.remove('min', 'max'); el.classList.add('show'); el._kw.moved = false; el._kw.place(room()); front(el);
+        if (!still) el.animate([{ opacity: 0, transform: 'translateY(12px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 300, easing: EASE });
         if (el._kw.onResize) el._kw.onResize();
       }
-      function close(el) { el.classList.remove('show', 'min', 'max'); el.style.height = ''; dock(); }
+      function shut(el) { el.classList.remove('show', 'min', 'max'); el.style.height = ''; dock(); }
+      function close(el) {
+        if (!el.classList.contains('show') || el._out) return;
+        if (still) { shut(el); return; }
+        var a = el._out = el.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(10px) scale(.96)' }], { duration: 220, easing: 'ease-in', fill: 'forwards' });
+        var done = function () { if (el._out !== a) return; el._out = null; shut(el); a.cancel(); };
+        a.onfinish = done; setTimeout(done, 260); // the timer also covers background tabs, where animations pause
+      }
       // re-fit open windows (screen resized, or the remote moved beside them); windows the user dragged stay put
       function reflow() {
         all.forEach(function (el) { if (el.classList.contains('show') && !el.classList.contains('min') && !el.classList.contains('max')) { if (el._kw.moved) put(el, el.offsetLeft, el.offsetTop); else el._kw.place(room()); } });
