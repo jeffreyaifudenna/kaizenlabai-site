@@ -185,15 +185,16 @@
   .kwin.max { left:8px !important; top:8px !important; width:calc(100vw - 16px) !important; height:calc(100dvh - 16px) !important; }
   .kwin.max .kw-bar { cursor:default; }
   /* Terminal: the page as plain text, with a command line */
-  .devview .kw-body { background:#000; color:#cfcfcf; font-family:ui-monospace, Consolas, monospace; font-size:clamp(.85rem, 1.2vw, .95rem); line-height:1.6; padding:14px 16px; white-space:pre-wrap; }
-  .devview .kw-body a { color:#cfcfcf; }
+  .devview .kw-body { background:#000; color:#e8e8e8; font-family:ui-monospace, Consolas, monospace; font-size:clamp(1.05rem, 1.55vw, 1.2rem); line-height:1.55; padding:14px 16px; white-space:pre-wrap; overflow-wrap:anywhere; overflow-x:hidden; }
+  @media (max-width:600px) { .devview .kw-body { font-size:1rem; padding:12px; } }
+  .devview .kw-body a { color:#e8e8e8; }
   .term { margin-top:14px; border-top:1px dashed #333; padding-top:10px; }
-  .tout { color:#bdbdbd; }
+  .tout { color:#dcdcdc; }
   .tout b { color:var(--gold); font-weight:400; }
   .tout .err { color:#e08a6f; }
   #tf { display:flex; gap:8px; align-items:center; padding-top:6px; }
   #tf label { color:var(--gold); flex:none; }
-  #tin { flex:1; min-width:0; background:none; border:0; outline:0; color:#fff; font:inherit; font-size:16px; caret-color:var(--gold); }
+  #tin { flex:1; min-width:0; background:none; border:0; outline:0; color:#fff; font:inherit; caret-color:var(--gold); }
   .toast { position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translate(-50%,20px); background:var(--gold); color:#050505; font-weight:600; padding:8px 16px; border-radius:999px; opacity:0; transition:all .3s; z-index:60; pointer-events:none; white-space:nowrap; }
   .toast.show { opacity:1; transform:translate(-50%,0); }
   /* Bot radar */
