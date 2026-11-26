@@ -253,6 +253,14 @@
   .kz-sugg button { min-height:40px; padding:0 12px; border-radius:999px; border:1px dashed #5a4a22; background:none; color:var(--tan); font:500 .95rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; }
   .kz-sugg button:disabled { opacity:.35; cursor:default; }
   @media (hover:hover) { .kz-sugg button:not(:disabled):hover { border-color:var(--gold); color:var(--gold); } }
+  .kz-path { position:relative; margin-top:14px; text-align:left; border:1px solid #3a3122; border-radius:16px; padding:4px 14px 4px 34px; background:#0a0907; }
+  .kz-path::before { content:""; position:absolute; left:16px; top:22px; bottom:22px; width:2px; background:linear-gradient(#8a6a22, var(--gold)); }
+  .kz-pt { position:relative; padding:9px 0; }
+  .kz-pt + .kz-pt { border-top:1px solid #2a2416; }
+  .kz-pt::before { content:""; position:absolute; left:-23px; top:15px; width:12px; height:12px; border-radius:50%; background:#0a0907; border:2px solid var(--gold); }
+  .kz-pt:first-child::before { background:var(--gold); }
+  .kz-pt span { display:block; color:var(--tan); font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; }
+  .kz-pt b { display:block; color:#f2ead8; font-size:1.08rem; line-height:1.4; margin-top:2px; overflow-wrap:anywhere; }
   .kz-sent { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:10px 12px; margin-top:16px; text-align:left; }
   .kz-sent label, .kz-q2 { color:#f2ead8; font-size:1.1rem; font-weight:700; }
   .kz-q2 { display:block; margin:16px 0 10px; }
@@ -264,9 +272,9 @@
   .kz-done.on svg { stroke:#050505; } .kz-done.on path { stroke-dashoffset:0; }
   .kz-done.pop { animation:kzpop2 .5s cubic-bezier(.34,1.56,.64,1); } @keyframes kzpop2 { 40% { transform:scale(1.08); } }
   .kz-burst { position:fixed; width:8px; height:8px; border-radius:50%; background:var(--gold); pointer-events:none; z-index:200; }
-  .kz-pick { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:18px; }
-  .kz-pick button { flex:1 1 120px; min-height:60px; border-radius:16px; border:1px solid #4a4232; background:#0a0907; color:#f2ead8; font:700 1.1rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; transition:background .2s, color .2s, border-color .2s; }
-  .kz-pick button[aria-checked="true"] { background:var(--gold); color:#050505; border-color:var(--gold); }
+  .kz-open { margin-top:16px; padding:26px 18px; border:1px dashed #5a4a22; border-radius:16px; color:#d8d0bd; font-size:1.05rem; line-height:1.5; }
+  .kz-open span, .kz-tile .soon { display:block; color:var(--gold); font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; margin-bottom:4px; }
+  .kz-tile.open { border-style:dashed; } .kz-tile .soon { margin:0; }
   .kz-sum { margin-top:16px; text-align:left; border:1px solid #3a3122; border-radius:18px; padding:6px 16px; background:linear-gradient(180deg,#14110b,#0a0907); }
   .kz-sum div { padding:8px 0; border-bottom:1px solid #2a2416; } .kz-sum div:last-child { border-bottom:0; }
   #kzEnd .kz-mark { font-size:1.8rem; margin-bottom:4px; } #kzEnd .kz-link { margin-top:8px; }
@@ -389,7 +397,7 @@ Sections
         <button type="button" class="kz-tile" data-kz="kzRev"><span class="n">1</span><span class="t">Review process</span></button>
         <button type="button" class="kz-tile" data-kz="kzImp"><span class="n">2</span><span class="t">Add one improvement</span></button>
         <button type="button" class="kz-tile" data-kz="kzAct"><span class="n">3</span><span class="t">Pick the smallest action you can do right now</span></button>
-        <button type="button" class="kz-tile" data-kz="kzIt"><span class="n">4</span><span class="t">Iterate</span></button>
+        <button type="button" class="kz-tile open" data-kz="kzIt"><span class="n">4</span><span class="t">Iterate</span><span class="soon">Coming soon</span></button>
       </div>
       <button type="button" class="kz-link" id="kzAgain">New goal</button></div>
     <div id="kzRev" class="kz-step" hidden><div class="kz-dots" aria-label="Step 1 of 4"><i class="on"></i><i></i><i></i><i></i></div><h3 class="kz-h">Review process</h3><p class="kz-sub">How is <b class="kzGoal"></b> going? Add up to 3 of each.</p>
@@ -400,12 +408,13 @@ Sections
     <div id="kzImp" class="kz-step" hidden><div class="kz-dots" aria-label="Step 2 of 4"><i class="past"></i><i class="on"></i><i></i><i></i></div><h3 class="kz-h">Add one improvement</h3><p class="kz-sub" id="kzImpHint">Just one. Small is good.</p>
       <div class="kz-sent"><label for="kzI1">Next time I&rsquo;ll</label><input id="kzI1" maxlength="60" placeholder="practise for 10 minutes a day"><label for="kzI2">so that</label><input id="kzI2" maxlength="60" placeholder="I improve a little each day"></div>
       <div class="kz-sugg" id="kzImpSugg"><button type="button">practise for 10 minutes a day</button><button type="button">ask someone for feedback</button><button type="button">remove one distraction</button><button type="button">write down what I learned</button></div><div class="kz-row"><button type="button" class="kz-go alt" data-kz="menu">All steps</button><button type="button" class="kz-go" data-kz="kzAct">Next</button></div></div>
-    <div id="kzAct" class="kz-step" hidden><div class="kz-dots" aria-label="Step 3 of 4"><i class="past"></i><i class="past"></i><i class="on"></i><i></i></div><h3 class="kz-h">Smallest action, right now</h3><p class="kz-sub" id="kzActFor"></p>
-      <label class="kz-q2" for="kzA1">What can you do in the next 2 minutes?</label><input id="kzA1" class="kz-in" maxlength="60" placeholder="Set a reminder for tomorrow">
-      <div class="kz-sugg" id="kzActSugg"><button type="button">Set a reminder</button><button type="button">Get the tools out</button><button type="button">Do the first 2 minutes</button><button type="button">Tell someone my plan</button></div>
+    <div id="kzAct" class="kz-step" hidden><div class="kz-dots" aria-label="Step 3 of 4"><i class="past"></i><i class="past"></i><i class="on"></i><i></i></div><h3 class="kz-h">Smallest action, right now</h3>
+      <div class="kz-path"><div class="kz-pt"><span>Goal</span><b class="kzGoal"></b></div><div class="kz-pt" id="kzPathImp"><span>Your improvement</span><b id="kzActImp"></b></div></div>
+      <label class="kz-q2" for="kzA1">What&rsquo;s the smallest thing you can do right now that moves you toward this?</label><input id="kzA1" class="kz-in" maxlength="60" placeholder="Set a reminder for tomorrow">
+      <div class="kz-sugg" id="kzActSugg"></div>
       <button type="button" class="kz-done" id="kzDone" aria-pressed="false"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-16"/></svg><span>Done</span></button><div class="kz-row"><button type="button" class="kz-go alt" data-kz="menu">All steps</button><button type="button" class="kz-go" data-kz="kzIt">Next</button></div></div>
-    <div id="kzIt" class="kz-step" hidden><div class="kz-dots" aria-label="Step 4 of 4"><i class="past"></i><i class="past"></i><i class="past"></i><i class="on"></i></div><h3 class="kz-h">Iterate</h3><p class="kz-sub">Review, improve, act. Then do it again. When will you come back to it?</p>
-      <div class="kz-pick" role="radiogroup" aria-label="When to review again"><button type="button" role="radio" aria-checked="false">Tomorrow</button><button type="button" role="radio" aria-checked="false">In 3 days</button><button type="button" role="radio" aria-checked="false">Next week</button></div><div class="kz-row"><button type="button" class="kz-go alt" data-kz="menu">All steps</button><button type="button" class="kz-go" data-kz="kzEnd">Finish</button></div></div>
+    <div id="kzIt" class="kz-step" hidden><div class="kz-dots" aria-label="Step 4 of 4"><i class="past"></i><i class="past"></i><i class="past"></i><i class="on"></i></div><h3 class="kz-h">Iterate</h3><div class="kz-open"><span>Coming soon</span>This step is still being designed.</div>
+      <div class="kz-row"><button type="button" class="kz-go alt" data-kz="menu">All steps</button><button type="button" class="kz-go" data-kz="kzEnd">Finish</button></div></div>
     <div id="kzEnd" class="kz-step" hidden><div class="kz-mark" aria-hidden="true">&#25913;&#21892;</div><h3 class="kz-h">One loop done</h3><p class="kz-sub">A little better than before.</p>
       <dl class="kz-sum" id="kzSum"></dl>
       <div class="kz-row"><button type="button" class="kz-go" id="kzLoop">Start a new loop</button><button type="button" class="kz-go alt" id="kzCopy">Copy summary</button></div><button type="button" class="kz-link" id="kzNew">New goal</button></div>
@@ -766,10 +775,9 @@ Sections
         var f = $(id).querySelector('.kz-tile, input, .kz-go'); if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 60);
       }
       function kzReset(keepGoal) {
-        kz = { goal: keepGoal ? kz.goal : '', good: [], bad: [], imp: '', why: '', act: '', done: false, when: '' };
+        kz = { goal: keepGoal ? kz.goal : '', good: [], bad: [], imp: '', why: '', act: '', done: false };
         ['kzI1', 'kzI2', 'kzA1'].forEach(function (x) { $(x).value = ''; });
         kzWin.querySelectorAll('.kz-add input').forEach(function (i) { i.value = ''; });
-        kzWin.querySelectorAll('.kz-pick button').forEach(function (b) { b.setAttribute('aria-checked', 'false'); });
         $('kzDone').classList.remove('on'); $('kzDone').setAttribute('aria-pressed', 'false'); kzLists();
       }
       function kzStart() { kzReset(false); $('kzIn').value = ''; kzShow('kzAsk'); }
@@ -784,8 +792,8 @@ Sections
       kzWin.addEventListener('click', function (e) { var b = e.target.closest('[data-kz]'); if (!b) return; kzSave(); kzTick(); kzShow(b.dataset.kz === 'menu' ? 'kzAns' : b.dataset.kz); });
       function kzSave() { kz.imp = $('kzI1').value.trim(); kz.why = $('kzI2').value.trim(); kz.act = $('kzA1').value.trim(); }
       function kzTiles() {
-        var st = { kzRev: kz.good.length + kz.bad.length > 0, kzImp: !!kz.imp, kzAct: kz.done, kzIt: !!kz.when };
-        kzWin.querySelectorAll('.kz-tile').forEach(function (t) { var d = st[t.dataset.kz]; t.classList.toggle('done', d); t.setAttribute('aria-label', t.textContent.replace(/^\d/, '') + (d ? ' (done)' : '')); });
+        var st = { kzRev: kz.good.length + kz.bad.length > 0, kzImp: !!kz.imp, kzAct: kz.done };
+        kzWin.querySelectorAll('.kz-tile').forEach(function (t) { var d = st[t.dataset.kz]; t.classList.toggle('done', !!d); if (d !== undefined) t.setAttribute('aria-label', t.textContent.replace(/^\d/, '') + (d ? ' (done)' : '')); });
       }
 
       // 1. Review: two short lists, up to 3 each, typed or tapped from suggestions
@@ -814,7 +822,36 @@ Sections
       $('kzImpSugg').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; $('kzI1').value = b.textContent; kzTick(); $('kzI2').focus(); });
 
       // 3. Smallest action: something doable in 2 minutes, then a big Done tick
-      function kzActPrep() { $('kzActFor').textContent = kz.imp ? 'Your improvement: ' + kz.imp + '.' : 'Make it tiny, so it is easy to start.'; }
+      // the action screen shows the path: goal, then the improvement, then the action that moves toward them
+      function kzActPrep() {
+        $('kzPathImp').hidden = !kz.imp;
+        $('kzActImp').textContent = kz.imp ? 'Next time I\u2019ll ' + kz.imp + (kz.why ? ' so that ' + kz.why : '') : '';
+        var box = $('kzActSugg'); box.textContent = '';
+        kzIdeas(kz.imp + ' ' + kz.why + ' ' + kz.goal).forEach(function (t) { var b = document.createElement('button'); b.type = 'button'; b.textContent = t; box.appendChild(b); });
+      }
+      // suggestions tailored to what they wrote (simple keyword match, all on this device); a time like 11:30 gives an alarm 15 minutes before it
+      function kzIdeas(txt) {
+        var t = txt.toLowerCase(), out = [], m = t.match(/\b(\d{1,2})(?::(\d{2}))?\s*(am|pm)?\b/);
+        function add(a) { a.forEach(function (x) { if (out.length < 4 && out.indexOf(x) < 0) out.push(x); }); }
+        if (m && (m[2] || m[3] || /\bat\s+\d/.test(t))) {
+          var h = +m[1], mi = +(m[2] || 0) - 15; if (mi < 0) { mi += 60; h = h === 1 ? 12 : h - 1; }
+          if (h >= 1 && h <= 24) add(['Set an alarm for ' + h + ':' + (mi < 10 ? '0' : '') + mi + (m[3] ? ' ' + m[3] : '')]);
+        }
+        var R = [
+          [/computer|laptop|screen|phone|bed|sleep|night|late|tired/, ['Set a bedtime alarm', 'Close extra tabs now', 'Plug the laptop in away from my bed', 'Put my phone on Do Not Disturb']],
+          [/distract|focus|notification|social|scroll/, ['Turn on Do Not Disturb', 'Put my phone in another room', 'Close every tab I don\u2019t need', 'Clear my desk']],
+          [/practi[cs]e|minutes a day|daily|every day|habit/, ['Set a 10-minute timer', 'Put my practice things out', 'Block 10 minutes in my calendar', 'Do the first 2 minutes now']],
+          [/feedback|ask|mentor|coach|review/, ['Pick one person to ask', 'Write the question I\u2019ll ask', 'Send the message now', 'Save a note of what to show them']],
+          [/run|walk|gym|exercise|workout|fit|stretch|train/, ['Put my shoes by the door', 'Lay out my kit', 'Do 2 minutes of stretching', 'Set a reminder for tomorrow']],
+          [/eat|food|cook|diet|meal|water|drink/, ['Fill a glass of water', 'Write a shopping list', 'Plan tomorrow\u2019s first meal', 'Put the fruit where I can see it']],
+          [/write|learn|read|study|note|journal/, ['Open a note and write one line', 'Write down what I learned today', 'Read for 2 minutes', 'Put the book on my pillow']],
+          [/speak|talk|present|speech|stage|public/, ['Say my opening line out loud', 'Record 30 seconds on my phone', 'Write my first sentence', 'Tell someone my plan']],
+          [/money|save|spend|budget/, ['Check one account balance', 'Cancel one unused subscription', 'Write down today\u2019s spending', 'Set a savings reminder']]
+        ];
+        R.forEach(function (x) { if (x[0].test(t)) add(x[1]); });
+        add(['Set a reminder', 'Write the first step down', 'Do the first 2 minutes now', 'Tell someone my plan']);
+        return out;
+      }
       $('kzActSugg').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; $('kzA1').value = b.textContent; kzTick(); });
       $('kzDone').addEventListener('click', function () {
         var d = $('kzDone');
@@ -829,16 +866,13 @@ Sections
         }
       });
 
-      // 4. Iterate: pick when to come back
-      kzWin.querySelectorAll('.kz-pick button').forEach(function (b) {
-        b.addEventListener('click', function () { kzWin.querySelectorAll('.kz-pick button').forEach(function (o) { o.setAttribute('aria-checked', String(o === b)); }); kz.when = b.textContent; kzTick(); });
-      });
+      // 4. Iterate: left open for now (to be designed)
 
       // the end: one summary card, only the parts that were filled in
       function kzRows() {
         return [['Getting better at', kz.goal], ['What\u2019s working', kz.good.join(', ')], ['What\u2019s not', kz.bad.join(', ')],
           ['One improvement', kz.imp ? 'Next time I\u2019ll ' + kz.imp + (kz.why ? ' so that ' + kz.why : '') : ''],
-          ['Smallest action', kz.act ? kz.act + (kz.done ? ' \u2713 done' : '') : ''], ['Review again', kz.when]].filter(function (x) { return x[1]; });
+          ['Smallest action', kz.act ? kz.act + (kz.done ? ' \u2713 done' : '') : '']].filter(function (x) { return x[1]; });
       }
       function kzSummary() {
         var dl = $('kzSum'); dl.textContent = '';
