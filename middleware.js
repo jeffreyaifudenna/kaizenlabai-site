@@ -4,7 +4,7 @@ import { botName, redisConfig, redisPipeline, day } from './lib/bots.js';
 
 export const config = {
   // Pages and the files bots read; skip images, icons, scripts and the API itself.
-  matcher: ['/', '/learning/:path*', '/agents/:path*', '/automations/:path*', '/open-source/:path*', '/bots/:path*', '/robots.txt', '/llms.txt', '/sitemap.xml', '/index.md'],
+  matcher: ['/', '/learning/:path*', '/agents/:path*', '/open-source/:path*', '/bots/:path*', '/robots.txt', '/llms.txt', '/sitemap.xml', '/index.md'],
 };
 
 export default function middleware(request, context) {
