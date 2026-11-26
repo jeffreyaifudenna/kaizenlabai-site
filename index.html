@@ -165,32 +165,44 @@
   .zenhint { position:fixed; bottom:calc(16px + env(safe-area-inset-bottom)); left:0; right:0; text-align:center; color:#a8996f; font-size:.95rem; opacity:0; transition:opacity 1.2s; z-index:3; pointer-events:none; }
   body.zen .zenhint { opacity:1; }
 
-  /* Dev mode: the page as plain text, with a command window */
-  .devview { position:fixed; inset:0; z-index:50; background:#000; color:#cfcfcf; font-family:ui-monospace, Consolas, monospace; font-size:clamp(.85rem, 1.2vw, .95rem); line-height:1.6; padding:20px 20px 16px; overflow:auto; display:none; white-space:pre-wrap; text-align:left; flex-direction:column; }
-  body.devmode .devview { display:flex; }
-  .devview a { color:#cfcfcf; }
-  @media (max-width:700px) { .devview { padding-top:68px; } }
-  .term { flex:1; min-height:180px; margin-top:14px; border-top:1px dashed #333; padding-top:10px; display:flex; flex-direction:column; overflow:hidden; }
-  .tout { flex:1; overflow:auto; color:#bdbdbd; }
+  /* Floating windows (Terminal, Bot radar, X-ray code): drag by the title bar, minimize, expand, close */
+  .kwin { position:fixed; left:8px; top:8px; z-index:50; display:none; flex-direction:column; width:min(720px, calc(100vw - 16px)); max-width:calc(100vw - 16px); max-height:calc(100dvh - 16px);
+          background:#060605; border:1px solid var(--gold); border-radius:12px; box-shadow:0 24px 70px rgba(0,0,0,.9); text-align:left; overflow:hidden; }
+  .kwin.show { display:flex; }
+  .kw-bar { flex:none; display:flex; align-items:center; gap:6px; padding:4px 4px 4px 14px; min-height:56px; background:#0c0b08; border-bottom:1px solid #3a3122; cursor:move; touch-action:none; user-select:none; -webkit-user-select:none; }
+  .kw-t { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font:700 .95rem ui-monospace, Consolas, monospace; letter-spacing:.12em; color:var(--gold); }
+  .kw-t i { font-style:normal; font-weight:400; letter-spacing:0; color:#a8a08a; margin-left:10px; }
+  .kw-b { flex:none; display:grid; place-items:center; width:48px; height:48px; padding:0; border-radius:8px; border:1px solid #4a4232; background:#000; color:#eee; font-size:1.5rem; line-height:1; cursor:pointer; }
+  .kw-b svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:2; }
+  .kw-b.txt { width:auto; padding:0 20px; border-color:var(--gold); color:var(--gold); font:700 1.05rem ui-sans-serif, system-ui, sans-serif; letter-spacing:.04em; }
+  .kw-b:focus-visible { color:var(--gold); border-color:var(--gold); }
+  @media (hover:hover) { .kw-b:hover { color:var(--gold); border-color:var(--gold); } .kw-b.txt:hover { background:var(--gold); color:#000; } }
+  .kw-b .r2 { display:none; } .kwin.max .kw-b .r1 { display:none; } .kwin.max .kw-b .r2 { display:inline; }
+  .kw-body { flex:1 1 auto; min-height:0; overflow:auto; }
+  .kwin.min { height:auto !important; width:min(300px, calc(100vw - 16px)) !important; }
+  .kwin.min > .kw-body { display:none !important; } .kwin.min .kw-bar { border-bottom:0; cursor:pointer; }
+  .kwin.max { left:8px !important; top:8px !important; width:calc(100vw - 16px) !important; height:calc(100dvh - 16px) !important; }
+  .kwin.max .kw-bar { cursor:default; }
+  /* Terminal: the page as plain text, with a command line */
+  .devview .kw-body { background:#000; color:#cfcfcf; font-family:ui-monospace, Consolas, monospace; font-size:clamp(.85rem, 1.2vw, .95rem); line-height:1.6; padding:14px 16px; white-space:pre-wrap; }
+  .devview .kw-body a { color:#cfcfcf; }
+  .term { margin-top:14px; border-top:1px dashed #333; padding-top:10px; }
+  .tout { color:#bdbdbd; }
   .tout b { color:var(--gold); font-weight:400; }
   .tout .err { color:#e08a6f; }
   #tf { display:flex; gap:8px; align-items:center; padding-top:6px; }
   #tf label { color:var(--gold); flex:none; }
   #tin { flex:1; min-width:0; background:none; border:0; outline:0; color:#fff; font:inherit; font-size:16px; caret-color:var(--gold); }
-
-  .devx { position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top)); min-height:44px; padding:0 18px; border-radius:999px; border:1px solid var(--gold); background:#0d0d0d; color:var(--gold); font:600 .95rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; white-space:normal; }
   .toast { position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translate(-50%,20px); background:var(--gold); color:#050505; font-weight:600; padding:8px 16px; border-radius:999px; opacity:0; transition:all .3s; z-index:60; pointer-events:none; white-space:nowrap; }
   .toast.show { opacity:1; transform:translate(-50%,0); }
   /* Bot radar */
-  #radar { position:fixed; inset:0; z-index:48; background:rgba(5,5,5,.97); display:none; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:16px; }
-  body.radar #radar { display:flex; }
-  #radar .rtop { width:min(560px, 100%); display:flex; align-items:center; color:#bbb; font-size:.95rem; letter-spacing:.12em; }
-  #radar .rtop button { margin-left:auto; background:#1a1a1a; border:1px solid #4a4232; border-radius:50%; width:48px; height:48px; color:#ddd; font-size:1.5rem; cursor:pointer; line-height:1; }
-  #radar canvas { width:min(560px, 92vw, 62vh); height:min(560px, 92vw, 62vh); }
-  #radar .rnote { width:min(560px, 100%); color:#bfa25a; font-size:1rem; line-height:1.5; text-align:center; }
+  #radar .kw-body { display:flex; flex-direction:column; align-items:center; gap:10px; padding:12px 16px 16px; }
+  #radar canvas { display:block; width:min(100%, 52vh); height:auto; aspect-ratio:1 / 1; }
+  #radar.max canvas { width:min(100%, calc(100dvh - 200px)); }
+  #radar .rnote { width:100%; color:#bfa25a; font-size:1rem; line-height:1.5; text-align:center; }
   #radar .rnote a { color:var(--tan); }
   /* X-ray: a blueprint scan. Outlines every part; tap one to see its real HTML, CSS and JavaScript */
-  body.xray > *:not(#xr-layer):not(.toast):not(#xrExit):not(#radar):not(#xrCode) { filter:grayscale(1) brightness(.32) contrast(1.1); transition:filter .6s; }
+  body.xray > *:not(#xr-layer):not(.toast):not(#xrExit):not(.kwin):not(.rm):not(.mini) { filter:grayscale(1) brightness(.32) contrast(1.1); transition:filter .6s; }
   #xr-layer { position:absolute; left:0; top:0; width:100%; pointer-events:none; z-index:30; font:600 13px/1 ui-monospace, Consolas, monospace; text-align:left; }
   #xr-layer .g { position:fixed; inset:0; background-image:linear-gradient(rgba(229,184,76,.11) 1px, transparent 1px), linear-gradient(90deg, rgba(229,184,76,.11) 1px, transparent 1px), linear-gradient(rgba(229,184,76,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(229,184,76,.05) 1px, transparent 1px); background-size:120px 120px, 120px 120px, 24px 24px, 24px 24px; }
   #xr-layer .b { position:absolute; border:1px solid; opacity:0; animation:xr .5s ease forwards; pointer-events:auto; cursor:pointer;
@@ -209,18 +221,14 @@
   #xr-layer .sum .tip { margin-top:6px; color:var(--tan); }
   @media (max-width:600px) { #xr-layer .sum { min-width:0; font-size:13px; padding:8px 11px 10px; } #xr-layer .sum .lg { display:none; } }
   @keyframes xr { to { opacity:1; } }
-  #xrExit { position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top)); z-index:33; display:none; min-height:48px; padding:0 20px; border-radius:6px; border:1px solid var(--gold); background:#000; color:var(--gold); font:700 .95rem ui-monospace, Consolas, monospace; letter-spacing:.08em; cursor:pointer; }
+  #xrExit { position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top)); z-index:33; display:none; min-height:56px; padding:0 28px; border-radius:8px; border:2px solid var(--gold); background:#000; color:var(--gold); font:700 1.1rem ui-monospace, Consolas, monospace; letter-spacing:.08em; cursor:pointer; }
   #xrExit:focus-visible { background:var(--gold); color:#000; }
   @media (hover:hover) { #xrExit:hover { background:var(--gold); color:#000; } }
   body.xray #xrExit { display:block; }
-  #xrCode { position:fixed; left:50%; bottom:calc(12px + env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(760px, calc(100vw - 24px)); max-height:min(58vh, 540px); overflow:auto; z-index:33; display:none; background:#000; border:1px solid var(--gold); border-radius:8px; padding:0 0 16px; text-align:left; box-shadow:0 20px 60px rgba(0,0,0,.95); }
-  body.xray #xrCode.show { display:block; }
-  #xrCode .hd { position:sticky; top:0; display:flex; align-items:center; gap:12px; padding:8px 8px 8px 16px; background:#0c0b08; border-bottom:1px solid #3a3122; }
-  #xrCode .tg { flex:1; font:700 1.1rem ui-monospace, Consolas, monospace; color:var(--gold); }
-  #xrCode .tg i { font-style:normal; font-weight:400; color:#a8a08a; margin-left:10px; font-size:.95rem; }
-  #xrCode .x { flex:none; width:48px; height:48px; border-radius:6px; border:1px solid #4a4232; background:#000; color:#eee; font-size:1.5rem; line-height:1; cursor:pointer; }
-  #xrCode .x:focus-visible { color:var(--gold); border-color:var(--gold); }
-  @media (hover:hover) { #xrCode .x:hover { color:var(--gold); border-color:var(--gold); } }
+  #xrCode .kw-body { max-height:min(52vh, 520px); padding-bottom:16px; }
+  #xrCode.max .kw-body { max-height:none; }
+  /* While X-ray is on, the minimized remote is a small mark so it never hides the scan */
+  body.xray .mini { width:72px !important; z-index:60; }
   #xrCode .what { color:#f2ead8; font-size:1.1rem; line-height:1.5; padding:14px 16px 0; }
   #xrCode .lang { display:flex; align-items:center; gap:10px; font:700 .82rem ui-monospace, Consolas, monospace; letter-spacing:.14em; color:var(--tan); margin:18px 16px 8px; text-transform:uppercase; }
   #xrCode .lang::after { content:""; flex:1; height:1px; background:#3a3122; }
@@ -282,8 +290,7 @@
     <button type="button" data-p="fine" class="on" aria-pressed="true">Fine-liner</button><button type="button" data-p="brush" aria-pressed="false">Sumi brush</button><button type="button" data-p="nib" aria-pressed="false">Gold nib</button><span class="sep"></span><button type="button" id="undo">Undo</button><button type="button" id="clr">Clear</button><button type="button" id="done">Done</button>
   </div>
 
-  <section class="devview" id="dev" aria-label="Terminal"><button type="button" class="devx" id="devX">Exit</button>
-<div>KaizenLabAI
+  <section class="kwin devview" id="dev" role="dialog" aria-label="Terminal"><div class="kw-bar"><span class="kw-t">TERMINAL</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b txt" data-kw="close" id="devX" aria-label="Exit the terminal">Exit</button></div><div class="kw-body" id="devBody"><div>KaizenLabAI
 AI experiments. A little better every day.
 
 Sections
@@ -292,14 +299,87 @@ Sections
   - <a href="/automations/">Automations</a>   For small businesses (coming soon)
   - <a href="/open-source/">Open Source</a>   github.com/jeffreyaifudenna
 </div><div class="term"><div class="tout" id="tout">KaizenLabAI terminal. Type "help" to see commands. Esc or "exit" to leave.
-</div><form id="tf" autocomplete="off"><label for="tin">kaizen@lab:~$</label><input id="tin" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="go"></form></div>
+</div><form id="tf" autocomplete="off"><label for="tin">kaizen@lab:~$</label><input id="tin" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="go"></form></div></div>
   </section>
 
   <button type="button" id="xrExit">Exit X-ray</button>
-  <section id="xrCode" aria-label="X-ray: the code behind this part" aria-live="polite"></section>
-  <section id="radar" role="dialog" aria-label="Bot radar"><div class="rtop">BOT RADAR<button type="button" id="radarX" aria-label="Close bot radar">&times;</button></div><canvas id="radarC" role="img" aria-label="Radar of bots that visited in the last 7 days"></canvas><p class="rnote" id="radarNote"></p></section>
+  <section id="xrCode" class="kwin" role="dialog" aria-label="X-ray: the code behind this part"><div class="kw-bar"><span class="kw-t">X-RAY</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b" data-kw="close" id="xrX" aria-label="Close the code view">&times;</button></div><div class="kw-body" id="xrBody" aria-live="polite"></div></section>
+  <section id="radar" class="kwin" role="dialog" aria-label="Bot radar"><div class="kw-bar"><span class="kw-t">BOT RADAR</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b" data-kw="close" id="radarX" aria-label="Close bot radar">&times;</button></div><div class="kw-body"><canvas id="radarC" role="img" aria-label="Radar of bots that visited in the last 7 days"></canvas><p class="rnote" id="radarNote"></p></div></section>
   <div class="toast" id="toast" role="status"></div>
 
+  <script>
+    // Floating windows: drag by the title bar, minimize to a bar at the bottom, expand to fill the screen, close.
+    window.KW = (function () {
+      var z = 50, all = [];
+      function put(el, x, y) {
+        var w = el.offsetWidth, h = el.offsetHeight;
+        el.style.left = Math.max(8, Math.min(innerWidth - w - 8, x)) + 'px'; el.style.top = Math.max(8, Math.min(innerHeight - h - 8, y)) + 'px';
+      }
+      // the free space beside the lab remote when it is open on a wide screen
+      function room() {
+        var rm = document.getElementById('rm'), r = innerWidth - 8;
+        if (rm && rm.classList.contains('open') && rm.offsetLeft - 20 >= 420) r = rm.offsetLeft - 12; // offsetLeft ignores the opening animation
+        return { l: 8, r: r, w: r - 8, phone: innerWidth < 700 };
+      }
+      function front(el) { el.style.zIndex = ++z; }
+      function dock() {
+        var i = 0; all.forEach(function (el) { if (el.classList.contains('show') && el.classList.contains('min')) { el.style.left = '8px'; el.style.top = (innerHeight - 8 - (++i) * (el.offsetHeight + 8) + 8) + 'px'; } });
+      }
+      function setMin(el, on) {
+        var st = el._kw;
+        if (on === el.classList.contains('min')) return;
+        if (on) { el.classList.remove('max'); st.rect = [el.style.left, el.style.top]; el.classList.add('min'); dock(); }
+        else { el.classList.remove('min'); el.style.left = st.rect[0]; el.style.top = st.rect[1]; put(el, el.offsetLeft, el.offsetTop); dock(); }
+        el.querySelector('[data-kw="min"]').setAttribute('aria-label', on ? 'Restore' : 'Minimize');
+        if (st.onResize) st.onResize();
+      }
+      function setMax(el, on) {
+        if (el.classList.contains('min')) setMin(el, false);
+        el.classList.toggle('max', on);
+        var b = el.querySelector('[data-kw="max"]'); b.setAttribute('aria-label', on ? 'Restore size' : 'Expand'); b.title = on ? 'Restore size' : 'Expand';
+        if (!on) put(el, el.offsetLeft, el.offsetTop);
+        if (el._kw.onResize) el._kw.onResize();
+      }
+      function make(el, o) {
+        el._kw = o; all.push(el);
+        var bar = el.querySelector('.kw-bar');
+        el.querySelector('[data-kw="min"]').addEventListener('click', function () { setMin(el, !el.classList.contains('min')); });
+        el.querySelector('[data-kw="max"]').addEventListener('click', function () { setMax(el, !el.classList.contains('max')); });
+        el.querySelector('[data-kw="close"]').addEventListener('click', function () { o.onClose(); });
+        el.addEventListener('pointerdown', function () { front(el); }, true);
+        // content that grows after opening (radar note, code view) never pushes the window off screen
+        if (window.ResizeObserver) new ResizeObserver(function () { if (el.classList.contains('show') && !el.classList.contains('min') && !el.classList.contains('max')) put(el, el.offsetLeft, el.offsetTop); }).observe(el);
+        var on = false, moved = false, dx = 0, dy = 0, sx = 0, sy = 0;
+        bar.addEventListener('pointerdown', function (e) {
+          if (e.target.closest('button') || el.classList.contains('max')) return;
+          on = true; moved = false; sx = e.clientX; sy = e.clientY; dx = e.clientX - el.offsetLeft; dy = e.clientY - el.offsetTop; try { bar.setPointerCapture(e.pointerId); } catch (x) {}
+        });
+        bar.addEventListener('pointermove', function (e) {
+          if (!on) return; if (!moved && Math.hypot(e.clientX - sx, e.clientY - sy) < 6) return;
+          moved = true; o.moved = true; put(el, e.clientX - dx, e.clientY - dy);
+        });
+        function end() {
+          if (!on) return; on = false;
+          if (!moved && el.classList.contains('min')) setMin(el, false); // tap a minimized bar to bring it back
+          else if (moved && el.classList.contains('min')) el._kw.rect = [el.style.left, el.style.top];
+        }
+        bar.addEventListener('pointerup', end); bar.addEventListener('pointercancel', end);
+      }
+      function open(el) {
+        if (el.classList.contains('show')) { if (el.classList.contains('min')) setMin(el, false); front(el); return; }
+        el.classList.remove('min', 'max'); el.classList.add('show'); el._kw.moved = false; el._kw.place(room()); front(el);
+        if (el._kw.onResize) el._kw.onResize();
+      }
+      function close(el) { el.classList.remove('show', 'min', 'max'); el.style.height = ''; dock(); }
+      // re-fit open windows (screen resized, or the remote moved beside them); windows the user dragged stay put
+      function reflow() {
+        all.forEach(function (el) { if (el.classList.contains('show') && !el.classList.contains('min') && !el.classList.contains('max')) { if (el._kw.moved) put(el, el.offsetLeft, el.offsetTop); else el._kw.place(room()); } });
+        dock();
+      }
+      addEventListener('resize', reflow);
+      return { make: make, open: open, close: close, put: put, room: room, reflow: reflow };
+    })();
+  </script>
   <script>
     // Live bot counts, fetched once and shared. null when the counter is not live (never a made-up number).
     window.kzBots = window.fetch ? fetch('/api/bots').then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }) : Promise.resolve(null);
@@ -409,7 +489,7 @@ Sections
         if (m === 'drawing') { setPen(pen); say('Pick a pen, then draw anywhere'); }
         if (m === 'cracking') say('Tap anywhere to crack the page with gold');
       }
-      function onPage(e) { return !e.target.closest('.rm, .mini, .pill, .devview, #radar, #xrCode, #xrExit'); }
+      function onPage(e) { return !e.target.closest('.rm, .mini, .pill, .kwin, #xrExit'); }
       document.addEventListener('pointerdown', function (e) {
         if (body.classList.contains('zen')) { body.classList.remove('zen'); return; }
         if (!onPage(e)) return;
@@ -509,25 +589,38 @@ Sections
 
       // ---- the keys
       function startZen() { setMode(null); setTimeout(function () { body.classList.add('zen'); }, 50); }
-      function startDev() { setMode(null); body.classList.remove('zen'); body.classList.add('devmode'); setTimeout(function () { $('tin').focus(); }, 50); }
+      function startDev() { setMode(null); body.classList.remove('zen'); body.classList.add('devmode'); KW.open($('dev')); setTimeout(function () { $('tin').focus({ preventScroll: true }); }, 50); }
       function act(a) {
         if (a === 'kintsugi') setMode(body.classList.contains('cracking') ? null : 'cracking');
         else if (a === 'draw') setMode(body.classList.contains('drawing') ? null : 'drawing');
         else if (a === 'mend') mend();
         else if (a === 'kaizen') say('Kaizen: coming soon');
-        else if (a === 'zen') { closeRemote(); startZen(); chime(); }
-        else if (a === 'xray') { closeRemote(); setMode(null); KZ.xray(true); chime(); }
-        else if (a === 'radar') { closeRemote(); setMode(null); KZ.radar(true); chime(); }
-        else if (a === 'dev') { closeRemote(); startDev(); }
+        else if (a === 'zen') { closeRemote(); KZ.xray(false); startZen(); chime(); }
+        else if (a === 'xray') { if (body.classList.contains('xray')) KZ.xray(false); else { setMode(null); KZ.xray(true); } chime(); }
+        else if (a === 'radar') { if (!body.classList.contains('xray')) closeRemote(); setMode(null); KZ.radar(true); chime(); }
+        else if (a === 'dev') { if (!body.classList.contains('xray')) closeRemote(); startDev(); }
       }
       rm.addEventListener('click', function (e) { var b = e.target.closest('[data-a]'); if (b) { blink(); act(b.dataset.a); } });
+
+      // X-ray keeps the remote in view: open on the right side on wide screens, a small mark at the top right on phones
+      function wide() { return innerWidth >= 1000 && innerHeight >= 600; }
+      function dockRemote() {
+        var top = 84;
+        if (wide()) { var x = innerWidth - rm.offsetWidth - 12; if (isOpen()) place(rm, x, top); else expand(mini.classList.contains('show') ? mini.querySelector('img') : logoImg, x, top); }
+        else { if (isOpen()) hideRemote(); body.classList.add('rmopen'); mini.classList.add('show'); miniMoved = true; place(mini, innerWidth - 72 - 12, top); }
+      }
+      document.addEventListener('kz:xray', function (e) {
+        keyOn('xray', e.detail);
+        if (e.detail) { dockRemote(); KW.reflow(); }
+        else if (mini.classList.contains('show')) { miniMoved = false; syncMini(); }
+      });
 
       // Reset: back to a fresh page. Closes any open section, clears cracks and drawings,
       // turns Draw, Kintsugi, Zen, X-ray, Radar and Terminal off, and puts the pen and sound back to their defaults.
       var toutStart = $('tout').innerHTML;
       function resetAll() {
         setMode(null); cur = null; strokes = []; redraw(); cracks = []; drawCracks(true); setPen('fine'); body.classList.remove('P-fine');
-        body.classList.remove('zen', 'devmode'); $('tout').innerHTML = toutStart; $('tin').value = '';
+        body.classList.remove('zen'); leaveDev(); $('tout').innerHTML = toutStart; $('tin').value = '';
         if (window.KZ) { KZ.xray(false); KZ.radar(false); }
         if (window.kzCloseSection) kzCloseSection();
         if (sound) toggleSound();
@@ -536,10 +629,18 @@ Sections
       $('rmReset').addEventListener('click', resetAll);
 
       // ---- Terminal command window
-      var tout = $('tout'), tin = $('tin');
+      var tout = $('tout'), tin = $('tin'), devBody = $('devBody');
+      // Terminal window: bottom right beside the page (near full width on phones), so the page stays visible
+      KW.make($('dev'), {
+        place: function (rm) {
+          var el = $('dev'), w = rm.phone ? innerWidth - 16 : Math.min(720, rm.w), h = Math.round(Math.min(rm.phone ? 520 : 480, innerHeight * (rm.phone ? .62 : .6)));
+          el.style.width = w + 'px'; el.style.height = h + 'px'; KW.put(el, rm.r - w, innerHeight - h - 16);
+        },
+        onClose: function () { leaveDev(); logoBtn.focus({ preventScroll: true }); }
+      });
       function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
-      function print(html) { var o = document.createElement('div'); o.innerHTML = html + '\n'; tout.appendChild(o); tout.scrollTop = tout.scrollHeight; }
-      function leaveDev() { body.classList.remove('devmode'); }
+      function print(html) { var o = document.createElement('div'); o.innerHTML = html + '\n'; tout.appendChild(o); devBody.scrollTop = devBody.scrollHeight; }
+      function leaveDev() { body.classList.remove('devmode'); KW.close($('dev')); }
       var CMD = {
         help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the four sections\n<b>ping</b>      round trip to our server, in ms\n<b>uptime</b>    how long the site has been live\n<b>bots</b>      bots that visited (live counts)\n<b>draw</b> &middot; <b>kintsugi</b> &middot; <b>mend</b> &middot; <b>zen</b> &middot; <b>sound</b> &middot; <b>xray</b> &middot; <b>radar</b>   same as the remote keys\n<b>clear</b>     clear this window\n<b>exit</b>      close the terminal'; },
         about: function () { return 'An AI lab applying kaizen, continuous improvement, to building with AI.\nA little better every day.'; },
@@ -558,8 +659,8 @@ Sections
         draw: function () { leaveDev(); setMode('drawing'); return ''; },
         kintsugi: function () { leaveDev(); setMode('cracking'); return ''; },
         mend: function () { mend(); return 'mended'; },
-        xray: function () { leaveDev(); KZ.xray(true); return ''; },
-        radar: function () { leaveDev(); KZ.radar(true); return ''; },
+        xray: function () { KZ.xray(true); return 'x-ray on'; },
+        radar: function () { KZ.radar(true); return 'bot radar open'; },
         bots: function () {
           print('fetching live counts&hellip;');
           fetch('/api/bots').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
@@ -576,7 +677,6 @@ Sections
         clear: function () { tout.innerHTML = ''; return null; },
         exit: function () { leaveDev(); logoBtn.focus({ preventScroll: true }); return ''; }
       };
-      $('devX').addEventListener('click', function () { leaveDev(); logoBtn.focus({ preventScroll: true }); });
       $('tf').addEventListener('submit', function (e) {
         e.preventDefault(); var v = tin.value.trim().toLowerCase(); tin.value = ''; if (!v) return;
         print('<b>$</b> ' + esc(v));
@@ -588,7 +688,7 @@ Sections
       document.addEventListener('keydown', function (e) {
         if (e.key !== 'Escape') return;
         var busy = body.classList.contains('drawing') || body.classList.contains('cracking') || body.classList.contains('zen') || body.classList.contains('devmode') || body.classList.contains('xray') || body.classList.contains('radar');
-        if (busy) { setMode(null); body.classList.remove('zen', 'devmode'); KZ.xray(false); KZ.radar(false); if (isOpen()) rm.querySelector('.k').focus({ preventScroll: true }); else logoBtn.focus({ preventScroll: true }); }
+        if (busy) { setMode(null); body.classList.remove('zen'); leaveDev(); KZ.xray(false); KZ.radar(false); if (isOpen()) rm.querySelector('.k').focus({ preventScroll: true }); else logoBtn.focus({ preventScroll: true }); }
         else if (isOpen() || mini.classList.contains('show')) { closeRemote(); logoBtn.focus({ preventScroll: true }); }
       });
     })();
@@ -598,7 +698,12 @@ Sections
     window.KZ = (function () {
       var body = document.body;
       // ---------- X-ray: outline every part; tap one to see its real HTML, CSS and JavaScript ----------
-      var xrOn = false, xrTimer = 0, xrSel = null, codeBox = document.getElementById('xrCode');
+      var xrOn = false, xrTimer = 0, xrSel = null, codeBox = document.getElementById('xrCode'), codeBody = document.getElementById('xrBody');
+      // the code view is a window: bottom of the screen, beside the remote on wide screens
+      KW.make(codeBox, {
+        place: function (rm) { var w = Math.min(760, rm.w); codeBox.style.width = w + 'px'; KW.put(codeBox, rm.l + (rm.w - w) / 2, innerHeight); },
+        onClose: function () { hideCode(); }
+      });
       var PLAIN = {
         img: ['picture', 'A picture. The browser downloads the image file and draws it in this spot.'],
         h1: ['headline', 'The headline. Big text that tells people, and search engines, what this page is.'],
@@ -639,17 +744,18 @@ Sections
       }
       function showCode(el) {
         var js = window.KZJS && KZJS.get(el), css = cssOf(el);
-        codeBox.innerHTML = '<div class="hd"><div class="tg"></div><button type="button" class="x" aria-label="Close the code view">&times;</button></div><div class="what"></div>' +
+        codeBody.innerHTML = '<div class="what"></div>' +
           '<div class="lang">HTML <em>the structure</em></div><pre>' + hlHTML(htmlOf(el)) + '</pre>' +
           '<div class="lang">CSS <em>the look</em></div><pre>' + (css ? hlCSS(css) : '(none)') + '</pre>' +
           (js ? '<div class="lang">JavaScript <em>what it does when tapped</em></div><pre>' + hlJS(js.toString()) + '</pre>' : '');
-        var r = el.getBoundingClientRect(), tg = codeBox.querySelector('.tg');
+        var r = el.getBoundingClientRect(), tg = codeBox.querySelector('.kw-t'); tg.textContent = '';
         tg.textContent = '<' + el.tagName.toLowerCase() + '>'; var dm = document.createElement('i'); dm.textContent = plain(el)[0] + ' \u00b7 ' + Math.round(r.width) + '\u00d7' + Math.round(r.height) + ' px'; tg.appendChild(dm);
-        codeBox.querySelector('.what').textContent = plain(el)[1];
-        codeBox.querySelector('.x').addEventListener('click', hideCode);
-        codeBox.classList.add('show'); codeBox.scrollTop = 0;
+        codeBody.querySelector('.what').textContent = plain(el)[1];
+        var was = codeBox.classList.contains('show') && codeBox._kw.moved;
+        KW.open(codeBox); codeBody.scrollTop = 0;
+        if (!was && !codeBox.classList.contains('max')) KW.put(codeBox, codeBox.offsetLeft, innerHeight); // grow from the bottom edge
       }
-      function hideCode() { codeBox.classList.remove('show'); xrSel = null; Array.prototype.forEach.call(document.querySelectorAll('#xr-layer .sel'), function (s) { s.classList.remove('sel'); }); }
+      function hideCode() { KW.close(codeBox); xrSel = null; Array.prototype.forEach.call(document.querySelectorAll('#xr-layer .sel'), function (s) { s.classList.remove('sel'); }); }
       function xrDraw() {
         var old = document.getElementById('xr-layer'); if (old) old.remove();
         if (!xrOn) return;
@@ -660,7 +766,7 @@ Sections
         var n = 0, delay = 0, labels = [];
         function free(x, y, w, h) { for (var i = 0; i < labels.length; i++) { var q = labels[i]; if (x < q[0] + q[2] && x + w > q[0] && y < q[1] + q[3] && y + h > q[1]) return false; } labels.push([x, y, w, h]); return true; }
         Array.prototype.forEach.call(document.body.querySelectorAll('*'), function (el) {
-          if (/^(SCRIPT|STYLE|LINK|META|BR|CANVAS)$/.test(el.tagName) || el.closest('#xr-layer, .rm, .mini, .pill, #radar, #xrExit, #xrCode, .toast, .devview, .zenhint, .panel:not(.open)')) return;
+          if (/^(SCRIPT|STYLE|LINK|META|BR|CANVAS)$/.test(el.tagName) || el.closest('#xr-layer, .rm, .mini, .pill, .kwin, #xrExit, .toast, .zenhint, .panel:not(.open)')) return;
           var cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return;
           var r = el.getBoundingClientRect(); if (r.width < 8 || r.height < 8) return;
           var kind = el.tagName === 'IMG' ? 'media' : (el.tagName === 'A' || el.tagName === 'BUTTON') ? 'action' : /^(H1|H2|P|SPAN|B)$/.test(el.tagName) ? 'text' : 'box';
@@ -691,7 +797,7 @@ Sections
       function xrSig() { var r = document.querySelector('.hero').getBoundingClientRect(); return [r.top, r.height, r.width].map(Math.round).join(); }
       function xrLater() { clearTimeout(xrTimer); xrTimer = setTimeout(xrDraw, 300); }
       function xray(on) {
-        if (on === xrOn) return; xrOn = on; body.classList.toggle('xray', on);
+        if (on === xrOn) return; xrOn = on; body.classList.toggle('xray', on); document.dispatchEvent(new CustomEvent('kz:xray', { detail: on }));
         if (on) { xrSel = null; xrDraw(); var sig = xrSig(); setTimeout(function () { if (xrOn && !xrSel && xrSig() !== sig) xrDraw(); }, 520); addEventListener('resize', xrLater); setTimeout(function () { document.getElementById('xrExit').focus({ preventScroll: true }); }, 50); }
         else { hideCode(); xrDraw(); removeEventListener('resize', xrLater); }
       }
@@ -724,6 +830,7 @@ Sections
         raf = 0; if (!rOn) return;
         var dt = last ? now - last : 16; last = now; if (!reduce) angle = (angle + dt * .0016) % (Math.PI * 2);
         if (!W) fit();
+        if (!W) { raf = requestAnimationFrame(draw); return; } // minimized: nothing to draw
         var cx = W / 2, cy = W / 2, R = W / 2 - 14; ctx.clearRect(0, 0, W, W);
         ctx.strokeStyle = '#2a2416'; ctx.lineWidth = 1;
         for (var i = 1; i <= 4; i++) { ctx.beginPath(); ctx.arc(cx, cy, R * i / 4, 0, 7); ctx.stroke(); }
@@ -743,11 +850,19 @@ Sections
         raf = requestAnimationFrame(draw);
       }
       function radar(on) {
-        if (on === rOn) return; rOn = on; body.classList.toggle('radar', on);
+        if (on === rOn) { if (on) KW.open(radarEl); return; } rOn = on; body.classList.toggle('radar', on);
+        if (on) KW.open(radarEl); else KW.close(radarEl);
         if (on) { W = 0; last = 0; load(); raf = requestAnimationFrame(draw); setTimeout(function () { document.getElementById('radarX').focus({ preventScroll: true }); }, 50); }
         else if (raf) { cancelAnimationFrame(raf); raf = 0; }
       }
-      document.getElementById('radarX').addEventListener('click', function () { radar(false); });
+      var radarEl = document.getElementById('radar');
+      // radar window: right side on wide screens, bottom on phones
+      KW.make(radarEl, {
+        place: function (rm) { var w = rm.phone ? innerWidth - 16 : Math.min(500, rm.w); radarEl.style.width = w + 'px'; KW.put(radarEl, rm.r - w, rm.phone ? innerHeight : (innerHeight - radarEl.offsetHeight) / 2); },
+        onClose: function () { radar(false); },
+        onResize: function () { W = 0; }
+      });
+      if (window.ResizeObserver) new ResizeObserver(function () { W = 0; }).observe(c);
       addEventListener('resize', function () { if (rOn) W = 0; });
       return { xray: xray, radar: radar };
     })();
