@@ -95,49 +95,56 @@
   .mono { font-family:ui-monospace, Consolas, monospace; }
 
   /* Lab remote: small, draggable, opens from the logo, minimizes to a round icon */
-  .rm { position:fixed; left:0; top:0; width:min(304px, calc(100vw - 16px)); padding:10px 14px 16px; border-radius:28px; z-index:40; text-align:left;
+  .rm { position:fixed; left:0; top:0; width:min(384px, calc(100vw - 16px)); padding:14px 18px 18px; border-radius:32px; z-index:40; text-align:left;
         background:linear-gradient(180deg,#171717,#0a0a0a); border:1px solid rgba(229,184,76,.5); box-shadow:0 20px 50px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.05);
         cursor:grab; user-select:none; -webkit-user-select:none; touch-action:none; visibility:hidden; opacity:0; }
   .rm.open { visibility:visible; opacity:1; }
   .rm.drag { cursor:grabbing; }
   body.rmopen .logo-btn .logo { visibility:hidden; }
   .rm-top { display:flex; align-items:center; gap:8px; }
-  .rm-btn { width:44px; height:44px; flex:none; border-radius:50%; border:1px solid #4a4232; background:#121212; color:#ccc; font-size:1.4rem; line-height:1; cursor:pointer; }
+  .rm-btn { width:48px; height:48px; flex:none; border-radius:50%; border:1px solid #4a4232; background:#121212; color:#ccc; font-size:1.4rem; line-height:1; cursor:pointer; }
   .rm-btn:focus-visible { color:var(--gold); border-color:var(--gold); }
   @media (hover:hover) { .rm-btn:hover { color:var(--gold); border-color:var(--gold); } }
-  .slot { width:30px; height:auto; mix-blend-mode:lighten; -webkit-user-drag:none; }
-  .rm-t { flex:1; text-align:center; font-size:.75rem; letter-spacing:.2em; color:#aaa; }
+  .slot { width:40px; height:auto; mix-blend-mode:lighten; -webkit-user-drag:none; }
+  .rm-t { flex:1; text-align:center; font-size:.85rem; letter-spacing:.2em; color:#aaa; }
   .led { width:8px; height:8px; margin-right:6px; border-radius:50%; background:#3a2f14; transition:background .15s, box-shadow .15s; }
   .led.on { background:var(--gold); box-shadow:0 0 8px var(--gold); }
-  .screen { margin:10px 0 12px; background:#070604; border:1px solid #2a2416; border-radius:12px; padding:8px 12px; font:.82rem/1.7 ui-monospace, Consolas, monospace; color:#bfa25a; }
+  .screen { margin:12px 0 14px; background:#070604; border:1px solid #2a2416; border-radius:14px; padding:10px 14px; font:.95rem/1.75 ui-monospace, Consolas, monospace; color:#bfa25a; }
   .screen .r { display:flex; justify-content:space-between; }
   .screen b { color:var(--gold); font-weight:400; }
-  .meter { height:5px; border-radius:3px; background:#1d1a12; margin-top:3px; overflow:hidden; }
+  .meter { height:6px; border-radius:3px; background:#1d1a12; margin-top:3px; overflow:hidden; }
   .meter i { display:block; height:100%; width:0; background:var(--gold); }
-  .inst { display:flex; align-items:flex-end; justify-content:space-around; margin-bottom:16px; }
-  .knob, .sw { display:flex; flex-direction:column; align-items:center; gap:6px; font-size:.78rem; color:#bbb; letter-spacing:.08em; }
-  .dial { width:52px; height:52px; border-radius:50%; background:radial-gradient(circle at 50% 35%,#2a2a2a,#0e0e0e); border:1px solid #3a3a3a; position:relative; cursor:ns-resize; touch-action:none; }
-  .dial::after { content:""; position:absolute; left:50%; top:5px; width:2px; height:12px; margin-left:-1px; background:var(--gold); border-radius:1px; transform-origin:50% 21px; transform:rotate(var(--r,0deg)); }
+  .inst { display:flex; align-items:flex-end; justify-content:space-around; margin-bottom:18px; }
+  .knob, .sw { display:flex; flex-direction:column; align-items:center; gap:7px; font-size:.86rem; color:#bbb; letter-spacing:.08em; }
+  .dial { width:62px; height:62px; border-radius:50%; background:radial-gradient(circle at 50% 35%,#2a2a2a,#0e0e0e); border:1px solid #3a3a3a; position:relative; cursor:ns-resize; touch-action:none; }
+  .dial::after { content:""; position:absolute; left:50%; top:5px; width:3px; height:14px; margin-left:-1.5px; background:var(--gold); border-radius:2px; transform-origin:50% 26px; transform:rotate(var(--r,0deg)); }
     .sw { background:none; border:0; font-family:inherit; cursor:pointer; padding:10px 4px 0; min-width:56px; }
   .sw:focus-visible { border-radius:10px; }
-  .tog { width:52px; height:30px; border-radius:15px; background:#151515; border:1px solid #4a4a4a; position:relative; }
-  .tog::after { content:""; position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#777; transition:left .2s, background .2s; }
-  .sw[aria-checked="true"] .tog::after { left:25px; background:var(--gold); }
-  .keys { display:grid; grid-template-columns:repeat(4, 1fr); gap:14px 4px; }
-  .k { display:flex; flex-direction:column; align-items:center; gap:5px; background:none; border:0; color:#ddd; font:inherit; font-size:.8rem; font-weight:600; cursor:pointer; padding:0; white-space:nowrap; }
-  .k i { width:56px; height:56px; border-radius:50%; display:grid; place-items:center; font-style:normal; font-size:1.35rem; color:var(--gold); background:#141414; border:1px solid #4a4232; box-shadow:0 2px 0 #000; }
-  .k i.mono { font-size:1.05rem; }
+  .tog { width:60px; height:34px; border-radius:17px; background:#151515; border:1px solid #4a4a4a; position:relative; }
+  .tog::after { content:""; position:absolute; top:3px; left:3px; width:26px; height:26px; border-radius:50%; background:#777; transition:left .2s, background .2s; }
+  .sw[aria-checked="true"] .tog::after { left:29px; background:var(--gold); }
+  .keys { display:grid; grid-template-columns:repeat(4, 1fr); gap:16px 6px; }
+  .k { display:flex; flex-direction:column; align-items:center; gap:5px; background:none; border:0; color:#ddd; font:inherit; font-size:.9rem; font-weight:600; cursor:pointer; padding:0; white-space:nowrap; }
+  .k i { width:66px; height:66px; border-radius:50%; display:grid; place-items:center; font-style:normal; font-size:1.6rem; color:var(--gold); background:#141414; border:1px solid #4a4232; box-shadow:0 2px 0 #000; }
+  .k i.mono { font-size:1.2rem; }
   .k:focus-visible { outline:none; }
   .k:focus-visible i { border-color:var(--gold); outline:2px solid var(--gold); outline-offset:3px; }
   @media (hover:hover) { .k:hover i { border-color:var(--gold); } }
   .k:active i { transform:translateY(1px); }
   .k.on i { background:var(--gold); color:#050505; border-color:var(--gold); }
   .k.soon i { border-style:dashed; }
-  .mini { position:fixed; left:0; top:0; width:60px; height:60px; padding:0; border-radius:50%; z-index:41; display:none; align-items:center; justify-content:center; background:#0d0d0d; border:1px solid rgba(229,184,76,.6); box-shadow:0 10px 30px rgba(0,0,0,.8); cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; }
-  .mini.show { display:flex; }
-  .mini img { width:38px; pointer-events:none; mix-blend-mode:lighten; }
+  .rm-reset { display:block; width:100%; min-height:50px; margin-top:18px; border-radius:999px; border:1px solid #4a4232; background:#121212; color:var(--tan); font:600 1rem ui-sans-serif, system-ui, sans-serif; letter-spacing:.06em; cursor:pointer; }
+  .rm-reset:focus-visible { color:var(--gold); border-color:var(--gold); }
+  @media (hover:hover) { .rm-reset:hover { color:var(--gold); border-color:var(--gold); } }
+  .rm-reset:active { transform:translateY(1px); }
+  /* Minimized: the remote turns back into the logo mark, same size and shape as the page logo */
+  .mini { position:fixed; left:0; top:0; width:120px; padding:0; border:0; border-radius:12px; background:none; z-index:41; display:none; cursor:grab; touch-action:none; user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; }
+  .mini.show { display:block; }
+  .mini img { display:block; width:100%; height:auto; pointer-events:none; mix-blend-mode:lighten; transition:filter .25s ease, transform .25s ease; }
+  .mini:focus-visible { outline:2px solid var(--gold); outline-offset:6px; }
+  @media (hover:hover) { .mini:hover img { filter:drop-shadow(0 0 18px rgba(229,184,76,.35)); transform:scale(1.03); } }
   .mini.drag { cursor:grabbing; }
-  .mini.on { box-shadow:0 0 0 2px var(--gold), 0 10px 30px rgba(0,0,0,.8); }
+  .mini.on img { filter:drop-shadow(0 0 14px rgba(229,184,76,.55)); }
   
   /* Draw: three pens */
   body.drawing { user-select:none; -webkit-user-select:none; touch-action:none; }
@@ -185,27 +192,45 @@
   #radar canvas { width:min(560px, 92vw, 62vh); height:min(560px, 92vw, 62vh); }
   #radar .rnote { width:min(560px, 100%); color:#bfa25a; font-size:1rem; line-height:1.5; text-align:center; }
   #radar .rnote a { color:var(--tan); }
-  /* X-ray: outlines every part; tap one to see its real HTML, CSS and JavaScript */
-  body.xray > *:not(#xr-layer):not(.toast):not(#xrExit):not(#radar):not(#xrCode) { filter:grayscale(1) brightness(.55) contrast(1.1); transition:filter .6s; }
-  #xr-layer { position:absolute; left:0; top:0; width:100%; pointer-events:none; z-index:30; font:11px/1.2 ui-monospace, Consolas, monospace; text-align:left; }
-  #xr-layer .g { position:fixed; inset:0; background-image:linear-gradient(rgba(229,184,76,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(229,184,76,.06) 1px, transparent 1px); background-size:24px 24px; }
-  #xr-layer .b { position:absolute; border:1px solid; border-radius:3px; opacity:0; animation:xr .5s ease forwards; pointer-events:auto; cursor:pointer; }
-  #xr-layer .b:hover, #xr-layer .b.sel { background:rgba(229,184,76,.08); border-width:2px; }
-  #xr-layer .b span { position:absolute; left:-1px; top:-15px; padding:1px 4px; background:#050505; border:1px solid currentColor; border-radius:3px; white-space:nowrap; pointer-events:none; }
-  #xr-layer .sum { position:fixed; left:12px; top:calc(12px + env(safe-area-inset-top)); padding:8px 10px; background:rgba(5,5,5,.92); border:1px solid var(--gold); border-radius:8px; color:var(--gold); line-height:1.6; font-size:12.5px; pointer-events:none; }
-  #xr-layer .sum i { color:#a8a08a; font-style:normal; }
+  /* X-ray: a blueprint scan. Outlines every part; tap one to see its real HTML, CSS and JavaScript */
+  body.xray > *:not(#xr-layer):not(.toast):not(#xrExit):not(#radar):not(#xrCode) { filter:grayscale(1) brightness(.32) contrast(1.1); transition:filter .6s; }
+  #xr-layer { position:absolute; left:0; top:0; width:100%; pointer-events:none; z-index:30; font:600 13px/1 ui-monospace, Consolas, monospace; text-align:left; }
+  #xr-layer .g { position:fixed; inset:0; background-image:linear-gradient(rgba(229,184,76,.11) 1px, transparent 1px), linear-gradient(90deg, rgba(229,184,76,.11) 1px, transparent 1px), linear-gradient(rgba(229,184,76,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(229,184,76,.05) 1px, transparent 1px); background-size:120px 120px, 120px 120px, 24px 24px, 24px 24px; }
+  #xr-layer .b { position:absolute; border:1px solid; opacity:0; animation:xr .5s ease forwards; pointer-events:auto; cursor:pointer;
+    background:linear-gradient(currentColor,currentColor) 0 0/10px 2px, linear-gradient(currentColor,currentColor) 0 0/2px 10px, linear-gradient(currentColor,currentColor) 100% 0/10px 2px, linear-gradient(currentColor,currentColor) 100% 0/2px 10px,
+               linear-gradient(currentColor,currentColor) 0 100%/10px 2px, linear-gradient(currentColor,currentColor) 0 100%/2px 10px, linear-gradient(currentColor,currentColor) 100% 100%/10px 2px, linear-gradient(currentColor,currentColor) 100% 100%/2px 10px; background-repeat:no-repeat; }
+  #xr-layer .b:hover, #xr-layer .b.sel { box-shadow:inset 0 0 0 1px currentColor, 0 0 0 1px currentColor; background-color:rgba(229,184,76,.07); }
+  #xr-layer .b span { position:absolute; left:-1px; bottom:100%; margin-bottom:3px; padding:5px 8px; background:#000; border:1px solid currentColor; border-radius:3px; white-space:nowrap; pointer-events:none; color:#f2ead8; letter-spacing:.01em; }
+  #xr-layer .b span.in { bottom:auto; top:3px; left:3px; margin:0; }
+  #xr-layer .b span b { color:var(--c); font-weight:700; }
+  #xr-layer .b span i { color:#a8a08a; font-style:normal; font-weight:400; margin-left:6px; }
+  #xr-layer .sum { position:fixed; left:12px; top:calc(12px + env(safe-area-inset-top)); min-width:220px; padding:10px 14px 12px; background:#000; border:1px solid var(--gold); border-radius:6px; color:#f2ead8; font:14px/1.75 ui-monospace, Consolas, monospace; pointer-events:none; }
+  #xr-layer .sum .h { color:var(--gold); font-weight:700; letter-spacing:.14em; border-bottom:1px solid #3a3122; padding-bottom:4px; margin-bottom:4px; }
+  #xr-layer .sum .r { display:flex; justify-content:space-between; gap:18px; } #xr-layer .sum .r i { color:#a8a08a; font-style:normal; } #xr-layer .sum .r b { color:var(--gold); font-weight:600; }
+  #xr-layer .sum .lg { display:grid; grid-template-columns:1fr 1fr; gap:0 12px; margin-top:6px; padding-top:6px; border-top:1px solid #3a3122; font-size:13px; }
+  #xr-layer .sum .lg s { display:inline-block; width:10px; height:10px; margin-right:7px; border:2px solid currentColor; text-decoration:none; vertical-align:-1px; }
+  #xr-layer .sum .tip { margin-top:6px; color:var(--tan); }
+  @media (max-width:600px) { #xr-layer .sum { min-width:0; font-size:13px; padding:8px 11px 10px; } #xr-layer .sum .lg { display:none; } }
   @keyframes xr { to { opacity:1; } }
-  #xrExit { position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top)); z-index:33; display:none; min-height:44px; padding:0 18px; border-radius:999px; border:1px solid var(--gold); background:#0d0d0d; color:var(--gold); font:600 .95rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; }
+  #xrExit { position:fixed; right:12px; top:calc(12px + env(safe-area-inset-top)); z-index:33; display:none; min-height:48px; padding:0 20px; border-radius:6px; border:1px solid var(--gold); background:#000; color:var(--gold); font:700 .95rem ui-monospace, Consolas, monospace; letter-spacing:.08em; cursor:pointer; }
+  #xrExit:focus-visible { background:var(--gold); color:#000; }
+  @media (hover:hover) { #xrExit:hover { background:var(--gold); color:#000; } }
   body.xray #xrExit { display:block; }
-  #xrCode { position:fixed; left:50%; bottom:calc(12px + env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(640px, calc(100vw - 24px)); max-height:min(50vh, 460px); overflow:auto; z-index:33; display:none; background:#070604; border:1px solid var(--gold); border-radius:16px; padding:12px 14px 14px; text-align:left; box-shadow:0 20px 50px rgba(0,0,0,.85); }
+  #xrCode { position:fixed; left:50%; bottom:calc(12px + env(safe-area-inset-bottom)); transform:translateX(-50%); width:min(760px, calc(100vw - 24px)); max-height:min(58vh, 540px); overflow:auto; z-index:33; display:none; background:#000; border:1px solid var(--gold); border-radius:8px; padding:0 0 16px; text-align:left; box-shadow:0 20px 60px rgba(0,0,0,.95); }
   body.xray #xrCode.show { display:block; }
-  #xrCode .x { float:right; margin:-4px -6px 4px 8px; width:44px; height:44px; border-radius:50%; border:1px solid #333; background:#1a1a1a; color:#ddd; font-size:1.4rem; line-height:1; cursor:pointer; }
+  #xrCode .hd { position:sticky; top:0; display:flex; align-items:center; gap:12px; padding:8px 8px 8px 16px; background:#0c0b08; border-bottom:1px solid #3a3122; }
+  #xrCode .tg { flex:1; font:700 1.1rem ui-monospace, Consolas, monospace; color:var(--gold); }
+  #xrCode .tg i { font-style:normal; font-weight:400; color:#a8a08a; margin-left:10px; font-size:.95rem; }
+  #xrCode .x { flex:none; width:48px; height:48px; border-radius:6px; border:1px solid #4a4232; background:#000; color:#eee; font-size:1.5rem; line-height:1; cursor:pointer; }
   #xrCode .x:focus-visible { color:var(--gold); border-color:var(--gold); }
   @media (hover:hover) { #xrCode .x:hover { color:var(--gold); border-color:var(--gold); } }
-  #xrCode .what { color:#eee; font-size:1.05rem; line-height:1.5; }
-  #xrCode .lang { clear:both; font-size:.72rem; letter-spacing:.16em; color:#a8a08a; margin:12px 0 4px; text-transform:uppercase; }
-  #xrCode pre { margin:0; font:.82rem/1.55 ui-monospace, Consolas, monospace; color:#bfa25a; white-space:pre-wrap; word-break:break-word; background:#0b0a07; border-radius:8px; padding:8px 10px; }
-  #xrCode .hk { color:var(--gold); } #xrCode .ha { color:var(--tan); } #xrCode .hs { color:#a8a08a; }
+  #xrCode .what { color:#f2ead8; font-size:1.1rem; line-height:1.5; padding:14px 16px 0; }
+  #xrCode .lang { display:flex; align-items:center; gap:10px; font:700 .82rem ui-monospace, Consolas, monospace; letter-spacing:.14em; color:var(--tan); margin:18px 16px 8px; text-transform:uppercase; }
+  #xrCode .lang::after { content:""; flex:1; height:1px; background:#3a3122; }
+  #xrCode .lang em { font-style:normal; color:#a8a08a; font-weight:400; letter-spacing:.06em; text-transform:none; }
+  #xrCode pre { margin:0 16px; font:.95rem/1.65 ui-monospace, Consolas, monospace; color:#ece4d0; white-space:pre-wrap; word-break:break-word; background:#0b0a07; border:1px solid #2a2416; border-left:3px solid var(--gold); border-radius:4px; padding:10px 14px; }
+  #xrCode .hk { color:var(--gold); font-weight:700; } #xrCode .ha { color:var(--tan); } #xrCode .hs { color:#b9e09f; }
+  @media (max-width:600px) { #xrCode pre { font-size:.88rem; padding:8px 10px; } #xrCode .what { font-size:1.02rem; } }
   @media (prefers-reduced-motion: reduce) { body.xray > * { transition:none; } #xr-layer .b { animation:none; opacity:1; } }
   @media (prefers-reduced-motion: reduce) { body.zen .logo { animation:none; } .fade, .logo { transition:none; } }
 </style>
@@ -254,6 +279,7 @@
       <button type="button" class="k soon" data-a="kaizen" aria-label="Kaizen (coming soon)"><i>&#25913;</i>Kaizen</button>
       <button type="button" class="k" data-a="dev"><i class="mono">&gt;_</i>Terminal</button>
     </div>
+    <button type="button" class="rm-reset" id="rmReset" aria-label="Reset the page to how it was when it opened">Reset</button>
   </div>
   <button type="button" class="mini" id="mini" aria-label="Open the lab remote"><img src="logo.webp" alt="" draggable="false"></button>
 
@@ -430,8 +456,14 @@ Sections
         expand(logoImg, l.left + l.width / 2 - rm.offsetWidth / 2, l.top);
       }
       function hideRemote() { rm.classList.remove('open'); rm.setAttribute('aria-hidden', 'true'); }
+      var miniMoved = false;
+      function syncMini() {
+        var l = logoImg.getBoundingClientRect(); if (!l.width) return;
+        mini.style.width = l.width + 'px';
+        if (miniMoved) place(mini, mini.offsetLeft, mini.offsetTop); else place(mini, l.left, l.top);
+      }
       function minimize() {
-        var b = rm.getBoundingClientRect(); mini.classList.add('show'); place(mini, b.left, b.top); var a = mini.getBoundingClientRect();
+        var b = rm.getBoundingClientRect(); mini.classList.add('show'); syncMini(); var a = mini.getBoundingClientRect();
         if (!reduce && rm.animate) {
           var an = rm.animate([{ transformOrigin: '0 0', transform: 'none', opacity: 1 }, { transformOrigin: '0 0', transform: 'translate(' + (a.left - b.left) + 'px,' + (a.top - b.top) + 'px) scale(' + (a.width / b.width) + ',' + (a.height / b.height) + ')', opacity: 0, borderRadius: '50%' }], { duration: 280, easing: 'ease-in', fill: 'forwards' });
           an.onfinish = function () { hideRemote(); an.cancel(); };
@@ -439,7 +471,7 @@ Sections
         } else hideRemote();
         mini.focus({ preventScroll: true }); blink();
       }
-      function closeRemote() { hideRemote(); mini.classList.remove('show'); body.classList.remove('rmopen'); }
+      function closeRemote() { hideRemote(); mini.classList.remove('show'); body.classList.remove('rmopen'); miniMoved = false; }
       logoBtn.addEventListener('click', openRemote); KZJS.set(logoBtn, openRemote);
       $('rmMin').addEventListener('click', minimize);
 
@@ -455,12 +487,14 @@ Sections
       (function () {
         var dx = 0, dy = 0, sx = 0, sy = 0, down = false, moved = false;
         mini.addEventListener('pointerdown', function (e) { down = true; moved = false; sx = e.clientX; sy = e.clientY; var r = mini.getBoundingClientRect(); dx = e.clientX - r.left; dy = e.clientY - r.top; mini.setPointerCapture(e.pointerId); });
-        mini.addEventListener('pointermove', function (e) { if (!down) return; if (Math.hypot(e.clientX - sx, e.clientY - sy) > 6) { moved = true; mini.classList.add('drag'); } if (moved) place(mini, e.clientX - dx, e.clientY - dy); });
+        mini.addEventListener('pointermove', function (e) { if (!down) return; if (Math.hypot(e.clientX - sx, e.clientY - sy) > 6) { moved = true; miniMoved = true; mini.classList.add('drag'); } if (moved) place(mini, e.clientX - dx, e.clientY - dy); });
         function up() { down = false; mini.classList.remove('drag'); }
         mini.addEventListener('pointerup', up); mini.addEventListener('pointercancel', up);
-        mini.addEventListener('click', function () { if (moved) { moved = false; return; } var r = mini.getBoundingClientRect(); expand(mini.querySelector('img'), r.left, r.top); });
+        mini.addEventListener('click', function () { if (moved) { moved = false; return; } var r = mini.getBoundingClientRect(); expand(mini.querySelector('img'), r.left + r.width / 2 - rm.offsetWidth / 2, r.top); });
       })();
-      window.addEventListener('resize', function () { if (isOpen()) place(rm, rm.offsetLeft, rm.offsetTop); if (mini.classList.contains('show')) place(mini, mini.offsetLeft, mini.offsetTop); });
+      window.addEventListener('resize', function () { if (isOpen()) place(rm, rm.offsetLeft, rm.offsetTop); if (mini.classList.contains('show')) syncMini(); });
+      // the page logo shrinks while a section is open; keep the minimized mark matching it
+      document.addEventListener('kz:sec', function () { setTimeout(function () { if (mini.classList.contains('show')) syncMini(); }, 480); });
 
       // instruments: SEAMS and INK dials (drag up or down, or arrow keys), SOUND switch
       function dial(el, min, max, val, name, onChange) {
@@ -474,9 +508,10 @@ Sections
           var d = (e.key === 'ArrowUp' || e.key === 'ArrowRight') ? 1 : (e.key === 'ArrowDown' || e.key === 'ArrowLeft') ? -1 : 0; if (!d) return;
           e.preventDefault(); var nv = Math.max(min, Math.min(max, v + d)); if (nv !== v) { v = nv; set(); say(name + ': ' + v); }
         });
+        return { reset: function () { v = val; set(true); } };
       }
-      dial($('dSeams'), 1, 6, 3, 'Seams', function (v) { seams = v; });
-      dial($('dInk'), 1, 5, 2, 'Ink', function (v) { ink = v; });
+      var dSeams = dial($('dSeams'), 1, 6, 3, 'Seams', function (v) { seams = v; });
+      var dInk = dial($('dInk'), 1, 5, 2, 'Ink', function (v) { ink = v; });
       function toggleSound() { sound = !sound; $('snd').setAttribute('aria-checked', String(sound)); return sound; }
       $('snd').addEventListener('click', function () { var on = toggleSound(); say(on ? 'Sound on' : 'Sound off'); chime(); blink(); });
 
@@ -505,6 +540,19 @@ Sections
         else if (a === 'dev') { closeRemote(); startDev(); }
       }
       rm.addEventListener('click', function (e) { var b = e.target.closest('[data-a]'); if (b) { blink(); act(b.dataset.a); } });
+
+      // Reset: back to a fresh page. Closes any open section, clears cracks and drawings,
+      // turns Draw, Kintsugi, Zen, X-ray, Radar and Terminal off, and puts the dials, pen and sound back to their defaults.
+      var toutStart = $('tout').innerHTML;
+      function resetAll() {
+        setMode(null); cur = null; strokes = []; redraw(); cracks = []; drawCracks(true); setPen('fine'); body.classList.remove('P-fine');
+        body.classList.remove('zen', 'devmode'); $('tout').innerHTML = toutStart; $('tin').value = '';
+        if (window.KZ) { KZ.xray(false); KZ.radar(false); }
+        if (window.kzCloseSection) kzCloseSection();
+        dSeams.reset(); dInk.reset(); if (sound) toggleSound();
+        window.scrollTo(0, 0); blink(); say('Reset');
+      }
+      $('rmReset').addEventListener('click', resetAll);
 
       // ---- Terminal command window
       var tout = $('tout'), tin = $('tin');
@@ -610,10 +658,12 @@ Sections
       }
       function showCode(el) {
         var js = window.KZJS && KZJS.get(el), css = cssOf(el);
-        codeBox.innerHTML = '<button type="button" class="x" aria-label="Close the code view">&times;</button><div class="what"></div>' +
-          '<div class="lang">HTML &middot; the structure</div><pre>' + hlHTML(htmlOf(el)) + '</pre>' +
-          '<div class="lang">CSS &middot; the look</div><pre>' + (css ? hlCSS(css) : '(none)') + '</pre>' +
-          (js ? '<div class="lang">JavaScript &middot; what it does when tapped</div><pre>' + hlJS(js.toString()) + '</pre>' : '');
+        codeBox.innerHTML = '<div class="hd"><div class="tg"></div><button type="button" class="x" aria-label="Close the code view">&times;</button></div><div class="what"></div>' +
+          '<div class="lang">HTML <em>the structure</em></div><pre>' + hlHTML(htmlOf(el)) + '</pre>' +
+          '<div class="lang">CSS <em>the look</em></div><pre>' + (css ? hlCSS(css) : '(none)') + '</pre>' +
+          (js ? '<div class="lang">JavaScript <em>what it does when tapped</em></div><pre>' + hlJS(js.toString()) + '</pre>' : '');
+        var r = el.getBoundingClientRect(), tg = codeBox.querySelector('.tg');
+        tg.textContent = '<' + el.tagName.toLowerCase() + '>'; var dm = document.createElement('i'); dm.textContent = plain(el)[0] + ' \u00b7 ' + Math.round(r.width) + '\u00d7' + Math.round(r.height) + ' px'; tg.appendChild(dm);
         codeBox.querySelector('.what').textContent = plain(el)[1];
         codeBox.querySelector('.x').addEventListener('click', hideCode);
         codeBox.classList.add('show'); codeBox.scrollTop = 0;
@@ -626,16 +676,25 @@ Sections
         var tags = document.getElementsByTagName('*').length, lines = document.documentElement.outerHTML.split('\n').length;
         var layer = document.createElement('div'); layer.id = 'xr-layer'; layer.setAttribute('aria-hidden', 'true');
         layer.style.height = document.documentElement.scrollHeight + 'px'; layer.innerHTML = '<div class="g"></div>';
-        var n = 0, delay = 0;
+        var n = 0, delay = 0, labels = [];
+        function free(x, y, w, h) { for (var i = 0; i < labels.length; i++) { var q = labels[i]; if (x < q[0] + q[2] && x + w > q[0] && y < q[1] + q[3] && y + h > q[1]) return false; } labels.push([x, y, w, h]); return true; }
         Array.prototype.forEach.call(document.body.querySelectorAll('*'), function (el) {
           if (/^(SCRIPT|STYLE|LINK|META|BR|CANVAS)$/.test(el.tagName) || el.closest('#xr-layer, .rm, .mini, .pill, #radar, #xrExit, #xrCode, .toast, .devview, .zenhint, .panel:not(.open)')) return;
           var cs = getComputedStyle(el); if (cs.display === 'none' || cs.visibility === 'hidden' || +cs.opacity === 0) return;
           var r = el.getBoundingClientRect(); if (r.width < 8 || r.height < 8) return;
           var kind = el.tagName === 'IMG' ? 'media' : (el.tagName === 'A' || el.tagName === 'BUTTON') ? 'action' : /^(H1|H2|P|SPAN|B)$/.test(el.tagName) ? 'text' : 'box';
-          var col = { media: '#e5b84c', action: '#9fd18b', text: '#d9c08a', box: '#5f7f9a' }[kind];
+          var col = { media: ['#e5b84c', 'rgba(229,184,76,.5)'], action: ['#a8e08f', 'rgba(168,224,143,.5)'], text: ['#ead7a8', 'rgba(234,215,168,.45)'], box: ['#8fb6d6', 'rgba(143,182,214,.45)'] }[kind];
           var d = document.createElement('div'); d.className = 'b' + (el === xrSel ? ' sel' : '');
-          d.style.cssText = 'left:' + (r.left + scrollX) + 'px;top:' + (r.top + scrollY) + 'px;width:' + r.width + 'px;height:' + r.height + 'px;color:' + col + ';border-color:' + col + ';animation-delay:' + (delay += 25) + 'ms';
-          if (kind !== 'box' || r.width > 200) { var s = document.createElement('span'); s.textContent = '<' + el.tagName.toLowerCase() + '> ' + plain(el)[0]; d.appendChild(s); }
+          d.style.cssText = 'left:' + (r.left + scrollX) + 'px;top:' + (r.top + scrollY) + 'px;width:' + r.width + 'px;height:' + r.height + 'px;color:' + col[0] + ';--c:' + col[0] + ';border-color:' + col[1] + ';animation-delay:' + (delay += 25) + 'ms';
+          if (kind !== 'box' || r.width > 200) {
+            var tag = el.tagName.toLowerCase(), word = plain(el)[0], dims = Math.round(r.width) + '\u00d7' + Math.round(r.height),
+                lw = (tag.length + word.length + dims.length + 4) * 7.9 + 24, inside = r.top < 34, ly = inside ? r.top + 3 : r.top - 31;
+            if (free(r.left, ly, lw, 28)) {
+              var s = document.createElement('span'); if (inside) s.className = 'in';
+              var tb = document.createElement('b'); tb.textContent = '<' + tag + '>'; s.appendChild(tb); s.appendChild(document.createTextNode(' ' + word));
+              var di = document.createElement('i'); di.textContent = dims; s.appendChild(di); d.appendChild(s);
+            }
+          }
           d.addEventListener('click', function (ev) {
             ev.stopPropagation(); Array.prototype.forEach.call(layer.querySelectorAll('.sel'), function (x) { x.classList.remove('sel'); });
             d.classList.add('sel'); xrSel = el; showCode(el);
@@ -643,13 +702,16 @@ Sections
           layer.appendChild(d); n++;
         });
         var sum = document.createElement('div'); sum.className = 'sum';
-        sum.innerHTML = 'X-RAY<br><i>parts on screen</i> ' + n + '<br><i>HTML tags</i> ' + tags + '<br><i>CSS rules</i> ' + rules + '<br><i>lines of code</i> ' + lines + '<br><i>tap any outline</i>';
+        function row(k, v) { return '<div class="r"><i>' + k + '</i><b>' + v + '</b></div>'; }
+        sum.innerHTML = '<div class="h">X-RAY // SCAN</div>' + row('parts on screen', n) + row('HTML tags', tags) + row('CSS rules', rules) + row('lines of code', lines) +
+          '<div class="lg"><span style="color:#e5b84c"><s></s>image</span><span style="color:#a8e08f"><s></s>action</span><span style="color:#ead7a8"><s></s>text</span><span style="color:#8fb6d6"><s></s>box</span></div><div class="tip">&gt; tap any outline</div>';
         layer.appendChild(sum); document.body.appendChild(layer);
       }
+      function xrSig() { var r = document.querySelector('.hero').getBoundingClientRect(); return [r.top, r.height, r.width].map(Math.round).join(); }
       function xrLater() { clearTimeout(xrTimer); xrTimer = setTimeout(xrDraw, 300); }
       function xray(on) {
         if (on === xrOn) return; xrOn = on; body.classList.toggle('xray', on);
-        if (on) { xrSel = null; xrDraw(); addEventListener('resize', xrLater); setTimeout(function () { document.getElementById('xrExit').focus({ preventScroll: true }); }, 50); }
+        if (on) { xrSel = null; xrDraw(); var sig = xrSig(); setTimeout(function () { if (xrOn && !xrSel && xrSig() !== sig) xrDraw(); }, 520); addEventListener('resize', xrLater); setTimeout(function () { document.getElementById('xrExit').focus({ preventScroll: true }); }, 50); }
         else { hideCode(); xrDraw(); removeEventListener('resize', xrLater); }
       }
       document.getElementById('xrExit').addEventListener('click', function (e) { e.stopPropagation(); xray(false); });
@@ -735,6 +797,7 @@ Sections
       var panel = document.getElementById('panel'), inner = document.getElementById('panelIn'), links = document.querySelectorAll('nav a[data-sec]'), cur = null;
       function setH(open) { panel.style.height = open ? (inner.offsetHeight + 18) + 'px' : '0px'; panel.classList.toggle('open', open); }
       function show(id, scroll) {
+        document.dispatchEvent(new Event('kz:sec'));
         Array.prototype.forEach.call(links, function (x) { var on = x.dataset.sec === id; x.classList.toggle('active', on); x.setAttribute('aria-expanded', String(on)); });
         document.body.classList.toggle('secopen', !!id); panel.classList.toggle('wide', id === 'learning');
         if (!id) { cur = null; clearTimeout(show.t); clearTimeout(show.s); setH(false); history.replaceState(null, '', location.pathname); return; }
@@ -749,6 +812,7 @@ Sections
         show(cur === id ? null : id, true);
       }
       Array.prototype.forEach.call(links, function (a) { a.addEventListener('click', openSection); window.KZJS && KZJS.set(a, openSection); });
+      window.kzCloseSection = function () { if (cur) show(null); };
       window.addEventListener('resize', function () { if (cur) setH(true); });
       window.addEventListener('hashchange', function () { var k = location.hash.slice(1); if (S[k] && k !== cur) show(k, true); });
       var h = location.hash.slice(1); if (S[h]) show(h, false);
