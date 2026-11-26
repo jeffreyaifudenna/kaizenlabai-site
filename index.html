@@ -68,6 +68,10 @@
   .panel.open .panel-in { opacity:1; transform:none; }
   .panel h2 { color:var(--gold); font-size:1.6rem; }
   .panel p { color:var(--tan); font-size:1.1rem; line-height:1.5; margin:.5rem auto 0; max-width:34em; }
+  .panel .big { display:block; color:var(--gold); font-size:2.6rem; line-height:1.1; margin-top:.4rem; font-variant-numeric:tabular-nums; }
+  .panel .tops { color:#f2ead8; } .panel .tops span { white-space:nowrap; }
+  .panel .src { font-size:.92rem; color:#a8996f; }
+  .panel button.pbtn { background:none; font:inherit; font-size:1rem; cursor:pointer; }
   .panel .soon { display:inline-block; margin-top:1rem; padding:.35rem .9rem; border:1px solid #4a4232; border-radius:999px; color:#a8996f; font-size:.85rem; letter-spacing:.08em; text-transform:uppercase; }
   .panel .pbtn { display:inline-flex; align-items:center; margin-top:1rem; padding:0 1.4rem; border:1px solid var(--gold); border-radius:999px; color:var(--gold); text-decoration:none; font-size:1rem; min-height:48px; }
   .panel .pbtn:focus-visible { background:var(--gold); color:#050505; }
@@ -84,16 +88,11 @@
   .panel-in.media .play::after { left:29px; top:22px; border-width:15px 0 15px 24px; }
   .panel-in.media .pbtn { margin:16px 0 18px; }
   nav a.active { background:var(--gold); color:#050505; }
-  nav { display:grid; grid-template-columns:repeat(3, auto); gap:14px; margin-top:clamp(1.25rem, 4vh, 2.25rem); }
+  nav { display:grid; grid-template-columns:repeat(4, auto); gap:14px; margin-top:clamp(1.25rem, 4vh, 2.25rem); }
   nav a { display:flex; align-items:center; justify-content:center; min-height:48px; padding:0 1.4rem; border:1px solid var(--gold); border-radius:999px; color:var(--gold); text-decoration:none; font-size:clamp(1rem, 1.4vw, 1.15rem); letter-spacing:.02em; transition:background .15s ease, color .15s ease; }
   nav a:focus-visible { background:var(--gold); color:#050505; }
   @media (hover:hover) { nav a:hover { background:var(--gold); color:#050505; } }
-  @media (max-width: 640px) { nav { grid-template-columns:repeat(3, 1fr); width:min(100%, 380px); gap:10px; } nav a { padding:0 .5rem; } }
-  .botline { margin-top:1.4rem; color:#a8996f; font-size:.9rem; line-height:1.5; max-width:36em; min-height:1.3em; }
-  .botline a { display:inline-block; padding:.6rem .25rem; color:var(--tan); text-decoration:underline; text-decoration-color:#4a4232; text-underline-offset:4px; }
-  .botline a:focus-visible { color:var(--gold); }
-  @media (hover:hover) { .botline a:hover { color:var(--gold); text-decoration-color:var(--gold); } }
-  .botline b { color:var(--gold); font-weight:600; }
+  @media (max-width: 640px) { nav { grid-template-columns:auto auto auto auto; width:min(100%, 400px); gap:6px; justify-content:center; } nav a { padding:0 .7rem; font-size:clamp(.86rem, 3.9vw, 1rem); } }
 
   [hidden] { display:none !important; }
   .mono { font-family:ui-monospace, Consolas, monospace; }
@@ -343,9 +342,9 @@
       <a href="/learning/" data-sec="learning" aria-controls="panel" aria-expanded="false">Learning</a>
       <a href="/agents/" data-sec="agents" aria-controls="panel" aria-expanded="false">Agents</a>
       <a href="/open-source/" data-sec="open-source" aria-controls="panel" aria-expanded="false">Open Source</a>
+      <a href="/bots/" data-sec="bots" aria-controls="panel" aria-expanded="false">Bots</a>
     </nav>
     <div class="panel fade" id="panel" role="region" aria-live="polite"><div class="panel-in" id="panelIn"></div></div>
-    <p class="botline fade" id="botline" aria-live="polite"></p>
   </main>
 
   <div class="zenhint">Zen mode &middot; tap anywhere to return</div>
@@ -378,7 +377,7 @@
   <section class="kwin devview" id="dev" role="dialog" aria-label="Terminal"><div class="kw-bar"><span class="kw-t">TERMINAL</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b txt" data-kw="close" id="devX" aria-label="Exit the terminal">Exit</button></div><div class="kw-body" id="devBody"><div>KaizenLabAI
 AI experiments. A little better every day.
 
-Sections<dl class="dsec"><dt>Learning</dt><dd>Educational AI videos on YouTube<br>Video: <a href="https://www.youtube.com/watch?v=diDHi31MHFA">21 Layers from the Edge of the Universe</a></dd><dt>Agents</dt><dd>AI workers (coming soon)</dd><dt>Open Source</dt><dd><a href="https://github.com/jeffreyaifudenna/kaizenlabai-site">This website&rsquo;s code</a><br><a href="https://github.com/jeffreyaifudenna">github.com/jeffreyaifudenna</a></dd></dl>
+Sections<dl class="dsec"><dt>Learning</dt><dd>Educational AI videos on YouTube<br>Video: <a href="https://www.youtube.com/watch?v=diDHi31MHFA">21 Layers from the Edge of the Universe</a></dd><dt>Agents</dt><dd>AI workers (coming soon)</dd><dt>Open Source</dt><dd><a href="https://github.com/jeffreyaifudenna/kaizenlabai-site">This website&rsquo;s code</a><br><a href="https://github.com/jeffreyaifudenna">github.com/jeffreyaifudenna</a></dd><dt>Bots</dt><dd><a href="/bots/">Bots that visited this site</a> (live counts)</dd></dl>
 Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class="tout" id="tout">Type a command below. Esc or "exit" to leave.
 </div><form id="tf" autocomplete="off"><label for="tin">kaizen@lab:~$</label><input id="tin" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="go"></form></div></div>
   </section>
@@ -944,7 +943,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       var CMD = {
         help: function () { return '<b>help</b>      list commands\n<b>about</b>     what KaizenLabAI is\n<b>sections</b>  the three sections\n<b>ping</b>      round trip to our server, in ms\n<b>uptime</b>    how long the site has been live\n<b>bots</b>      bots that visited (live counts)\n<b>draw</b> &middot; <b>kintsugi</b> &middot; <b>zen</b> &middot; <b>xray</b> &middot; <b>radar</b> &middot; <b>kaizen</b>   same as the remote keys\n<b>clear</b>     clear this window\n<b>exit</b>      close the terminal'; },
         about: function () { return 'An AI lab applying kaizen, continuous improvement, to building with AI.\nA little better every day.'; },
-        sections: function () { return 'learning  agents  open-source'; },
+        sections: function () { return 'learning  agents  open-source  bots'; },
         ping: function () {
           var t0 = performance.now();
           fetch('/robots.txt?ping=' + Date.now(), { cache: 'no-store' }).then(function (r) {
@@ -1168,18 +1167,18 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
     })();
   </script>
   <script>
-    // Public bot counter: filled from /api/bots. Shows nothing if counts are unavailable (never a made-up number).
-    (function () {
-      var el = document.getElementById('botline'); if (!el) return;
-      kzBots.then(function (d) {
-        if (!d || !d.since || !d.allTime) return;
-        var f = function (n) { return Number(n).toLocaleString('en-US'); };
-        var since = new Date(d.since + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-        el.innerHTML = '<b></b> self-identified bots visited in the last 7 days &middot; <b></b> since <span></span> &middot; <a href="/bots/">which bots?</a>';
-        var b = el.querySelectorAll('b'); b[0].textContent = f(d.last7.total); b[1].textContent = f(d.allTime.total);
-        el.querySelector('span').textContent = since;
-      });
-    })();
+    // Public bot counter, shown in the Bots tab: filled from /api/bots. Shows nothing made up if counts are unavailable.
+    window.kzBotsHtml = '<h2>Bots</h2><p>Bot counts are not available yet.</p><a class="pbtn" href="/bots/">How we count</a>';
+    kzBots.then(function (d) {
+      if (!d || !d.since || !d.last7) return;
+      var f = function (n) { return Number(n).toLocaleString('en-US'); }, e = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+      var since = new Date(d.since + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+      var top = (d.last7.bots || []).slice(0, 3).map(function (b) { return '<span>' + e(b.name) + ' ' + f(b.count) + '</span>'; }).join(' &middot; ');
+      window.kzBotsHtml = '<h2>Bots</h2><p>Self-identified bot visits, last 7 days<b class="big">' + f(d.last7.total) + '</b></p>' +
+        (top ? '<p class="tops">' + top + '</p>' : '') +
+        '<p class="src">Counting since ' + e(since) + ' (UTC). Source: our own request log, page requests whose browser name says it is a bot.</p>' +
+        '<a class="pbtn" href="/bots/">Full list</a> <button type="button" class="pbtn" data-radar>Bot radar</button>';
+    });
   </script>
   <script>
     // Sections open in a panel below the buttons, on the same page (links still work without JavaScript)
@@ -1196,7 +1195,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
         Array.prototype.forEach.call(links, function (x) { var on = x.dataset.sec === id; x.classList.toggle('active', on); x.setAttribute('aria-expanded', String(on)); });
         document.body.classList.toggle('secopen', !!id); panel.classList.toggle('wide', id === 'learning');
         if (!id) { cur = null; clearTimeout(show.t); clearTimeout(show.s); setH(false); history.replaceState(null, '', location.pathname); return; }
-        cur = id; inner.innerHTML = S[id]; inner.classList.toggle('media', id === 'learning'); panel.classList.remove('open'); clearTimeout(show.t); clearTimeout(show.s);
+        cur = id; inner.innerHTML = id === 'bots' ? window.kzBotsHtml : S[id]; inner.classList.toggle('media', id === 'learning'); panel.classList.remove('open'); clearTimeout(show.t); clearTimeout(show.s);
         show.t = setTimeout(function () { setH(true); if (scroll) show.s = setTimeout(function () { panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 460); }, 20);
         history.replaceState(null, '', '#' + id);
       }
@@ -1210,6 +1209,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       window.kzCloseSection = function () { if (cur) show(null); };
       // The video plays right here in the panel (privacy-enhanced YouTube player), never on a new page
       inner.addEventListener('click', function (e) {
+        if (e.target.closest('[data-radar]')) { if (window.KZ) KZ.radar(true); return; }
         var t = e.target.closest('a[data-yt]'); if (!t || e.ctrlKey || e.metaKey || e.shiftKey) return;
         e.preventDefault();
         var f = document.createElement('iframe'); f.className = 'ytframe'; f.title = t.getAttribute('aria-label').replace(/^Watch /, '');
