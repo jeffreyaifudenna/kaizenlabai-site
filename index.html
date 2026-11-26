@@ -198,6 +198,36 @@
   #tin { flex:1; min-width:0; background:none; border:0; outline:0; color:#fff; font:inherit; caret-color:var(--gold); }
   .toast { position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translate(-50%,20px); background:var(--gold); color:#050505; font-weight:600; padding:8px 16px; border-radius:999px; opacity:0; transition:all .3s; z-index:60; pointer-events:none; white-space:nowrap; }
   .toast.show { opacity:1; transform:translate(-50%,0); }
+  /* Kaizen: one question, what kaizen means, then an optional 1-minute meditation */
+  #kzWin .kw-body { padding:22px 22px 24px; text-align:center; background:radial-gradient(120% 80% at 50% 0%, #15120a 0%, #060605 60%); }
+  .kz-step { animation:kzin .5s cubic-bezier(.22,1,.36,1); }
+  @keyframes kzin { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+  .kz-mark { font-size:2.4rem; letter-spacing:.15em; color:var(--gold); opacity:.85; margin-bottom:10px; }
+  .kz-q { display:block; color:#f2ead8; font-size:clamp(1.35rem, 3.4vw, 1.7rem); font-weight:700; line-height:1.3; margin-bottom:18px; }
+  #kzIn { display:block; width:100%; min-height:58px; padding:0 18px; border-radius:16px; border:1px solid #4a4232; background:#000; color:#fff; font:inherit; font-size:1.2rem; text-align:center; outline:0; transition:border-color .2s, box-shadow .2s; }
+  #kzIn::placeholder { color:#6f6655; }
+  #kzIn:focus { border-color:var(--gold); box-shadow:0 0 0 4px rgba(229,184,76,.15); }
+  .kz-row { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top:20px; }
+  .kz-go { display:inline-flex; align-items:center; justify-content:center; min-width:150px; min-height:56px; padding:0 26px; border-radius:999px; border:1px solid var(--gold); background:var(--gold); color:#050505; font:700 1.12rem ui-sans-serif, system-ui, sans-serif; letter-spacing:.02em; cursor:pointer; transition:transform .12s, background .2s, color .2s; }
+  .kz-go:active { transform:scale(.97); }
+  .kz-go.alt { background:transparent; color:var(--gold); }
+  @media (hover:hover) { .kz-go.alt:hover { background:rgba(229,184,76,.12); } }
+  .kz-go:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+  .kz-you { color:var(--tan); font-size:.95rem; letter-spacing:.14em; text-transform:uppercase; overflow-wrap:anywhere; }
+  .kz-you b { display:block; color:var(--gold); font-size:clamp(1.6rem, 4.4vw, 2.1rem); letter-spacing:0; text-transform:none; margin-top:6px; line-height:1.2; }
+  .kz-ex { color:#eee; font-size:1.15rem; line-height:1.6; margin:18px auto 0; max-width:30em; padding-top:18px; border-top:1px solid #2a2416; }
+  #kzAsk.shake { animation:kzsh .32s; } @keyframes kzsh { 25% { transform:translateX(-7px); } 75% { transform:translateX(7px); } }
+  .kz-orb { position:relative; width:min(240px, 62vw, 36vh); aspect-ratio:1; margin:4px auto 0; }
+  .kz-orb svg { position:absolute; inset:0; width:100%; height:100%; transform:rotate(-90deg); }
+  .kz-track { fill:none; stroke:#2a2416; stroke-width:2; }
+  .kz-prog { fill:none; stroke:var(--gold); stroke-width:3; stroke-linecap:round; stroke-dasharray:1; stroke-dashoffset:1; }
+  .kz-halo, .kz-core { position:absolute; left:50%; top:50%; border-radius:50%; will-change:transform, opacity; }
+  .kz-halo { width:86%; height:86%; margin:-43% 0 0 -43%; background:radial-gradient(circle, rgba(229,184,76,.28) 0%, rgba(229,184,76,.08) 55%, rgba(229,184,76,0) 72%); }
+  .kz-core { width:62%; height:62%; margin:-31% 0 0 -31%; background:radial-gradient(circle at 42% 38%, #f6dc95 0%, #e5b84c 38%, #8a6a22 100%); box-shadow:0 0 40px rgba(229,184,76,.45), inset 0 -8px 24px rgba(0,0,0,.35); }
+  .kz-cue { color:#f2ead8; font-size:1.55rem; font-weight:700; letter-spacing:.02em; margin-top:16px; min-height:1.3em; transition:opacity .6s; }
+  .kz-cue.fade { opacity:0; }
+  .kz-time { color:var(--tan); font:1.2rem ui-monospace, Consolas, monospace; margin-top:4px; font-variant-numeric:tabular-nums; }
+  @media (max-width:460px) { .kz-go { min-width:0; flex:1 1 100%; white-space:nowrap; } #kzMed .kz-go { flex-basis:120px; } }
   /* Bot radar */
   #radar .kw-body { display:flex; flex-direction:column; align-items:center; gap:10px; padding:12px 16px 16px; }
   #radar canvas { display:block; width:min(100%, 52vh); height:auto; aspect-ratio:1 / 1; }
@@ -282,7 +312,7 @@
       <button type="button" class="k" data-a="zen"><i>&#9711;</i>Zen</button>
       <button type="button" class="k" data-a="xray"><i class="mono">[&#8201;]</i>X-ray</button>
       <button type="button" class="k" data-a="radar"><i>&#9678;</i>Bot radar</button>
-      <button type="button" class="k soon" data-a="kaizen" aria-label="Kaizen (coming soon)"><i>&#25913;</i>Kaizen</button>
+      <button type="button" class="k" data-a="kaizen"><i>&#25913;</i>Kaizen</button>
       <button type="button" class="k" data-a="dev"><i class="mono">&gt;_</i>Terminal</button>
     </div>
     <button type="button" class="rm-reset" id="rmReset" aria-label="Reset the page to how it was when it opened">Reset</button>
@@ -307,6 +337,11 @@ Sections
 
   <button type="button" id="xrExit">Exit X-ray</button>
   <section id="xrCode" class="kwin" role="dialog" aria-label="X-ray: the code behind this part"><div class="kw-bar"><span class="kw-t">X-RAY</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b" data-kw="close" id="xrX" aria-label="Close the code view">&times;</button></div><div class="kw-body" id="xrBody" aria-live="polite"></div></section>
+  <section id="kzWin" class="kwin" role="dialog" aria-label="Kaizen"><div class="kw-bar"><span class="kw-t">KAIZEN</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b" data-kw="close" id="kzX" aria-label="Close Kaizen">&times;</button></div><div class="kw-body">
+    <form id="kzAsk" class="kz-step" autocomplete="off"><div class="kz-mark" aria-hidden="true">&#25913;&#21892;</div><label for="kzIn" class="kz-q">What would you like to get better at?</label><input id="kzIn" maxlength="80" enterkeyhint="go" placeholder="Drawing, running, cooking&hellip;"><div class="kz-row"><button type="submit" class="kz-go">Next</button></div></form>
+    <div id="kzAns" class="kz-step" hidden><p class="kz-you">Getting better at<b id="kzYou"></b></p><p class="kz-ex">Kaizen is the process of getting better everyday, it requires reviewing your process, adding in one small improvement and continued iteration to get better.</p><div class="kz-row"><button type="button" class="kz-go" id="kzCalm">1-minute meditation</button><button type="button" class="kz-go alt" id="kzAgain">Start over</button></div></div>
+    <div id="kzMed" class="kz-step" hidden><div class="kz-orb" aria-hidden="true"><svg viewBox="0 0 200 200"><circle class="kz-track" cx="100" cy="100" r="96"/><circle class="kz-prog" id="kzProg" cx="100" cy="100" r="96" pathLength="1"/></svg><i class="kz-halo" id="kzHalo"></i><i class="kz-core" id="kzCore"></i></div><p class="kz-cue" id="kzCue" aria-live="polite">Breathe in</p><p class="kz-time" id="kzTime">1:00</p><div class="kz-row"><button type="button" class="kz-go alt" id="kzStop">Stop</button><button type="button" class="kz-go alt" id="kzSnd" aria-pressed="false">Sound off</button></div></div>
+  </div></section>
   <section id="radar" class="kwin" role="dialog" aria-label="Bot radar"><div class="kw-bar"><span class="kw-t">BOT RADAR</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b" data-kw="close" id="radarX" aria-label="Close bot radar">&times;</button></div><div class="kw-body"><canvas id="radarC" role="img" aria-label="Radar of bots that visited in the last 7 days"></canvas><p class="rnote" id="radarNote"></p></div></section>
   <div class="toast" id="toast" role="status"></div>
 
@@ -599,7 +634,7 @@ Sections
         if (a === 'kintsugi') setMode(body.classList.contains('cracking') ? null : 'cracking');
         else if (a === 'draw') setMode(body.classList.contains('drawing') ? null : 'drawing');
         else if (a === 'mend') mend();
-        else if (a === 'kaizen') say('Kaizen: coming soon');
+        else if (a === 'kaizen') { if (!body.classList.contains('xray')) closeRemote(); openKaizen(); }
         else if (a === 'zen') { closeRemote(); KZ.xray(false); startZen(); chime(); }
         else if (a === 'xray') { if (body.classList.contains('xray')) KZ.xray(false); else { setMode(null); KZ.xray(true); } chime(); }
         else if (a === 'radar') { if (!body.classList.contains('xray')) closeRemote(); setMode(null); KZ.radar(true); chime(); }
@@ -625,7 +660,7 @@ Sections
       var toutStart = $('tout').innerHTML;
       function resetAll() {
         setMode(null); cur = null; strokes = []; redraw(); cracks = []; drawCracks(true); setPen('fine'); body.classList.remove('P-fine');
-        body.classList.remove('zen'); leaveDev(); $('tout').innerHTML = toutStart; $('tin').value = '';
+        body.classList.remove('zen'); leaveDev(); closeKaizen(); $('tout').innerHTML = toutStart; $('tin').value = '';
         if (window.KZ) { KZ.xray(false); KZ.radar(false); }
         if (window.kzCloseSection) kzCloseSection();
         if (sound) toggleSound();
@@ -643,6 +678,73 @@ Sections
         },
         onClose: function () { leaveDev(); logoBtn.focus({ preventScroll: true }); }
       });
+
+      // ---- Kaizen: ask what they want to get better at, explain kaizen, then an optional 1-minute meditation.
+      // Nothing is stored or sent. Sound follows the remote's Sound switch (off by default).
+      var kzWin = $('kzWin'), medRaf = 0, medT0 = 0, medPhase = -1, medDone = false, MED = 60000, HALF = 5000;
+      KW.make(kzWin, {
+        place: function (rm) { var w = rm.phone ? innerWidth - 16 : Math.min(560, rm.w); kzWin.style.width = w + 'px'; KW.put(kzWin, rm.l + (rm.w - w) / 2, (innerHeight - kzWin.offsetHeight) / 2); },
+        onClose: function () { closeKaizen(); logoBtn.focus({ preventScroll: true }); }
+      });
+      function kzShow(id) { ['kzAsk', 'kzAns', 'kzMed'].forEach(function (x) { $(x).hidden = x !== id; }); if (kzWin.classList.contains('show') && !kzWin._kw.moved) requestAnimationFrame(function () { KW.reflow(); }); } // re-centre as the step changes size
+      function kzStart() { stopMed(); kzShow('kzAsk'); $('kzIn').value = ''; setTimeout(function () { $('kzIn').focus({ preventScroll: true }); }, 60); }
+      $('kzAsk').addEventListener('submit', function (e) {
+        e.preventDefault(); var v = $('kzIn').value.trim();
+        if (!v) { var f = $('kzAsk'); f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); $('kzIn').focus(); return; }
+        $('kzYou').textContent = v; kzShow('kzAns'); $('kzIn').blur(); chime(); $('kzCalm').focus({ preventScroll: true });
+      });
+      $('kzAgain').addEventListener('click', kzStart);
+
+      // soft synthesized sound: a warm pad that rises on the in-breath and falls on the out-breath, and a singing-bowl bell
+      function audio() { if (!sound) return null; try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); if (ac.state === 'suspended') ac.resume(); return ac; } catch (x) { return null; } }
+      function breathPad(up) {
+        var a = audio(); if (!a) return; var t = a.currentTime, d = HALF / 1000;
+        var out = a.createGain(), lp = a.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.setValueAtTime(up ? 500 : 900, t); lp.frequency.linearRampToValueAtTime(up ? 900 : 450, t + d);
+        out.gain.setValueAtTime(.0001, t); out.gain.linearRampToValueAtTime(.05, t + 1.6); out.gain.setValueAtTime(.05, t + d - 1.8); out.gain.linearRampToValueAtTime(.0001, t + d);
+        lp.connect(out).connect(a.destination);
+        [[1, 0], [1.5, 4], [2, -3]].forEach(function (p, i) {
+          var o = a.createOscillator(), g = a.createGain(); o.type = i ? 'sine' : 'triangle'; o.detune.value = p[1];
+          var f0 = 174.6 * p[0], f1 = f0 * (up ? 1.06 : 1 / 1.06); o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + d);
+          g.gain.value = [.6, .3, .18][i]; o.connect(g).connect(lp); o.start(t); o.stop(t + d + .05);
+        });
+      }
+      function bowl(f) {
+        var a = audio(); if (!a) return; var t = a.currentTime;
+        [[1, .09, 7], [2.76, .04, 4.5], [5.4, .02, 2.5], [1.004, .05, 7]].forEach(function (p) {
+          var o = a.createOscillator(), g = a.createGain(); o.type = 'sine'; o.frequency.value = f * p[0];
+          g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(p[1], t + .02); g.gain.exponentialRampToValueAtTime(.0001, t + p[2]);
+          o.connect(g).connect(a.destination); o.start(t); o.stop(t + p[2] + .05);
+        });
+      }
+      function sndLabel() { $('kzSnd').textContent = sound ? 'Sound on' : 'Sound off'; $('kzSnd').setAttribute('aria-pressed', String(sound)); }
+      $('kzSnd').addEventListener('click', function () { toggleSound(); sndLabel(); if (sound) bowl(392); });
+
+      // 1-minute meditation: 5 seconds in, 5 seconds out, six times; the gold ring fills as the minute passes
+      function setCue(txt) { var c = $('kzCue'); if (c.textContent === txt) return; c.classList.add('fade'); setTimeout(function () { c.textContent = txt; c.classList.remove('fade'); }, reduce ? 0 : 320); }
+      function medFrame(now) {
+        var el = now - medT0, left = Math.max(0, MED - el), ph = Math.floor(el / HALF), k = (el % HALF) / HALF;
+        var e = (1 - Math.cos(Math.PI * k)) / 2, sc = ph % 2 ? 1 - e : e; // eased 0..1, rising on in-breaths
+        if (!reduce) { $('kzCore').style.transform = 'scale(' + (.55 + .45 * sc) + ')'; $('kzHalo').style.transform = 'scale(' + (.6 + .55 * sc) + ')'; }
+        $('kzHalo').style.opacity = String(.35 + .65 * sc);
+        $('kzProg').style.strokeDashoffset = String(1 - Math.min(1, el / MED));
+        var s = Math.ceil(left / 1000); $('kzTime').textContent = s >= 60 ? '1:00' : '0:' + (s < 10 ? '0' : '') + s;
+        if (left <= 0) { finishMed(); return; }
+        if (ph !== medPhase) { medPhase = ph; setCue(ph % 2 ? 'Breathe out' : 'Breathe in'); breathPad(!(ph % 2)); }
+        medRaf = requestAnimationFrame(medFrame);
+      }
+      function startMed() {
+        kzShow('kzMed'); sndLabel(); medDone = false; medPhase = -1; $('kzStop').textContent = 'Stop'; $('kzCue').textContent = 'Breathe in';
+        bowl(392); cancelAnimationFrame(medRaf); medT0 = performance.now() + 900; // a short settle before the first breath
+        $('kzCore').style.transform = 'scale(.55)'; $('kzHalo').style.transform = 'scale(.6)'; $('kzProg').style.strokeDashoffset = '1'; $('kzTime').textContent = '1:00';
+        setTimeout(function () { if (!$('kzMed').hidden && !medDone) medRaf = requestAnimationFrame(medFrame); }, 900);
+        $('kzStop').focus({ preventScroll: true });
+      }
+      function finishMed() { medDone = true; cancelAnimationFrame(medRaf); setCue('Well done'); $('kzTime').textContent = '0:00'; $('kzStop').textContent = 'Back'; bowl(294); setTimeout(function () { bowl(392); }, 1400); }
+      function stopMed() { medDone = true; cancelAnimationFrame(medRaf); medRaf = 0; }
+      $('kzCalm').addEventListener('click', startMed);
+      $('kzStop').addEventListener('click', function () { stopMed(); kzShow('kzAns'); $('kzCalm').focus({ preventScroll: true }); });
+      function openKaizen() { setMode(null); if (!kzWin.classList.contains('show')) kzStart(); KW.open(kzWin); }
+      function closeKaizen() { stopMed(); KW.close(kzWin); }
       function esc(s) { return String(s).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); }
       function print(html) { var o = document.createElement('div'); o.innerHTML = html + '\n'; tout.appendChild(o); devBody.scrollTop = devBody.scrollHeight; }
       function leaveDev() { body.classList.remove('devmode'); KW.close($('dev')); }
@@ -692,8 +794,8 @@ Sections
       // Esc: leave whatever is on; if nothing is, put the remote away
       document.addEventListener('keydown', function (e) {
         if (e.key !== 'Escape') return;
-        var busy = body.classList.contains('drawing') || body.classList.contains('cracking') || body.classList.contains('zen') || body.classList.contains('devmode') || body.classList.contains('xray') || body.classList.contains('radar');
-        if (busy) { setMode(null); body.classList.remove('zen'); leaveDev(); KZ.xray(false); KZ.radar(false); if (isOpen()) rm.querySelector('.k').focus({ preventScroll: true }); else logoBtn.focus({ preventScroll: true }); }
+        var busy = body.classList.contains('drawing') || body.classList.contains('cracking') || body.classList.contains('zen') || body.classList.contains('devmode') || body.classList.contains('xray') || body.classList.contains('radar') || kzWin.classList.contains('show');
+        if (busy) { setMode(null); body.classList.remove('zen'); leaveDev(); closeKaizen(); KZ.xray(false); KZ.radar(false); if (isOpen()) rm.querySelector('.k').focus({ preventScroll: true }); else logoBtn.focus({ preventScroll: true }); }
         else if (isOpen() || mini.classList.contains('show')) { closeRemote(); logoBtn.focus({ preventScroll: true }); }
       });
     })();
