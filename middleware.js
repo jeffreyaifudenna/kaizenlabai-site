@@ -5,6 +5,7 @@
 //   bots:all / bots:d:<day>        requests per bot name (+ _total)
 //   bots:u:<day>:<name|_total>     estimated different visitors (HyperLogLog of a one-way hash; no addresses kept)
 //   bots:v:d:<day> / bots:x:d:<day> verified / unverified requests, for bots whose operators publish addresses
+//   bots:p:d:<day>                 which of our pages and files bots asked for
 //   tools:d:<day>                  developer tools and scripts (curl etc.), kept out of the bot counts
 import { botName, isTool, verify, visitorHash, redisConfig, redisPipeline, day } from './lib/bots.js';
 
@@ -24,7 +25,8 @@ async function count(request, name, tool) {
     return redisPipeline([['HINCRBY', k, '_total', 1], ['EXPIRE', k, TEN_DAYS]]);
   }
   const [hash, ok] = await Promise.all([visitorHash(ip, ua), verify(name, ip).catch(() => null)]);
-  const dayKey = 'bots:d:' + d, uName = 'bots:u:' + d + ':' + name, uAll = 'bots:u:' + d + ':_total';
+  const dayKey = 'bots:d:' + d, uName = 'bots:u:' + d + ':' + name, uAll = 'bots:u:' + d + ':_total', pKey = 'bots:p:d:' + d;
+  let path = '/'; try { path = new URL(request.url).pathname; } catch (e) {}
   const cmds = [
     ['SET', 'bots:since', d, 'NX'],
     ['HINCRBY', 'bots:all', name, 1],
@@ -34,6 +36,7 @@ async function count(request, name, tool) {
     ['EXPIRE', dayKey, TEN_DAYS],
     ['PFADD', uName, hash], ['EXPIRE', uName, TEN_DAYS],
     ['PFADD', uAll, hash], ['EXPIRE', uAll, TEN_DAYS],
+    ['HINCRBY', pKey, path, 1], ['EXPIRE', pKey, TEN_DAYS],
   ];
   if (ok !== null) { const k = (ok ? 'bots:v:d:' : 'bots:x:d:') + d; cmds.push(['HINCRBY', k, name, 1], ['EXPIRE', k, TEN_DAYS]); }
   return redisPipeline(cmds);

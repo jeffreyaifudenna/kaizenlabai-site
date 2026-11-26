@@ -3,6 +3,8 @@
 //   last7:   { total, visitors, bots: [{ name, count, visitors, verified, unverified }] },
 //   allTime: { total, bots: [{ name, count }] },
 //   tools7:  requests from developer tools and scripts (not counted as bots),
+//   daily:   [{ day, requests, visitors }] oldest first, last 7 days
+//   pages7:  [{ path, count }] which pages and files bots asked for, last 7 days
 //   verifiable: bot names whose operators publish their addresses }
 // visitors is an estimate (HyperLogLog), counted from the day it was added; verified/unverified only for verifiable bots.
 import { redisConfig, redisPipeline, day, VERIFY } from '../lib/bots.js';
@@ -35,6 +37,8 @@ export default async function handler() {
       ...days.map(d => ['HGETALL', 'bots:x:d:' + d]),
       ...days.map(d => ['HGET', 'tools:d:' + d, '_total']),
       ['PFCOUNT', ...days.map(d => 'bots:u:' + d + ':_total')],
+      ...days.map(d => ['PFCOUNT', 'bots:u:' + d + ':_total']),
+      ...days.map(d => ['HGETALL', 'bots:p:d:' + d]),
     ]);
     const since = res[0].result || null;
     const allTime = toList(toMap(res[1].result));
@@ -45,6 +49,9 @@ export default async function handler() {
     const tools7 = res.slice(23, 30).reduce((a, r) => a + (Number(r.result) || 0), 0);
     const last7 = toList(sum);
     last7.visitors = Number(res[30].result) || 0;
+    const daily = days.map((d, i) => ({ day: d, requests: toMap(res[2 + i].result)._total || 0, visitors: Number(res[31 + i].result) || 0 })).reverse();
+    const pg = {}; res.slice(38, 45).forEach(r => addInto(pg, toMap(r.result)));
+    const pages7 = Object.entries(pg).map(([path, count]) => ({ path, count })).sort((a, b) => b.count - a.count);
     // different visitors per bot (union of the 7 daily estimates)
     if (last7.bots.length) {
       const u = await redisPipeline(last7.bots.map(b => ['PFCOUNT', ...days.map(d => 'bots:u:' + d + ':' + b.name)]));
@@ -53,7 +60,7 @@ export default async function handler() {
         if (VERIFY[b.name]) { b.verified = ver[b.name] || 0; b.unverified = unv[b.name] || 0; }
       });
     }
-    return new Response(JSON.stringify({ since, updated: new Date().toISOString(), last7, allTime, tools7, verifiable: Object.keys(VERIFY) }), { status: 200, headers });
+    return new Response(JSON.stringify({ since, updated: new Date().toISOString(), last7, allTime, tools7, daily, pages7, verifiable: Object.keys(VERIFY) }), { status: 200, headers });
   } catch (e) {
     return new Response(JSON.stringify({ error: 'unavailable' }), { status: 503, headers });
   }

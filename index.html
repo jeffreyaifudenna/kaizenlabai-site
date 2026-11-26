@@ -57,7 +57,7 @@
   .logo-btn:active .logo { transform:scale(.97); }
   :focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
   /* A section is open: the hero compacts so the panel still fits on one screen */
-  body.secopen .tag { display:none; }
+  body.secopen .hero .tag { display:none; }
   body.secopen .logo { width:min(200px, 34vw, 13vh); }
   body.secopen h1 { font-size:clamp(2.25rem, min(10vw, 8vh), 5.5rem); margin-top:1rem; }
   body.secopen nav { margin-top:clamp(.9rem, 2.5vh, 1.5rem); }
@@ -71,6 +71,26 @@
   .panel .tops { color:#f2ead8; } .panel .tops span { white-space:nowrap; }
   .panel .src { font-size:.92rem; color:#a8996f; }
   .panel button.pbtn { background:none; font:inherit; font-size:1rem; cursor:pointer; }
+  /* Bots tab: the full set of bot stats, scrolling inside the panel so the page stays one screen */
+  .bp { overflow:auto; margin:.6rem -8px 0; padding:0 8px; text-align:left; overscroll-behavior:contain; }
+  .bp-tot { display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px; }
+  .bp-tot div { border:1px solid #3a3222; border-radius:12px; padding:.6rem .4rem; text-align:center; }
+  .bp-tot b { display:block; color:var(--gold); font-size:1.7rem; line-height:1.15; font-variant-numeric:tabular-nums; }
+  .bp-tot span { color:#a8996f; font-size:.82rem; line-height:1.25; display:block; }
+  .bp h3 { color:var(--tan); font-size:.82rem; letter-spacing:.12em; text-transform:uppercase; margin:1.1rem 0 .4rem; }
+  .bp-trend { display:flex; align-items:flex-end; gap:6px; height:96px; padding-top:4px; border-bottom:1px solid #3a3222; }
+  .bp-trend div { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; }
+  .bp-trend i { display:block; width:100%; max-width:36px; min-height:2px; border-radius:4px 4px 0 0; background:linear-gradient(#f6dc95, #b8892c); }
+  .bp-trend em { font-style:normal; color:#f2ead8; font-size:.8rem; font-variant-numeric:tabular-nums; margin-bottom:2px; }
+  .bp-days { display:flex; gap:6px; } .bp-days span { flex:1; text-align:center; color:#a8996f; font-size:.74rem; padding-top:3px; }
+  .bp table { width:100%; border-collapse:collapse; font-size:1rem; }
+  .bp th { color:#a8996f; font-size:.74rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; text-align:left; padding:.25rem .2rem; border-bottom:1px solid #3a3222; }
+  .bp td { color:#f2ead8; padding:.42rem .2rem; border-bottom:1px solid #1d1b16; overflow-wrap:anywhere; }
+  .bp .n { text-align:right; color:var(--gold); font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .bp .vt { display:inline-block; margin-left:.35rem; padding:0 .35rem; border-radius:6px; font-size:.72rem; vertical-align:1px; white-space:nowrap; }
+  .bp .vt.ok { color:#9fd18b; border:1px solid #3f5a33; } .bp .vt.warn { color:#e8a37a; border:1px solid #6a3f28; }
+  .bp .note { color:#a8996f; font-size:.9rem; line-height:1.5; margin-top:.7rem; }
+  .bp-btns { margin-top:.4rem; }
   .panel .soon { display:inline-block; margin-top:1rem; padding:.35rem .9rem; border:1px solid #4a4232; border-radius:999px; color:#a8996f; font-size:.85rem; letter-spacing:.08em; text-transform:uppercase; }
   .panel .pbtn { display:inline-flex; align-items:center; margin-top:1rem; padding:0 1.4rem; border:1px solid var(--gold); border-radius:999px; color:var(--gold); text-decoration:none; font-size:1rem; min-height:48px; }
   .panel .pbtn:focus-visible { background:var(--gold); color:#050505; }
@@ -1192,16 +1212,40 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
     kzBots.then(function (d) {
       if (!d || !d.since || !d.last7) return;
       var f = function (n) { return Number(n).toLocaleString('en-US'); }, e = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
-      var since = new Date(d.since + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-      var top = (d.last7.bots || []).slice(0, 3).map(function (b) { return '<span>' + e(b.name) + ' ' + f(b.count) + '</span>'; }).join(' &middot; ');
-      var ver = (d.last7.bots || []).filter(function (b) { return b.verified != null && (b.verified || b.unverified); }).map(function (b) {
-        return '<span>' + e(b.name) + ' ' + (b.unverified ? f(b.verified) + ' of ' + f(b.verified + b.unverified) + ' verified' : 'verified') + '</span>';
-      }).join(' &middot; ');
-      window.kzBotsHtml = '<h2>Bots</h2><p>Bot requests, last 7 days<b class="big">' + f(d.last7.total) + '</b>' +
-        (d.last7.visitors ? 'from about ' + f(d.last7.visitors) + ' different visitors' : '') + '</p>' +
-        (top ? '<p class="tops">' + top + '</p>' : '') + (ver ? '<p class="tops">' + ver + '</p>' : '') +
-        '<p class="src">Counting since ' + e(since) + ' (UTC). Source: our own request log, page requests whose browser name says it is a bot.' + (d.tools7 ? ' ' + f(d.tools7) + ' requests from developer tools (curl etc.) are not counted.' : '') + '</p>' +
-        '<a class="pbtn" href="/bots/">Full list</a> <button type="button" class="pbtn" data-radar>Bot radar</button>';
+      var date = function (iso, o) { return new Date(iso + 'T00:00:00Z').toLocaleDateString('en-US', Object.assign({ timeZone: 'UTC' }, o)); };
+      var since = date(d.since, { month: 'short', day: 'numeric', year: 'numeric' });
+      var h = '<h2>Bots</h2><div class="bp" tabindex="0" aria-label="Bot stats">';
+      // totals
+      h += '<div class="bp-tot"><div><b>' + f(d.last7.total) + '</b><span>requests, last 7 days</span></div>' +
+        '<div><b>' + (d.last7.visitors != null ? f(d.last7.visitors) : '&ndash;') + '</b><span>different visitors (estimate)</span></div>' +
+        '<div><b>' + f(d.allTime.total) + '</b><span>requests since ' + e(since) + '</span></div></div>';
+      // daily trend
+      if (d.daily && d.daily.length) {
+        var mx = Math.max.apply(null, d.daily.map(function (x) { return x.requests; }).concat([1]));
+        h += '<h3>Each day (UTC)</h3><div class="bp-trend" role="img" aria-label="Bot requests per day: ' + d.daily.map(function (x) { return date(x.day, { month: 'short', day: 'numeric' }) + ' ' + x.requests; }).join(', ') + '">' +
+          d.daily.map(function (x) { return '<div><em>' + (x.requests ? f(x.requests) : '') + '</em><i style="height:' + Math.round(x.requests / mx * 70) + 'px"></i></div>'; }).join('') +
+          '</div><div class="bp-days" aria-hidden="true">' + d.daily.map(function (x) { return '<span>' + date(x.day, { weekday: 'short' }) + '</span>'; }).join('') + '</div>';
+      }
+      // every bot
+      h += '<h3>Bots, last 7 days</h3>';
+      if (d.last7.bots.length) {
+        h += '<table><thead><tr><th>Bot</th><th class="n">Requests</th><th class="n">Visitors</th></tr></thead><tbody>' + d.last7.bots.map(function (b) {
+          var t = b.verified != null && (b.verified || b.unverified) ? (b.unverified ? '<span class="vt warn" title="Used this name from an address its operator does not publish">' + f(b.unverified) + ' unverified</span>' : '<span class="vt ok" title="Came from addresses its operator publishes">verified</span>') : '';
+          return '<tr><td>' + e(b.name) + t + '</td><td class="n">' + f(b.count) + '</td><td class="n">' + (b.visitors ? f(b.visitors) : '&ndash;') + '</td></tr>';
+        }).join('') + '</tbody></table>';
+      } else h += '<p class="note">None in the last 7 days.</p>';
+      // pages they read
+      if (d.pages7 && d.pages7.length) {
+        h += '<h3>What they read, last 7 days</h3><table><tbody>' + d.pages7.map(function (x) { return '<tr><td>' + e(x.path) + '</td><td class="n">' + f(x.count) + '</td></tr>'; }).join('') + '</tbody></table>';
+      }
+      // all time
+      if (d.allTime.bots.length) {
+        h += '<h3>All time, since ' + e(since) + '</h3><table><tbody>' + d.allTime.bots.map(function (b) { return '<tr><td>' + e(b.name) + '</td><td class="n">' + f(b.count) + '</td></tr>'; }).join('') + '</tbody></table>';
+      }
+      h += '<p class="note">' + (d.tools7 ? 'Not counted as bots: ' + f(d.tools7) + ' requests from developer tools (curl and the like) in the last 7 days. ' : '') +
+        'How we count: our own request log. A visit counts when its browser name says it is a bot. Visitors is an estimate made from a one-way scramble, so no addresses are kept. Googlebot, Bingbot, GPTBot, OAI-SearchBot and ChatGPT-User are checked against the addresses Google, Microsoft and OpenAI publish. Bots that pretend to be a normal browser are not counted.</p></div>' +
+        '<div class="bp-btns"><a class="pbtn" href="/bots/">Full page</a> <button type="button" class="pbtn" data-radar>Bot radar</button></div>';
+      window.kzBotsHtml = h;
     });
   </script>
   <script>
@@ -1213,6 +1257,13 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
         'open-source': '<h2>Open Source</h2><p>Code from the lab, open for anyone to use and build on.</p><a class="pbtn" href="https://github.com/jeffreyaifudenna/kaizenlabai-site">This website&rsquo;s code</a> <a class="pbtn" href="https://github.com/jeffreyaifudenna">All projects on GitHub</a>'
       };
       var panel = document.getElementById('panel'), inner = document.getElementById('panelIn'), links = document.querySelectorAll('nav a[data-sec]'), cur = null;
+      // the Bots stats scroll inside the panel, sized so the whole page still fits one screen
+      function fitBp() {
+        var bp = inner.querySelector('.bp'); if (!bp) return;
+        bp.style.maxHeight = '0px';
+        var heroEl = document.querySelector('.hero'), rest = heroEl.offsetHeight - panel.offsetHeight + inner.offsetHeight + 18; // page height with the stats folded away
+        bp.style.maxHeight = Math.max(160, Math.min(innerHeight - 40 - rest, 560)) + 'px';
+      }
       function setH(open) { panel.style.height = open ? (inner.offsetHeight + 18) + 'px' : '0px'; }
       var reduceMo = window.matchMedia('(prefers-reduced-motion: reduce)').matches, EASE = 'cubic-bezier(.22,1,.36,1)', MS = 480;
       var hero = [document.querySelector('.logo-btn .logo'), document.querySelector('.hero h1'), document.querySelector('.hero nav')], tag = document.querySelector('.hero .tag');
@@ -1224,7 +1275,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
         var first = rects(), wasOpen = document.body.classList.contains('secopen'), tagR = tag.getBoundingClientRect();
         // jump straight to the end layout...
         document.body.classList.toggle('secopen', !!id); panel.classList.toggle('wide', id === 'learning'); panel.classList.remove('open');
-        if (id) { cur = id; inner.innerHTML = id === 'bots' ? window.kzBotsHtml : S[id]; inner.classList.toggle('media', id === 'learning'); setH(true); history.replaceState(null, '', '#' + id); }
+        if (id) { cur = id; inner.innerHTML = id === 'bots' ? window.kzBotsHtml : S[id]; inner.classList.toggle('media', id === 'learning'); fitBp(); setH(true); history.replaceState(null, '', '#' + id); }
         else { cur = null; setH(false); history.replaceState(null, '', location.pathname); }
         var last = rects();
         void panel.offsetWidth; if (id) panel.classList.add('open'); // the panel content fades and rises in
@@ -1265,7 +1316,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
         f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true; f.referrerPolicy = 'strict-origin-when-cross-origin';
         var box = document.createElement('div'); box.className = t.className; box.appendChild(f); t.replaceWith(box);
       });
-      window.addEventListener('resize', function () { if (cur) setH(true); });
+      window.addEventListener('resize', function () { if (cur) { fitBp(); setH(true); } });
       window.addEventListener('hashchange', function () { var k = location.hash.slice(1); if (S[k] && k !== cur) show(k, true); });
       var h = location.hash.slice(1); if (S[h]) show(h, false);
     })();

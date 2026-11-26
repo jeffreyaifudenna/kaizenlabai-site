@@ -55,6 +55,8 @@
   <div class="cols" id="cols" hidden>
     <div><h2>Last 7 days</h2><table id="list7"><thead><tr><th>Bot</th><th class="n">Requests</th><th class="n">Visitors</th></tr></thead></table></div>
     <div><h2>All time</h2><table id="listAll"></table></div>
+    <div id="dayBox" hidden><h2>Each day (UTC)</h2><table id="listDay"></table></div>
+    <div id="pageBox" hidden><h2>What they read, last 7 days</h2><table id="listPages"></table></div>
   </div>
   <p class="empty" id="status">Loading counts&hellip;</p>
   <p class="tools" id="tools" hidden></p>
@@ -89,6 +91,8 @@
         document.getElementById('sinceLbl').textContent = 'since ' + since;
         fill(document.getElementById('list7'), d.last7.bots, true);
         fill(document.getElementById('listAll'), d.allTime.bots);
+        if (d.daily && d.daily.length) { fill(document.getElementById('listDay'), d.daily.slice().reverse().map(function (x) { return { name: new Date(x.day + 'T00:00:00Z').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' }), count: x.requests }; })); document.getElementById('dayBox').hidden = false; }
+        if (d.pages7 && d.pages7.length) { fill(document.getElementById('listPages'), d.pages7.map(function (x) { return { name: x.path, count: x.count }; })); document.getElementById('pageBox').hidden = false; }
         document.getElementById('totals').hidden = false; document.getElementById('cols').hidden = false;
         var upd = new Date(d.updated).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
         status.textContent = 'Counting since ' + since + ' (UTC). Updated ' + upd + '.';
