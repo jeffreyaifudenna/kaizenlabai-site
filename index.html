@@ -30,6 +30,9 @@
 </script>
 <link rel="icon" type="image/png" href="favicon.png">
 <style>
+  /* Fonts: Cinzel (titles) and Marcellus (labels), self-hosted from /fonts, SIL Open Font License 1.1 (see /fonts/OFL-*.txt) */
+  @font-face { font-family:"Cinzel"; src:url("/fonts/cinzel-latin.woff2") format("woff2"); font-weight:400 900; font-style:normal; font-display:swap; unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family:"Marcellus"; src:url("/fonts/marcellus-latin.woff2") format("woff2"); font-weight:400; font-style:normal; font-display:swap; unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
   :root { --gold:#e5b84c; --tan:#d9c08a; }
   * { margin:0; box-sizing:border-box; }
   html { height:100%; } body { min-height:100%; }
@@ -97,7 +100,7 @@
 
   /* Lab remote: small, draggable, opens from the logo, minimizes to a round icon. "Gilded" look: gold-edged frame and keys, serif type.
      --rmf is the remote's typeface (one place to swap it). */
-  .rm { --rmf:Georgia, "Times New Roman", serif; position:fixed; left:0; top:0; width:min(480px, calc(100vw - 16px)); padding:18px 22px 22px; border-radius:32px; z-index:40; text-align:left;
+  .rm { --rmf:Marcellus, Georgia, serif; --rmt:Cinzel, Georgia, serif; position:fixed; left:0; top:0; width:min(480px, calc(100vw - 16px)); padding:18px 22px 22px; border-radius:32px; z-index:40; text-align:left;
         background:radial-gradient(120% 70% at 50% 0%, #221a0c, #0a0806 70%); border:0; box-shadow:0 24px 60px rgba(0,0,0,.9), 0 0 0 1px rgba(229,184,76,.2);
         cursor:grab; user-select:none; -webkit-user-select:none; touch-action:none; visibility:hidden; opacity:0; }
   .rm::before { content:""; position:absolute; inset:0; border-radius:inherit; padding:1.5px; background:linear-gradient(160deg,#f6dc95,#8a6a22 35%,#e5b84c 60%,#6b5118); -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; pointer-events:none; }
@@ -109,7 +112,7 @@
   .rm-btn:focus-visible { color:var(--gold); border-color:var(--gold); }
   @media (hover:hover) { .rm-btn:hover { color:var(--gold); border-color:var(--gold); } }
   .slot { width:40px; height:auto; mix-blend-mode:lighten; -webkit-user-drag:none; }
-  .rm-t { flex:1; text-align:center; font:700 1.25rem var(--rmf); letter-spacing:.22em; background:linear-gradient(180deg,#fbe7b0,#c9962f); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .rm-t { flex:1; text-align:center; font:700 1.2rem var(--rmt); letter-spacing:.22em; background:linear-gradient(180deg,#fbe7b0,#c9962f); -webkit-background-clip:text; background-clip:text; color:transparent; }
   .led { width:8px; height:8px; margin-right:6px; border-radius:50%; background:#3a2f14; transition:background .15s, box-shadow .15s; }
   .led.on { background:var(--gold); box-shadow:0 0 8px var(--gold); }
   .screen { margin:12px 0 16px; background:linear-gradient(180deg,#0d0a05,#050403); border:1px solid #4a3a18; box-shadow:inset 0 2px 8px rgba(0,0,0,.8); border-radius:14px; padding:10px 14px; font:1.24rem/1.75 var(--rmf); letter-spacing:.04em; color:#d9c08a; font-variant-numeric:tabular-nums; }
@@ -118,7 +121,7 @@
   .meter { height:6px; border-radius:3px; background:#1d1a12; margin-top:3px; overflow:hidden; }
   .meter i { display:block; height:100%; width:0; background:linear-gradient(90deg,#8a6a22,#f6dc95); }
   .keys { display:flex; flex-wrap:wrap; justify-content:center; gap:20px 6px; }
-  .k { flex:0 0 calc(25% - 5px); display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:0; color:#f2ead8; font:700 1.25rem var(--rmf); letter-spacing:.02em; cursor:pointer; padding:0; white-space:nowrap; }
+  .k { flex:0 0 calc(25% - 5px); display:flex; flex-direction:column; align-items:center; gap:6px; background:none; border:0; color:#f2ead8; font:400 1.25rem var(--rmf); letter-spacing:.03em; cursor:pointer; padding:0; white-space:nowrap; }
   .k i { width:86px; height:86px; border-radius:50%; display:grid; place-items:center; font-style:normal; font-size:2.15rem; color:#f6dc95; background:radial-gradient(circle at 40% 30%, #2a2112, #0b0906 70%); border:0; box-shadow:0 0 0 2px #0b0906, 0 0 0 3.5px #b8892c, 0 6px 14px rgba(0,0,0,.7); text-shadow:0 1px 0 #000; transition:box-shadow .15s; }
   .k i.mono { font-size:1.6rem; }
   @media (max-width:460px) { .rm { padding:14px 12px 16px; } .k { font-size:1.1rem; } .k i { width:74px; height:74px; font-size:1.85rem; } .k i.mono { font-size:1.4rem; } }
@@ -128,7 +131,7 @@
   .k:active i { transform:translateY(1px); }
   .k.on i { background:radial-gradient(circle at 40% 30%, #f6dc95, #c9962f 75%); color:#1a1205; text-shadow:none; }
   .k.soon i { border-style:dashed; }
-  .rm-reset { display:block; width:100%; min-height:54px; margin-top:22px; border-radius:999px; border:0; background:linear-gradient(180deg,#e9c463,#b8892c); color:#1a1205; font:700 1.3rem var(--rmf); letter-spacing:.14em; box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 4px 12px rgba(0,0,0,.6); cursor:pointer; }
+  .rm-reset { display:block; width:100%; min-height:54px; margin-top:22px; border-radius:999px; border:0; background:linear-gradient(180deg,#e9c463,#b8892c); color:#1a1205; font:700 1.25rem var(--rmt); letter-spacing:.14em; box-shadow:inset 0 1px 0 rgba(255,255,255,.35), 0 4px 12px rgba(0,0,0,.6); cursor:pointer; }
   .rm-reset:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
   @media (hover:hover) { .rm-reset:hover { filter:brightness(1.08); } }
   .rm-reset:active { transform:translateY(1px); }
@@ -373,11 +376,14 @@
 AI experiments. A little better every day.
 
 Sections
-  - <a href="/learning/">Learning</a>      Educational AI videos on YouTube
-  - <a href="/agents/">Agents</a>        AI workers (coming soon)
-  - <a href="/automations/">Automations</a>   For small businesses (coming soon)
-  - <a href="/open-source/">Open Source</a>   github.com/jeffreyaifudenna
-</div><div class="term"><div class="tout" id="tout">KaizenLabAI terminal. Type "help" to see commands. Esc or "exit" to leave.
+  Learning      Educational AI videos on YouTube
+                Video: <a href="https://www.youtube.com/watch?v=KcCbkGVCFFU">21 Layers from the Edge of the Universe</a>
+  Agents        AI workers (coming soon)
+  Automations   For small businesses (coming soon)
+  Open Source   <a href="https://github.com/jeffreyaifudenna">github.com/jeffreyaifudenna</a>
+
+Commands
+<div class="tout" id="devHelp"></div></div><div class="term"><div class="tout" id="tout">Type a command below. Esc or "exit" to leave.
 </div><form id="tf" autocomplete="off"><label for="tin">kaizen@lab:~$</label><input id="tin" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="go"></form></div></div>
   </section>
 
@@ -410,7 +416,7 @@ Sections
       <div class="kz-row"><button type="button" class="kz-go alt" data-kz="menu">All steps</button><button type="button" class="kz-go" data-kz="kzEnd">Finish</button></div></div>
     <div id="kzEnd" class="kz-step" hidden><div class="kz-mark" aria-hidden="true">&#25913;&#21892;</div><h3 class="kz-h">One loop done</h3><p class="kz-sub">A little better than before.</p>
       <dl class="kz-sum" id="kzSum"></dl>
-      <div class="kz-row"><button type="button" class="kz-go" id="kzLoop">Start a new loop</button><button type="button" class="kz-go alt" id="kzCopy">Copy summary</button></div><button type="button" class="kz-link" id="kzNew">New goal</button></div>
+      <div class="kz-row"><button type="button" class="kz-go" id="kzLoop">Start a new loop</button><button type="button" class="kz-go alt" id="kzCard">Download card</button><button type="button" class="kz-go alt" id="kzCopy">Copy summary</button></div><button type="button" class="kz-link" id="kzNew">New goal</button></div>
   </div></section>
   <section id="radar" class="kwin" role="dialog" aria-label="Bot radar"><div class="kw-bar"><span class="kw-t">BOT RADAR</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b" data-kw="close" id="radarX" aria-label="Close bot radar">&times;</button></div><div class="kw-body"><canvas id="radarC" role="img" aria-label="Radar of bots that visited in the last 7 days"></canvas><p class="rnote" id="radarNote"></p></div></section>
   <div class="toast" id="toast" role="status"></div>
@@ -853,6 +859,59 @@ Sections
         kzRows().forEach(function (x) { var w = document.createElement('div'), t = document.createElement('dt'), d = document.createElement('dd'); t.textContent = x[0]; d.textContent = x[1]; w.appendChild(t); w.appendChild(d); dl.appendChild(w); });
        
       }
+
+      // Kaizen card: the summary drawn as a gold-on-dark image, made in the browser and saved straight to the device (nothing is sent)
+      function kzWrap(c, text, maxW) {
+        var words = String(text).split(/\s+/), lines = [], line = '';
+        words.forEach(function (w) { var t = line ? line + ' ' + w : w; if (c.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; });
+        if (line) lines.push(line); return lines;
+      }
+      function kzCardDraw(logo) {
+        var W = 1080, H = 1350, cv = document.createElement('canvas'), c = cv.getContext('2d'); cv.width = W; cv.height = H;
+        var bg = c.createRadialGradient(W / 2, 0, 60, W / 2, 0, H); bg.addColorStop(0, '#2a200e'); bg.addColorStop(.55, '#0c0a06'); bg.addColorStop(1, '#050403');
+        c.fillStyle = bg; c.fillRect(0, 0, W, H);
+        var gold = c.createLinearGradient(0, 0, W, H); gold.addColorStop(0, '#f6dc95'); gold.addColorStop(.35, '#8a6a22'); gold.addColorStop(.6, '#e5b84c'); gold.addColorStop(1, '#6b5118');
+        function rr(x, y, w, h, rad) { c.beginPath(); c.moveTo(x + rad, y); c.arcTo(x + w, y, x + w, y + h, rad); c.arcTo(x + w, y + h, x, y + h, rad); c.arcTo(x, y + h, x, y, rad); c.arcTo(x, y, x + w, y, rad); c.closePath(); }
+        c.strokeStyle = gold; c.lineWidth = 4; rr(36, 36, W - 72, H - 72, 44); c.stroke();
+        c.strokeStyle = 'rgba(229,184,76,.35)'; c.lineWidth = 1.5; rr(56, 56, W - 112, H - 112, 32); c.stroke();
+        c.textAlign = 'center'; c.textBaseline = 'alphabetic';
+        var y = 150;
+        if (logo) { var lh = 120, lw = logo.naturalWidth / logo.naturalHeight * lh; c.globalCompositeOperation = 'lighten'; c.drawImage(logo, (W - lw) / 2, y - 60, lw, lh); c.globalCompositeOperation = 'source-over'; y += 110; }
+        var tg = c.createLinearGradient(0, y - 60, 0, y + 10); tg.addColorStop(0, '#fbe7b0'); tg.addColorStop(1, '#c9962f');
+        c.fillStyle = tg; c.font = '700 64px Cinzel, Georgia, serif'; c.fillText('My Kaizen Loop', W / 2, y + 30); y += 70;
+        c.fillStyle = '#d9c08a'; c.font = '30px Marcellus, Georgia, serif'; c.fillText('A little better than before.', W / 2, y + 20); y += 70;
+        c.strokeStyle = 'rgba(229,184,76,.4)'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(160, y); c.lineTo(W - 160, y); c.stroke(); y += 40;
+        // rows: shrink the text if the summary is long, so it always fits the card
+        var rows = kzRows(), size = 44, maxW = W - 240, bottom = H - 150, plan, hgt = 0;
+        for (; size >= 26; size -= 2) {
+          c.font = size + 'px Marcellus, Georgia, serif'; hgt = 0;
+          plan = rows.map(function (x) { var ls = kzWrap(c, x[1], maxW).slice(0, 4); hgt += 30 + ls.length * size * 1.3 + 26; return ls; });
+          if (y + hgt <= bottom) break;
+        }
+        var gap = Math.min(40, Math.max(0, (bottom - y - hgt) / Math.max(1, rows.length))); y += gap / 2;
+        c.textAlign = 'left';
+        rows.forEach(function (x, i) {
+          c.fillStyle = '#b8892c'; c.font = '700 22px Cinzel, Georgia, serif'; c.fillText(x[0].toUpperCase().split('').join(String.fromCharCode(8202)), 120, y + 22); y += 30;
+          c.fillStyle = '#f2ead8'; c.font = size + 'px Marcellus, Georgia, serif';
+          plan[i].forEach(function (l) { y += size * 1.3; c.fillText(l, 120, y - size * .3); });
+          y += 26 + gap;
+        });
+        c.textAlign = 'center'; c.fillStyle = '#a8996f'; c.font = '700 26px Cinzel, Georgia, serif'; c.fillText('kaizenlabai.com', W / 2, H - 92);
+        return cv;
+      }
+      $('kzCard').addEventListener('click', function () {
+        var b = $('kzCard'); b.disabled = true;
+        var fonts = document.fonts ? Promise.all([document.fonts.load('700 64px Cinzel'), document.fonts.load('40px Marcellus')]).catch(function () {}) : Promise.resolve();
+        var logo = new Promise(function (ok) { var im = new Image(); im.onload = function () { ok(im); }; im.onerror = function () { ok(null); }; im.src = 'logo.webp'; });
+        Promise.all([fonts, logo]).then(function (v) {
+          var cv = kzCardDraw(v[1]);
+          cv.toBlob(function (blob) {
+            b.disabled = false; if (!blob) { say('Could not make the card'); return; }
+            var a = document.createElement('a'), u = URL.createObjectURL(blob); a.href = u; a.download = 'my-kaizen-loop.png'; body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(u); }, 4000); say('Card saved');
+          }, 'image/png');
+        });
+      });
       $('kzCopy').addEventListener('click', function () {
         var txt = 'My kaizen loop\n' + kzRows().map(function (x) { return x[0] + ': ' + x[1]; }).join('\n');
         if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function () { say('Copied'); }, function () { say('Could not copy'); }); else say('Could not copy');
@@ -897,6 +956,7 @@ Sections
         clear: function () { tout.innerHTML = ''; return null; },
         exit: function () { leaveDev(); logoBtn.focus({ preventScroll: true }); return ''; }
       };
+      $('devHelp').innerHTML = CMD.help().replace(/^/gm, '  ');
       $('tf').addEventListener('submit', function (e) {
         e.preventDefault(); var v = tin.value.trim().toLowerCase(); tin.value = ''; if (!v) return;
         print('<b>$</b> ' + esc(v));
