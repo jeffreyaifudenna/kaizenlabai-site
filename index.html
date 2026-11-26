@@ -51,20 +51,19 @@
   .tag { color:var(--tan); font-size:clamp(1.1rem, min(4.6vw, 4vh), 2.4rem); margin-top:1rem; }
   .fade { transition:opacity 1.2s; }
   .logo-btn { background:none; border:0; padding:0; cursor:pointer; border-radius:20px; position:relative; -webkit-tap-highlight-color:transparent; }
-  .logo-btn .logo { transition:transform .25s ease, filter .25s ease, width .45s cubic-bezier(.22,1,.36,1); }
+  .logo-btn .logo { transition:transform .25s ease, filter .25s ease; }
   .logo-btn:hover .logo, .logo-btn:focus-visible .logo { filter:drop-shadow(0 0 18px rgba(229,184,76,.35)); transform:scale(1.03); }
   .logo-btn:focus-visible { outline:2px solid var(--gold); outline-offset:6px; }
   .logo-btn:active .logo { transform:scale(.97); }
   :focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
   /* A section is open: the hero compacts so the panel still fits on one screen */
-  h1, .tag, nav { transition:width .45s cubic-bezier(.22,1,.36,1), font-size .45s cubic-bezier(.22,1,.36,1), margin .45s cubic-bezier(.22,1,.36,1); }
+  body.secopen .tag { display:none; }
   body.secopen .logo { width:min(200px, 34vw, 13vh); }
   body.secopen h1 { font-size:clamp(2.25rem, min(10vw, 8vh), 5.5rem); margin-top:1rem; }
-  body.secopen .tag { margin-top:.5rem; }
   body.secopen nav { margin-top:clamp(.9rem, 2.5vh, 1.5rem); }
-  .panel { width:min(760px, 100%); overflow:hidden; height:0; transition:height .45s cubic-bezier(.22,1,.36,1); }
-  .panel.wide { width:min(760px, 100%, calc((100dvh - 510px) * 1.78)); min-width:min(320px, 100%); }
-  .panel-in { margin-top:18px; padding:22px 24px; border:1px solid var(--gold); border-radius:16px; background:#0d0d0b; text-align:center; opacity:0; transform:translateY(-6px); transition:opacity .3s ease .1s, transform .3s ease .1s; }
+  .panel { width:min(760px, 100%); overflow:hidden; height:0; }
+  .panel.wide { width:min(760px, 100%, calc((100dvh - 470px) * 1.78)); min-width:min(320px, 100%); }
+  .panel-in { margin-top:18px; padding:22px 24px; border:1px solid var(--gold); border-radius:16px; background:#0d0d0b; text-align:center; opacity:0; transform:translateY(8px); transition:opacity .35s ease .12s, transform .45s cubic-bezier(.22,1,.36,1) .12s; }
   .panel.open .panel-in { opacity:1; transform:none; }
   .panel h2 { color:var(--gold); font-size:1.6rem; }
   .panel p { color:var(--tan); font-size:1.1rem; line-height:1.5; margin:.5rem auto 0; max-width:34em; }
@@ -1195,15 +1194,39 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
         'open-source': '<h2>Open Source</h2><p>Code from the lab, open for anyone to use and build on.</p><a class="pbtn" href="https://github.com/jeffreyaifudenna/kaizenlabai-site">This website&rsquo;s code</a> <a class="pbtn" href="https://github.com/jeffreyaifudenna">All projects on GitHub</a>'
       };
       var panel = document.getElementById('panel'), inner = document.getElementById('panelIn'), links = document.querySelectorAll('nav a[data-sec]'), cur = null;
-      function setH(open) { panel.style.height = open ? (inner.offsetHeight + 18) + 'px' : '0px'; panel.classList.toggle('open', open); }
+      function setH(open) { panel.style.height = open ? (inner.offsetHeight + 18) + 'px' : '0px'; }
+      var reduceMo = window.matchMedia('(prefers-reduced-motion: reduce)').matches, EASE = 'cubic-bezier(.22,1,.36,1)', MS = 480;
+      var hero = [document.querySelector('.logo-btn .logo'), document.querySelector('.hero h1'), document.querySelector('.hero nav')], tag = document.querySelector('.hero .tag');
+      function rects() { return hero.map(function (el) { return el.getBoundingClientRect(); }); }
       function show(id, scroll) {
         document.dispatchEvent(new Event('kz:sec'));
         Array.prototype.forEach.call(links, function (x) { var on = x.dataset.sec === id; x.classList.toggle('active', on); x.setAttribute('aria-expanded', String(on)); });
-        document.body.classList.toggle('secopen', !!id); panel.classList.toggle('wide', id === 'learning');
-        if (!id) { cur = null; clearTimeout(show.t); clearTimeout(show.s); setH(false); history.replaceState(null, '', location.pathname); return; }
-        cur = id; inner.innerHTML = id === 'bots' ? window.kzBotsHtml : S[id]; inner.classList.toggle('media', id === 'learning'); panel.classList.remove('open'); clearTimeout(show.t); clearTimeout(show.s);
-        show.t = setTimeout(function () { setH(true); if (scroll) show.s = setTimeout(function () { panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 460); }, 20);
-        history.replaceState(null, '', '#' + id);
+        clearTimeout(show.s);
+        var first = rects(), wasOpen = document.body.classList.contains('secopen'), tagR = tag.getBoundingClientRect();
+        // jump straight to the end layout...
+        document.body.classList.toggle('secopen', !!id); panel.classList.toggle('wide', id === 'learning'); panel.classList.remove('open');
+        if (id) { cur = id; inner.innerHTML = id === 'bots' ? window.kzBotsHtml : S[id]; inner.classList.toggle('media', id === 'learning'); setH(true); history.replaceState(null, '', '#' + id); }
+        else { cur = null; setH(false); history.replaceState(null, '', location.pathname); }
+        var last = rects();
+        void panel.offsetWidth; if (id) panel.classList.add('open'); // the panel content fades and rises in
+        if (reduceMo || !document.body.animate) return;
+        // ...then glide each part from where it was to where it is now, in one eased move
+        hero.forEach(function (el, i) {
+          var a = first[i], b = last[i]; if (!b.width) return;
+          var sc = a.width / b.width, dx = (a.left + a.width / 2) - (b.left + b.width / 2), dy = a.top - b.top;
+          if (Math.abs(dx) < .5 && Math.abs(dy) < .5 && Math.abs(sc - 1) < .005) return;
+          el.animate([{ transformOrigin: '50% 0', transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sc + ')' }, { transformOrigin: '50% 0', transform: 'none' }], { duration: MS, easing: EASE });
+        });
+        // the tagline fades out where it stood (opening) or fades back in (closing)
+        if (id && !wasOpen && tagR.height) {
+          var g = tag.cloneNode(true); g.removeAttribute('class'); g.setAttribute('aria-hidden', 'true');
+          g.style.cssText = 'position:fixed;margin:0;pointer-events:none;z-index:1;left:' + tagR.left + 'px;top:' + tagR.top + 'px;width:' + tagR.width + 'px;color:var(--tan);font-size:' + getComputedStyle(tag).fontSize + ';text-align:center';
+          document.body.appendChild(g);
+          g.animate([{ opacity: 1 }, { opacity: 0, transform: 'translateY(' + (last[1].bottom - tagR.top) * .5 + 'px) scale(.9)' }], { duration: MS * .55, easing: 'ease-out', fill: 'forwards' }).onfinish = function () { g.remove(); };
+        } else if (!id && wasOpen) {
+          tag.animate([{ opacity: 0, transform: 'translateY(-6px)' }, { opacity: 1, transform: 'none' }], { duration: MS, delay: MS * .35, easing: EASE, fill: 'backwards' });
+        }
+        if (id && scroll) show.s = setTimeout(function () { panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, MS);
       }
       function openSection(e) {
         if (e.ctrlKey || e.metaKey || e.shiftKey) return;
