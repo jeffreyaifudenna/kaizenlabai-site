@@ -8,7 +8,7 @@ KaizenLabAI is an AI lab applying kaizen (continuous, incremental improvement) t
 
 - [Learning](https://www.kaizenlabai.com/learning/): educational AI videos from our YouTube channel. First video: "21 Layers from the Edge of the Universe"
 - [Agents](https://www.kaizenlabai.com/agents/): AI workers (coming soon)
-- [Open Source](https://www.kaizenlabai.com/open-source/): code from the lab, open for anyone to use (GitHub: https://github.com/jeffreyaifudenna)
+- [Open Source](https://www.kaizenlabai.com/open-source/): code from the lab, open for anyone to use (GitHub: https://github.com/jeffreyaifudenna; this website's code: https://github.com/jeffreyaifudenna/kaizenlabai-site)
 - [Bots](https://www.kaizenlabai.com/bots/): live counts of bots that visited this site
 
 On the page, the logo opens a lab remote: Kaizen (a get-better-every-day game), Draw, Kintsugi, Zen, X-ray (the code behind the page), Bot radar and Terminal.
