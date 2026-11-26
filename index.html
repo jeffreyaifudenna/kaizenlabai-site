@@ -63,7 +63,7 @@
   body.secopen nav { margin-top:clamp(.9rem, 2.5vh, 1.5rem); }
   .panel { width:min(760px, 100%); overflow:hidden; height:0; }
   .panel.wide { width:min(760px, 100%, calc((100dvh - 470px) * 1.78)); min-width:min(320px, 100%); }
-  .panel-in { margin-top:18px; padding:22px 24px; border:1px solid var(--gold); border-radius:16px; background:#0d0d0b; text-align:center; opacity:0; transform:translateY(8px); transition:opacity .35s ease .12s, transform .45s cubic-bezier(.22,1,.36,1) .12s; }
+  .panel-in { margin-top:18px; padding:22px 24px; border:1px solid var(--gold); border-radius:16px; background:#0d0d0b; text-align:center; opacity:0; transform:translateY(10px); transition:opacity .36s ease .14s, transform .48s cubic-bezier(.22,1,.36,1) .14s; }
   .panel.open .panel-in { opacity:1; transform:none; }
   .panel h2 { color:var(--gold); font-size:1.6rem; }
   .panel p { color:var(--tan); font-size:1.1rem; line-height:1.5; margin:.5rem auto 0; max-width:34em; }
@@ -678,6 +678,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       }
       function isOpen() { return rm.classList.contains('open'); }
       function expand(srcImg, x, y) {
+        if (rm._shrink) { var sh = rm._shrink; rm._shrink = null; sh.cancel(); } // reopened mid-minimize
         if (!isOpen()) opener = document.activeElement;
         var a = srcImg.getBoundingClientRect();
         mini.classList.remove('show'); rm.classList.add('open'); rm.setAttribute('aria-hidden', 'false'); body.classList.add('rmopen'); place(rm, x, y);
@@ -707,10 +708,13 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
         if (miniMoved) place(mini, mini.offsetLeft, mini.offsetTop); else place(mini, l.left, l.top);
       }
       function minimize() {
+        if (rm._shrink) return; // already on its way down
         var b = rm.getBoundingClientRect(); rmPos = { x: rm.offsetLeft, y: rm.offsetTop }; mini.classList.add('show'); syncMini(); var a = mini.getBoundingClientRect();
         if (!reduce && rm.animate) {
           var an = rm.animate([{ transformOrigin: '0 0', transform: 'none', opacity: 1 }, { transformOrigin: '0 0', transform: 'translate(' + (a.left - b.left) + 'px,' + (a.top - b.top) + 'px) scale(' + (a.width / b.width) + ',' + (a.height / b.height) + ')', opacity: 0, borderRadius: '50%' }], { duration: 280, easing: 'ease-in', fill: 'forwards' });
-          an.onfinish = function () { hideRemote(); an.cancel(); };
+          rm._shrink = an;
+          var done = function () { if (rm._shrink !== an) return; rm._shrink = null; hideRemote(); an.cancel(); };
+          an.onfinish = done; setTimeout(done, 340); // the timer also covers background tabs, where animations pause
           mini.animate([{ transform: 'scale(.4)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], { duration: 260, delay: 180, fill: 'backwards' });
         } else hideRemote();
         mini.focus({ preventScroll: true }); blink();
@@ -744,7 +748,11 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       })();
       window.addEventListener('resize', function () { if (isOpen()) place(rm, rm.offsetLeft, rm.offsetTop); if (mini.classList.contains('show')) syncMini(); });
       // the page logo shrinks while a section is open; keep the minimized mark matching it
-      document.addEventListener('kz:sec', function () { setTimeout(function () { if (mini.classList.contains('show')) syncMini(); }, 480); });
+      document.addEventListener('kz:secmoved', function () {
+        if (!mini.classList.contains('show') || miniMoved) return;
+        var a = mini.getBoundingClientRect(); syncMini(); var b = mini.getBoundingClientRect();
+        if (!reduce && mini.animate && b.width) mini.animate([{ transformOrigin: '0 0', transform: 'translate(' + (a.left - b.left) + 'px,' + (a.top - b.top) + 'px) scale(' + (a.width / b.width) + ')' }, { transformOrigin: '0 0', transform: 'none' }], { duration: 480, easing: 'cubic-bezier(.22,1,.36,1)' });
+      });
 
 
       // stats screen: real numbers only. Bots row stays hidden until the counter is live.
@@ -1288,11 +1296,20 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
         Array.prototype.forEach.call(links, function (x) { var on = x.dataset.sec === id; x.classList.toggle('active', on); x.setAttribute('aria-expanded', String(on)); });
         clearTimeout(show.s);
         var first = rects(), wasOpen = document.body.classList.contains('secopen'), tagR = tag.getBoundingClientRect();
+        hero.forEach(function (el) { if (el._g) { el._g.cancel(); el._g = null; } }); // the next glide starts from where it is now
+        // the panel content that is leaving fades out where it stood, so nothing blinks away
+        var oldR = panel.classList.contains('open') ? inner.getBoundingClientRect() : null, ghost = null;
+        if (oldR && oldR.height && !reduceMo && document.body.animate) {
+          ghost = inner.cloneNode(true); ghost.removeAttribute('id'); ghost.setAttribute('aria-hidden', 'true'); ghost.querySelectorAll('[id]').forEach(function (n) { n.removeAttribute('id'); }); ghost.querySelectorAll('iframe').forEach(function (n) { var b = document.createElement('div'); b.style.cssText = 'background:#000;width:' + n.offsetWidth + 'px;height:' + n.offsetHeight + 'px'; n.replaceWith(b); }); // never copy a playing video
+          ghost.style.cssText = 'position:fixed;z-index:1;pointer-events:none;margin:0;opacity:1;transform:none;transition:none;left:' + oldR.left + 'px;top:' + oldR.top + 'px;width:' + oldR.width + 'px;height:' + oldR.height + 'px;overflow:hidden';
+          document.body.appendChild(ghost);
+        }
         // jump straight to the end layout...
         document.body.classList.toggle('secopen', !!id); panel.classList.toggle('wide', id === 'learning'); panel.classList.remove('open');
         if (id) { cur = id; inner.innerHTML = id === 'bots' ? window.kzBotsHtml : S[id]; inner.classList.toggle('media', id === 'learning'); fitBp(); setH(true); history.replaceState(null, '', '#' + id); }
         else { cur = null; setH(false); history.replaceState(null, '', location.pathname); }
         var last = rects();
+        document.dispatchEvent(new Event('kz:secmoved'));
         void panel.offsetWidth; if (id) panel.classList.add('open'); // the panel content fades and rises in
         if (reduceMo || !document.body.animate) return;
         // ...then glide each part from where it was to where it is now, in one eased move
@@ -1300,8 +1317,9 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
           var a = first[i], b = last[i]; if (!b.width) return;
           var sc = a.width / b.width, dx = (a.left + a.width / 2) - (b.left + b.width / 2), dy = a.top - b.top;
           if (Math.abs(dx) < .5 && Math.abs(dy) < .5 && Math.abs(sc - 1) < .005) return;
-          el.animate([{ transformOrigin: '50% 0', transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sc + ')' }, { transformOrigin: '50% 0', transform: 'none' }], { duration: MS, easing: EASE });
+          el._g = el.animate([{ transformOrigin: '50% 0', transform: 'translate(' + dx + 'px,' + dy + 'px) scale(' + sc + ')' }, { transformOrigin: '50% 0', transform: 'none' }], { duration: MS, easing: EASE });
         });
+        if (ghost) { var ga = ghost.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'translateY(' + (id ? -6 : 10) + 'px) scale(.985)' }], { duration: id ? 220 : 280, easing: 'ease-out', fill: 'forwards' }); var gone = function () { if (ghost.parentNode) ghost.remove(); }; ga.onfinish = gone; setTimeout(gone, 400); }
         // the tagline fades out where it stood (opening) or fades back in (closing)
         if (id && !wasOpen && tagR.height) {
           var g = tag.cloneNode(true); g.removeAttribute('class'); g.setAttribute('aria-hidden', 'true');
