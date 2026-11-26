@@ -34,6 +34,7 @@
   .video:focus-visible { outline:2px solid #e5b84c; outline-offset:4px; }
   .play { position:absolute; inset:0; margin:auto; width:68px; height:68px; border-radius:50%; background:rgba(5,5,5,.7); border:2px solid #e5b84c; }
   .play::after { content:""; position:absolute; left:26px; top:20px; border-style:solid; border-width:13px 0 13px 21px; border-color:transparent transparent transparent #e5b84c; }
+  .video iframe { display:block; width:100%; height:100%; border:0; }
   .vcap { margin-top:.75rem; color:#d9c08a; font-size:.95rem; }
   .soon { margin-top:1.5rem; }
 </style>
@@ -41,10 +42,21 @@
 <body>
   <a class="home" href="/"><img src="/logo.webp" alt="">KaizenLabAI</a>
   <h1>Learning</h1>
-  <a class="video" href="https://www.youtube.com/watch?v=KcCbkGVCFFU" aria-label="Watch our first video: 21 Layers from the Edge of the Universe">
+  <a class="video" data-yt="KcCbkGVCFFU" href="https://www.youtube.com/watch?v=KcCbkGVCFFU" aria-label="Watch our first video: 21 Layers from the Edge of the Universe">
     <img src="https://i.ytimg.com/vi/KcCbkGVCFFU/hqdefault.jpg" alt="21 Layers from the Edge of the Universe" width="480" height="360" loading="lazy">
     <span class="play" aria-hidden="true"></span>
   </a>
   <a class="btn" href="https://www.youtube.com/@KaizenLabAI?sub_confirmation=1">Subscribe on YouTube</a>
+  <script>
+    // Play the video right here on the page (privacy-enhanced YouTube player), never on a new page
+    document.querySelector('a[data-yt]').addEventListener('click', function (e) {
+      if (e.ctrlKey || e.metaKey || e.shiftKey) return;
+      e.preventDefault();
+      var f = document.createElement('iframe'); f.title = '21 Layers from the Edge of the Universe';
+      f.src = 'https://www.youtube-nocookie.com/embed/' + this.dataset.yt + '?autoplay=1&rel=0&playsinline=1';
+      f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true; f.referrerPolicy = 'strict-origin-when-cross-origin';
+      var box = document.createElement('div'); box.className = 'video'; box.appendChild(f); this.replaceWith(box);
+    });
+  </script>
 </body>
 </html>
