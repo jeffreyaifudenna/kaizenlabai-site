@@ -965,9 +965,11 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
           fetch('/api/bots').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
             if (!d || !d.allTime || !d.since) { print('<span class="err">Bot counts are not available yet.</span>'); return; }
             var top = d.last7.bots.slice(0, 8), max = Math.max.apply(null, top.map(function (b) { return b.count; }).concat([1]));
-            print('Self-identified bots, last 7 days (counting since ' + esc(d.since) + ')\n' + top.map(function (b) {
-              return esc(b.name).padEnd(18) + String(b.count).padStart(6) + '  ' + '▮'.repeat(Math.max(1, Math.round(b.count / max * 8)));
-            }).join('\n') + '\n' + 'last 7 days'.padEnd(18) + String(d.last7.total).padStart(6) + '\n' + 'all time'.padEnd(18) + String(d.allTime.total).padStart(6));
+            print('Bots, last 7 days (counting since ' + esc(d.since) + ')\n' + 'bot'.padEnd(18) + 'requests'.padStart(9) + 'visitors'.padStart(9) + '\n' + top.map(function (b) {
+              var mark = b.verified != null && (b.verified || b.unverified) ? (b.unverified ? '  ' + b.unverified + ' unverified' : '  verified') : '';
+              return esc(b.name).padEnd(18) + String(b.count).padStart(9) + String(b.visitors || '-').padStart(9) + '  ' + '▮'.repeat(Math.max(1, Math.round(b.count / max * 8))) + mark;
+            }).join('\n') + '\n' + 'last 7 days'.padEnd(18) + String(d.last7.total).padStart(9) + String(d.last7.visitors || '-').padStart(9) + '\n' + 'all time'.padEnd(18) + String(d.allTime.total).padStart(9) +
+            (d.tools7 ? '\n(not counted: ' + d.tools7 + ' requests from developer tools such as curl)' : ''));
           }).catch(function () { print('<span class="err">Bot counts are not available yet.</span>'); });
           return null;
         },
@@ -1121,7 +1123,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
             var g = group(b.name); blips.push({ name: b.name + ' \u00d7' + b.count, g: g, a: (hash(b.name) % 360) * Math.PI / 180, d: .25 + (hash(b.name + 'd') % 65) / 100, lit: 0, born: performance.now() });
           });
           note.innerHTML = '';
-          note.appendChild(document.createTextNode(d.last7.total.toLocaleString('en-US') + ' self-identified bot visits in the last 7 days (counting since ' + d.since + ', UTC). '));
+          note.appendChild(document.createTextNode(d.last7.total.toLocaleString('en-US') + ' bot requests in the last 7 days' + (d.last7.visitors ? ', about ' + d.last7.visitors.toLocaleString('en-US') + ' different visitors' : '') + ' (counting since ' + d.since + ', UTC). '));
           var a = document.createElement('a'); a.href = '/bots/'; a.textContent = 'Full list'; note.appendChild(a);
         }).catch(function () { note.textContent = 'The radar wakes up once the bot counter is live. No bots shown until then.'; });
       }
@@ -1174,9 +1176,13 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       var f = function (n) { return Number(n).toLocaleString('en-US'); }, e = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
       var since = new Date(d.since + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
       var top = (d.last7.bots || []).slice(0, 3).map(function (b) { return '<span>' + e(b.name) + ' ' + f(b.count) + '</span>'; }).join(' &middot; ');
-      window.kzBotsHtml = '<h2>Bots</h2><p>Self-identified bot visits, last 7 days<b class="big">' + f(d.last7.total) + '</b></p>' +
-        (top ? '<p class="tops">' + top + '</p>' : '') +
-        '<p class="src">Counting since ' + e(since) + ' (UTC). Source: our own request log, page requests whose browser name says it is a bot.</p>' +
+      var ver = (d.last7.bots || []).filter(function (b) { return b.verified != null && (b.verified || b.unverified); }).map(function (b) {
+        return '<span>' + e(b.name) + ' ' + (b.unverified ? f(b.verified) + ' of ' + f(b.verified + b.unverified) + ' verified' : 'verified') + '</span>';
+      }).join(' &middot; ');
+      window.kzBotsHtml = '<h2>Bots</h2><p>Bot requests, last 7 days<b class="big">' + f(d.last7.total) + '</b>' +
+        (d.last7.visitors ? 'from about ' + f(d.last7.visitors) + ' different visitors' : '') + '</p>' +
+        (top ? '<p class="tops">' + top + '</p>' : '') + (ver ? '<p class="tops">' + ver + '</p>' : '') +
+        '<p class="src">Counting since ' + e(since) + ' (UTC). Source: our own request log, page requests whose browser name says it is a bot.' + (d.tools7 ? ' ' + f(d.tools7) + ' requests from developer tools (curl etc.) are not counted.' : '') + '</p>' +
         '<a class="pbtn" href="/bots/">Full list</a> <button type="button" class="pbtn" data-radar>Bot radar</button>';
     });
   </script>

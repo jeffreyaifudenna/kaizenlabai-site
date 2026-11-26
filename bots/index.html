@@ -35,6 +35,11 @@
   td { padding:.45rem .2rem; border-bottom:1px solid #1d1b16; color:#e9dcc0; }
   td.n { text-align:right; color:#e5b84c; font-variant-numeric:tabular-nums; }
   .empty { color:#a8996f; font-size:.9rem; padding:.5rem 0; }
+  th { text-align:left; color:#a8996f; font-size:.78rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; padding:.3rem .2rem; border-bottom:1px solid #3a3222; }
+  th.n { text-align:right; }
+  .tag { display:inline-block; margin-left:.4rem; padding:0 .4rem; border-radius:6px; font-size:.72rem; letter-spacing:.04em; vertical-align:1px; }
+  .tag.ok { color:#9fd18b; border:1px solid #3f5a33; } .tag.warn { color:#e8a37a; border:1px solid #6a3f28; }
+  .tools { margin-top:1rem; color:#a8996f; font-size:.9rem; }
   .src { margin-top:2rem; color:#a8996f; font-size:.9rem; max-width:560px; line-height:1.5; }
 </style>
 </head>
@@ -43,21 +48,34 @@
   <h1>Bots</h1>
   <p class="lead">Bots that visited this site and said who they are.</p>
   <div class="totals" id="totals" hidden>
-    <div class="stat"><b id="t7"></b><span>last 7 days</span></div>
+    <div class="stat"><b id="t7"></b><span>requests, last 7 days</span></div>
+    <div class="stat"><b id="v7"></b><span>different visitors (estimate)</span></div>
     <div class="stat"><b id="tAll"></b><span id="sinceLbl">all time</span></div>
   </div>
   <div class="cols" id="cols" hidden>
-    <div><h2>Last 7 days</h2><table id="list7"></table></div>
+    <div><h2>Last 7 days</h2><table id="list7"><thead><tr><th>Bot</th><th class="n">Requests</th><th class="n">Visitors</th></tr></thead></table></div>
     <div><h2>All time</h2><table id="listAll"></table></div>
   </div>
   <p class="empty" id="status">Loading counts&hellip;</p>
-  <p class="src" id="src">Source: our own server log of page requests whose browser name (user agent) identifies a bot, such as GPTBot or Googlebot. Bots that pretend to be a normal browser are not counted. Counts are page requests, not unique bots.</p>
+  <p class="tools" id="tools" hidden></p>
+  <p class="src" id="src">Source: our own server log of page requests whose browser name (user agent) says it is a bot, such as GPTBot or Googlebot. Bots that pretend to be a normal browser are not counted. Requests: every page or file a bot asked for. Visitors: an estimate of different bots, from a one-way scramble of address and browser name (no addresses are kept). Verified: for Googlebot, Bingbot, GPTBot, OAI-SearchBot and ChatGPT-User we check the visit came from the addresses Google, Microsoft and OpenAI publish; a visit that uses the name from anywhere else is marked unverified. Developer tools such as curl are counted apart, not as bots.</p>
   <script>
     (function () {
       var f = function (n) { return Number(n).toLocaleString('en-US'); };
-      function fill(tbl, list) {
-        if (!list.length) { var r = tbl.insertRow(), c = r.insertCell(); c.className = 'empty'; c.textContent = 'None yet'; return; }
-        list.forEach(function (b) { var r = tbl.insertRow(); r.insertCell().textContent = b.name; var c = r.insertCell(); c.className = 'n'; c.textContent = f(b.count); });
+      function fill(tbl, list, more) {
+        var tb = tbl.tBodies[0] || tbl.appendChild(document.createElement('tbody'));
+        if (!list.length) { var r = tb.insertRow(), c = r.insertCell(); c.className = 'empty'; c.colSpan = 3; c.textContent = 'None yet'; return; }
+        list.forEach(function (b) {
+          var r = tb.insertRow(), nm = r.insertCell(); nm.textContent = b.name;
+          if (more && b.verified != null && (b.verified || b.unverified)) {
+            var t = document.createElement('span');
+            if (b.unverified) { t.className = 'tag warn'; t.textContent = f(b.unverified) + ' unverified'; t.title = 'Used the name ' + b.name + ' from an address its operator does not publish'; }
+            else { t.className = 'tag ok'; t.textContent = 'verified'; t.title = 'Every visit came from an address its operator publishes'; }
+            nm.appendChild(t);
+          }
+          var c = r.insertCell(); c.className = 'n'; c.textContent = f(b.count);
+          if (more) { var v = r.insertCell(); v.className = 'n'; v.textContent = b.visitors ? f(b.visitors) : '\u2013'; }
+        });
       }
       var status = document.getElementById('status');
       fetch('/api/bots').then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
@@ -65,9 +83,11 @@
         if (!d.since) { status.textContent = 'No bots counted yet.'; return; }
         var since = new Date(d.since + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
         document.getElementById('t7').textContent = f(d.last7.total);
+        document.getElementById('v7').textContent = d.last7.visitors != null ? f(d.last7.visitors) : '\u2013';
+        if (d.tools7) { var tl = document.getElementById('tools'); tl.textContent = 'Not counted as bots: ' + f(d.tools7) + ' requests from developer tools and scripts (such as curl) in the last 7 days.'; tl.hidden = false; }
         document.getElementById('tAll').textContent = f(d.allTime.total);
         document.getElementById('sinceLbl').textContent = 'since ' + since;
-        fill(document.getElementById('list7'), d.last7.bots);
+        fill(document.getElementById('list7'), d.last7.bots, true);
         fill(document.getElementById('listAll'), d.allTime.bots);
         document.getElementById('totals').hidden = false; document.getElementById('cols').hidden = false;
         var upd = new Date(d.updated).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' });
