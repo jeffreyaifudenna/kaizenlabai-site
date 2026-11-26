@@ -198,8 +198,8 @@
   #tin { flex:1; min-width:0; background:none; border:0; outline:0; color:#fff; font:inherit; caret-color:var(--gold); }
   .toast { position:fixed; left:50%; bottom:calc(16px + env(safe-area-inset-bottom)); transform:translate(-50%,20px); background:var(--gold); color:#050505; font-weight:600; padding:8px 16px; border-radius:999px; opacity:0; transition:all .3s; z-index:60; pointer-events:none; white-space:nowrap; }
   .toast.show { opacity:1; transform:translate(-50%,0); }
-  /* Kaizen: one question, then what kaizen means */
-  #kzWin .kw-body { padding:22px 22px 24px; text-align:center; background:radial-gradient(120% 80% at 50% 0%, #15120a 0%, #060605 60%); }
+  /* Kaizen: one question, what kaizen means, then four small tools (review, improve, act, iterate) and a summary */
+  #kzWin .kw-body { overflow-x:hidden; padding:22px 22px 24px; text-align:center; background:radial-gradient(120% 80% at 50% 0%, #15120a 0%, #060605 60%); }
   .kz-step { animation:kzin .5s cubic-bezier(.22,1,.36,1); }
   @keyframes kzin { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
   .kz-mark { font-size:2.4rem; letter-spacing:.15em; color:var(--gold); opacity:.85; margin-bottom:10px; }
@@ -217,7 +217,62 @@
   .kz-you b { display:block; color:var(--gold); font-size:clamp(1.6rem, 4.4vw, 2.1rem); letter-spacing:0; text-transform:none; margin-top:6px; line-height:1.2; }
   .kz-ex { color:#eee; font-size:1.15rem; line-height:1.6; margin:18px auto 0; max-width:30em; padding-top:18px; border-top:1px solid #2a2416; }
   #kzAsk.shake { animation:kzsh .32s; } @keyframes kzsh { 25% { transform:translateX(-7px); } 75% { transform:translateX(7px); } }
-  @media (max-width:460px) { .kz-go { min-width:0; flex:1 1 100%; white-space:nowrap; } }
+  @media (max-width:460px) { .kz-go { min-width:0; flex:1 1 100%; white-space:nowrap; } .kz-row .kz-go { flex-basis:120px; } }
+  .kz-link { display:block; margin:18px auto 0; min-height:48px; padding:0 16px; background:none; border:0; color:var(--tan); font:600 1rem ui-sans-serif, system-ui, sans-serif; text-decoration:underline; text-underline-offset:4px; cursor:pointer; }
+  .kz-tiles { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; margin-top:20px; }
+  .kz-tile { position:relative; display:flex; flex-direction:column; align-items:flex-start; justify-content:space-between; gap:10px; min-height:112px; padding:14px 16px; border-radius:18px; border:1px solid #4a4232; background:linear-gradient(180deg,#14110b,#0a0907); color:#f2ead8; font:700 1.08rem/1.3 ui-sans-serif, system-ui, sans-serif; text-align:left; cursor:pointer; transition:border-color .2s, transform .12s, background .2s; }
+  .kz-tile .n { display:grid; place-items:center; width:34px; height:34px; border-radius:50%; border:1px solid var(--gold); color:var(--gold); font:700 1rem ui-monospace, Consolas, monospace; transition:background .25s, color .25s; }
+  .kz-tile.done .n { background:var(--gold); color:#050505; font-size:0; }
+  .kz-tile.done .n::after { content:"\2713"; font-size:1.1rem; }
+  .kz-tile:active { transform:scale(.98); }
+  @media (hover:hover) { .kz-tile:hover { border-color:var(--gold); } }
+  .kz-tile:focus-visible { outline:2px solid var(--gold); outline-offset:3px; }
+  .kz-dots { display:flex; justify-content:center; gap:8px; margin-bottom:14px; }
+  .kz-dots i { width:28px; height:5px; border-radius:3px; background:#2a2416; transition:background .3s; }
+  .kz-dots i.past { background:#8a6a22; } .kz-dots i.on { background:var(--gold); }
+  .kz-h { color:var(--gold); font-size:clamp(1.4rem, 3.6vw, 1.75rem); line-height:1.25; }
+  .kz-sub { color:#d8d0bd; font-size:1.05rem; line-height:1.5; margin-top:6px; overflow-wrap:anywhere; }
+  .kz-sub b { color:#f2ead8; }
+  .kz-cols { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:14px; margin-top:16px; text-align:left; }
+  .kz-col { border:1px solid #2a2416; border-radius:16px; padding:12px; background:#0a0907; }
+  .kz-col h4 { color:#f2ead8; font-size:1rem; letter-spacing:.04em; margin-bottom:8px; }
+  .kz-add { display:flex; gap:6px; }
+  .kz-add input, .kz-in, .kz-sent input { min-width:0; flex:1; min-height:48px; padding:0 12px; border-radius:12px; border:1px solid #4a4232; background:#000; color:#fff; font:inherit; font-size:1.05rem; outline:0; transition:border-color .2s, box-shadow .2s; }
+  .kz-add input:focus, .kz-in:focus, .kz-sent input:focus { border-color:var(--gold); box-shadow:0 0 0 4px rgba(229,184,76,.15); }
+  .kz-add input::placeholder, .kz-in::placeholder, .kz-sent input::placeholder { color:#6f6655; }
+  .kz-add button { flex:none; min-width:64px; min-height:48px; border-radius:12px; border:1px solid var(--gold); background:var(--gold); color:#050505; font:700 1rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; }
+  .kz-add.full input, .kz-add.full button { opacity:.4; pointer-events:none; }
+  .kz-chips { display:flex; flex-direction:column; gap:6px; margin-top:8px; }
+  .kz-chips:empty { display:none; }
+  .kz-chip { display:flex; align-items:center; gap:8px; min-height:44px; padding:0 4px 0 12px; border-radius:12px; background:rgba(229,184,76,.12); border:1px solid rgba(229,184,76,.4); color:#f2ead8; font-size:1rem; overflow-wrap:anywhere; animation:kzpop .3s cubic-bezier(.34,1.56,.64,1); }
+  .kz-chip span { flex:1; }
+  .kz-chip button { flex:none; width:40px; height:40px; border:0; background:none; color:var(--tan); font-size:1.3rem; cursor:pointer; border-radius:10px; }
+  @keyframes kzpop { from { opacity:0; transform:scale(.85); } to { opacity:1; transform:none; } }
+  .kz-sugg { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-top:10px; }
+  .kz-col .kz-sugg { justify-content:flex-start; }
+  .kz-sugg button { min-height:40px; padding:0 12px; border-radius:999px; border:1px dashed #5a4a22; background:none; color:var(--tan); font:500 .95rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; }
+  .kz-sugg button:disabled { opacity:.35; cursor:default; }
+  @media (hover:hover) { .kz-sugg button:not(:disabled):hover { border-color:var(--gold); color:var(--gold); } }
+  .kz-sent { display:grid; grid-template-columns:auto 1fr; align-items:center; gap:10px 12px; margin-top:16px; text-align:left; }
+  .kz-sent label, .kz-q2 { color:#f2ead8; font-size:1.1rem; font-weight:700; }
+  .kz-q2 { display:block; margin:16px 0 10px; }
+  .kz-in { display:block; width:100%; text-align:center; }
+  .kz-done { display:inline-flex; align-items:center; gap:12px; margin-top:18px; min-height:64px; padding:0 26px 0 14px; border-radius:999px; border:1px solid var(--gold); background:#000; color:var(--gold); font:700 1.25rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; transition:background .3s, color .3s; }
+  .kz-done svg { width:44px; height:44px; fill:none; stroke:var(--gold); stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+  .kz-done path { stroke-dasharray:40; stroke-dashoffset:40; transition:stroke-dashoffset .5s cubic-bezier(.65,0,.35,1) .1s; }
+  .kz-done.on { background:var(--gold); color:#050505; }
+  .kz-done.on svg { stroke:#050505; } .kz-done.on path { stroke-dashoffset:0; }
+  .kz-done.pop { animation:kzpop2 .5s cubic-bezier(.34,1.56,.64,1); } @keyframes kzpop2 { 40% { transform:scale(1.08); } }
+  .kz-burst { position:fixed; width:8px; height:8px; border-radius:50%; background:var(--gold); pointer-events:none; z-index:200; }
+  .kz-pick { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:18px; }
+  .kz-pick button { flex:1 1 120px; min-height:60px; border-radius:16px; border:1px solid #4a4232; background:#0a0907; color:#f2ead8; font:700 1.1rem ui-sans-serif, system-ui, sans-serif; cursor:pointer; transition:background .2s, color .2s, border-color .2s; }
+  .kz-pick button[aria-checked="true"] { background:var(--gold); color:#050505; border-color:var(--gold); }
+  .kz-sum { margin-top:16px; text-align:left; border:1px solid #3a3122; border-radius:18px; padding:6px 16px; background:linear-gradient(180deg,#14110b,#0a0907); }
+  .kz-sum div { padding:8px 0; border-bottom:1px solid #2a2416; } .kz-sum div:last-child { border-bottom:0; }
+  #kzEnd .kz-mark { font-size:1.8rem; margin-bottom:4px; } #kzEnd .kz-link { margin-top:8px; }
+  .kz-sum dt { color:var(--tan); font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; }
+  .kz-sum dd { color:#f2ead8; font-size:1.08rem; line-height:1.45; margin-top:2px; overflow-wrap:anywhere; }
+  @media (max-width:560px) { .kz-cols { grid-template-columns:1fr; } .kz-sent { grid-template-columns:1fr; gap:6px; } .kz-tile { min-height:104px; font-size:1rem; } }
   /* Bot radar */
   #radar .kw-body { display:flex; flex-direction:column; align-items:center; gap:10px; padding:12px 16px 16px; }
   #radar canvas { display:block; width:min(100%, 52vh); height:auto; aspect-ratio:1 / 1; }
@@ -328,8 +383,32 @@ Sections
   <button type="button" id="xrExit">Exit X-ray</button>
   <section id="xrCode" class="kwin" role="dialog" aria-label="X-ray: the code behind this part"><div class="kw-bar"><span class="kw-t">X-RAY</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b" data-kw="close" id="xrX" aria-label="Close the code view">&times;</button></div><div class="kw-body" id="xrBody" aria-live="polite"></div></section>
   <section id="kzWin" class="kwin" role="dialog" aria-label="Kaizen"><div class="kw-bar"><span class="kw-t">KAIZEN</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b" data-kw="close" id="kzX" aria-label="Close Kaizen">&times;</button></div><div class="kw-body">
-    <form id="kzAsk" class="kz-step" autocomplete="off"><div class="kz-mark" aria-hidden="true">&#25913;&#21892;</div><label for="kzIn" class="kz-q">What would you like to get better at?</label><input id="kzIn" maxlength="80" enterkeyhint="go" placeholder="Drawing, running, cooking&hellip;"><div class="kz-row"><button type="submit" class="kz-go">Next</button></div></form>
-    <div id="kzAns" class="kz-step" hidden><p class="kz-you">Getting better at<b id="kzYou"></b></p><p class="kz-ex">Kaizen is the process of getting better everyday, it requires reviewing your process, adding in one small improvement and continued iteration to get better.</p><div class="kz-row"><button type="button" class="kz-go" id="kzAgain">Start over</button></div></div>
+    <form id="kzAsk" class="kz-step" autocomplete="off"><div class="kz-mark" aria-hidden="true">&#25913;&#21892;</div><label for="kzIn" class="kz-q">What would you like to get better at?</label><input id="kzIn" class="kz-in" maxlength="80" enterkeyhint="go" placeholder="Drawing, running, cooking&hellip;"><div class="kz-row"><button type="submit" class="kz-go">Next</button></div></form>
+    <div id="kzAns" class="kz-step" hidden><p class="kz-you">Getting better at<b class="kzGoal"></b></p><p class="kz-ex">Kaizen is the process of getting better everyday, it requires reviewing your process, adding in one small improvement and continued iteration to get better.</p>
+      <div class="kz-tiles">
+        <button type="button" class="kz-tile" data-kz="kzRev"><span class="n">1</span><span class="t">Review process</span></button>
+        <button type="button" class="kz-tile" data-kz="kzImp"><span class="n">2</span><span class="t">Add one improvement</span></button>
+        <button type="button" class="kz-tile" data-kz="kzAct"><span class="n">3</span><span class="t">Pick the smallest action you can do right now</span></button>
+        <button type="button" class="kz-tile" data-kz="kzIt"><span class="n">4</span><span class="t">Iterate</span></button>
+      </div>
+      <button type="button" class="kz-link" id="kzAgain">New goal</button></div>
+    <div id="kzRev" class="kz-step" hidden><div class="kz-dots" aria-label="Step 1 of 4"><i class="on"></i><i></i><i></i><i></i></div><h3 class="kz-h">Review process</h3><p class="kz-sub">How is <b class="kzGoal"></b> going? Add up to 3 of each.</p>
+      <div class="kz-cols">
+        <div class="kz-col"><h4>What&rsquo;s working</h4><form class="kz-add" data-list="good"><input maxlength="40" placeholder="Type, then Add" aria-label="Something that is working"><button type="submit">Add</button></form><div class="kz-chips" id="kzGood"></div><div class="kz-sugg" data-list="good"><button type="button">Showing up</button><button type="button">Enjoying it</button><button type="button">Good tools</button><button type="button">Learning fast</button></div></div>
+        <div class="kz-col"><h4>What&rsquo;s not</h4><form class="kz-add" data-list="bad"><input maxlength="40" placeholder="Type, then Add" aria-label="Something that is not working"><button type="submit">Add</button></form><div class="kz-chips" id="kzBad"></div><div class="kz-sugg" data-list="bad"><button type="button">Not enough time</button><button type="button">Getting stuck</button><button type="button">No feedback</button><button type="button">Losing focus</button></div></div>
+      </div><div class="kz-row"><button type="button" class="kz-go alt" data-kz="menu">All steps</button><button type="button" class="kz-go" data-kz="kzImp">Next</button></div></div>
+    <div id="kzImp" class="kz-step" hidden><div class="kz-dots" aria-label="Step 2 of 4"><i class="past"></i><i class="on"></i><i></i><i></i></div><h3 class="kz-h">Add one improvement</h3><p class="kz-sub" id="kzImpHint">Just one. Small is good.</p>
+      <div class="kz-sent"><label for="kzI1">Next time I&rsquo;ll</label><input id="kzI1" maxlength="60" placeholder="practise for 10 minutes a day"><label for="kzI2">so that</label><input id="kzI2" maxlength="60" placeholder="I improve a little each day"></div>
+      <div class="kz-sugg" id="kzImpSugg"><button type="button">practise for 10 minutes a day</button><button type="button">ask someone for feedback</button><button type="button">remove one distraction</button><button type="button">write down what I learned</button></div><div class="kz-row"><button type="button" class="kz-go alt" data-kz="menu">All steps</button><button type="button" class="kz-go" data-kz="kzAct">Next</button></div></div>
+    <div id="kzAct" class="kz-step" hidden><div class="kz-dots" aria-label="Step 3 of 4"><i class="past"></i><i class="past"></i><i class="on"></i><i></i></div><h3 class="kz-h">Smallest action, right now</h3><p class="kz-sub" id="kzActFor"></p>
+      <label class="kz-q2" for="kzA1">What can you do in the next 2 minutes?</label><input id="kzA1" class="kz-in" maxlength="60" placeholder="Set a reminder for tomorrow">
+      <div class="kz-sugg" id="kzActSugg"><button type="button">Set a reminder</button><button type="button">Get the tools out</button><button type="button">Do the first 2 minutes</button><button type="button">Tell someone my plan</button></div>
+      <button type="button" class="kz-done" id="kzDone" aria-pressed="false"><svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="24"/><path d="M15 27l7 7 15-16"/></svg><span>Done</span></button><div class="kz-row"><button type="button" class="kz-go alt" data-kz="menu">All steps</button><button type="button" class="kz-go" data-kz="kzIt">Next</button></div></div>
+    <div id="kzIt" class="kz-step" hidden><div class="kz-dots" aria-label="Step 4 of 4"><i class="past"></i><i class="past"></i><i class="past"></i><i class="on"></i></div><h3 class="kz-h">Iterate</h3><p class="kz-sub">Review, improve, act. Then do it again. When will you come back to it?</p>
+      <div class="kz-pick" role="radiogroup" aria-label="When to review again"><button type="button" role="radio" aria-checked="false">Tomorrow</button><button type="button" role="radio" aria-checked="false">In 3 days</button><button type="button" role="radio" aria-checked="false">Next week</button></div><div class="kz-row"><button type="button" class="kz-go alt" data-kz="menu">All steps</button><button type="button" class="kz-go" data-kz="kzEnd">Finish</button></div></div>
+    <div id="kzEnd" class="kz-step" hidden><div class="kz-mark" aria-hidden="true">&#25913;&#21892;</div><h3 class="kz-h">One loop done</h3><p class="kz-sub">A little better than before.</p>
+      <dl class="kz-sum" id="kzSum"></dl>
+      <div class="kz-row"><button type="button" class="kz-go" id="kzLoop">Start a new loop</button><button type="button" class="kz-go alt" id="kzCopy">Copy summary</button></div><button type="button" class="kz-link" id="kzNew">New goal</button></div>
   </div></section>
   <section id="radar" class="kwin" role="dialog" aria-label="Bot radar"><div class="kw-bar"><span class="kw-t">BOT RADAR</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b" data-kw="close" id="radarX" aria-label="Close bot radar">&times;</button></div><div class="kw-body"><canvas id="radarC" role="img" aria-label="Radar of bots that visited in the last 7 days"></canvas><p class="rnote" id="radarNote"></p></div></section>
   <div class="toast" id="toast" role="status"></div>
@@ -668,20 +747,108 @@ Sections
         onClose: function () { leaveDev(); logoBtn.focus({ preventScroll: true }); }
       });
 
-      // ---- Kaizen: ask what they want to get better at, then explain kaizen. Nothing is stored or sent.
-      var kzWin = $('kzWin');
+      // ---- Kaizen game: ask what they want to get better at, explain kaizen, then four small tools
+      // (review, one improvement, smallest action, iterate) and a summary. Nothing is stored or sent.
+      var kzWin = $('kzWin'), KZS = ['kzAsk', 'kzAns', 'kzRev', 'kzImp', 'kzAct', 'kzIt', 'kzEnd'], kz;
       KW.make(kzWin, {
-        place: function (rm) { var w = rm.phone ? innerWidth - 16 : Math.min(560, rm.w); kzWin.style.width = w + 'px'; KW.put(kzWin, rm.l + (rm.w - w) / 2, (innerHeight - kzWin.offsetHeight) / 2); },
+        place: function (rm) { var w = rm.phone ? innerWidth - 16 : Math.min(600, rm.w); kzWin.style.width = w + 'px'; KW.put(kzWin, rm.l + (rm.w - w) / 2, (innerHeight - kzWin.offsetHeight) / 2); },
         onClose: function () { closeKaizen(); logoBtn.focus({ preventScroll: true }); }
       });
-      function kzShow(id) { ['kzAsk', 'kzAns'].forEach(function (x) { $(x).hidden = x !== id; }); if (kzWin.classList.contains('show') && !kzWin._kw.moved) requestAnimationFrame(function () { KW.reflow(); }); } // re-centre as the step changes size
-      function kzStart() { kzShow('kzAsk'); $('kzIn').value = ''; setTimeout(function () { $('kzIn').focus({ preventScroll: true }); }, 60); }
+      function kzTick() { tone(1046, .12, .025); }
+      function kzShow(id) {
+        KZS.forEach(function (x) { $(x).hidden = x !== id; });
+        kzWin.querySelector('.kw-body').scrollTop = 0;
+        if (kzWin.classList.contains('show') && !kzWin._kw.moved) requestAnimationFrame(function () { KW.reflow(); }); // re-centre as the step changes size
+        if (id === 'kzAns') kzTiles();
+        if (id === 'kzImp') kzImpPrep();
+        if (id === 'kzAct') kzActPrep();
+        if (id === 'kzEnd') kzSummary();
+        var f = $(id).querySelector('.kz-tile, input, .kz-go'); if (f) setTimeout(function () { f.focus({ preventScroll: true }); }, 60);
+      }
+      function kzReset(keepGoal) {
+        kz = { goal: keepGoal ? kz.goal : '', good: [], bad: [], imp: '', why: '', act: '', done: false, when: '' };
+        ['kzI1', 'kzI2', 'kzA1'].forEach(function (x) { $(x).value = ''; });
+        kzWin.querySelectorAll('.kz-add input').forEach(function (i) { i.value = ''; });
+        kzWin.querySelectorAll('.kz-pick button').forEach(function (b) { b.setAttribute('aria-checked', 'false'); });
+        $('kzDone').classList.remove('on'); $('kzDone').setAttribute('aria-pressed', 'false'); kzLists();
+      }
+      function kzStart() { kzReset(false); $('kzIn').value = ''; kzShow('kzAsk'); }
       $('kzAsk').addEventListener('submit', function (e) {
         e.preventDefault(); var v = $('kzIn').value.trim();
         if (!v) { var f = $('kzAsk'); f.classList.remove('shake'); void f.offsetWidth; f.classList.add('shake'); $('kzIn').focus(); return; }
-        $('kzYou').textContent = v; kzShow('kzAns'); $('kzIn').blur(); chime(); $('kzAgain').focus({ preventScroll: true });
+        kz.goal = v; kzWin.querySelectorAll('.kzGoal').forEach(function (b) { b.textContent = v; }); $('kzIn').blur(); chime(); kzShow('kzAns');
       });
-      $('kzAgain').addEventListener('click', kzStart);
+      $('kzAgain').addEventListener('click', kzStart); $('kzNew').addEventListener('click', kzStart);
+      $('kzLoop').addEventListener('click', function () { kzReset(true); chime(); kzShow('kzAns'); });
+      // every [data-kz] button moves to that step ("menu" is the four-tile screen)
+      kzWin.addEventListener('click', function (e) { var b = e.target.closest('[data-kz]'); if (!b) return; kzSave(); kzTick(); kzShow(b.dataset.kz === 'menu' ? 'kzAns' : b.dataset.kz); });
+      function kzSave() { kz.imp = $('kzI1').value.trim(); kz.why = $('kzI2').value.trim(); kz.act = $('kzA1').value.trim(); }
+      function kzTiles() {
+        var st = { kzRev: kz.good.length + kz.bad.length > 0, kzImp: !!kz.imp, kzAct: kz.done, kzIt: !!kz.when };
+        kzWin.querySelectorAll('.kz-tile').forEach(function (t) { var d = st[t.dataset.kz]; t.classList.toggle('done', d); t.setAttribute('aria-label', t.textContent.replace(/^\d/, '') + (d ? ' (done)' : '')); });
+      }
+
+      // 1. Review: two short lists, up to 3 each, typed or tapped from suggestions
+      function kzLists() {
+        [['good', 'kzGood'], ['bad', 'kzBad']].forEach(function (L) {
+          var box = $(L[1]); box.textContent = '';
+          kz[L[0]].forEach(function (t, i) {
+            var c = document.createElement('div'), sp = document.createElement('span'), x = document.createElement('button');
+            c.className = 'kz-chip'; sp.textContent = t; x.type = 'button'; x.innerHTML = '&times;'; x.setAttribute('aria-label', 'Remove ' + t);
+            x.addEventListener('click', function () { kz[L[0]].splice(i, 1); kzLists(); });
+            c.appendChild(sp); c.appendChild(x); box.appendChild(c);
+          });
+          var full = kz[L[0]].length >= 3;
+          kzWin.querySelector('.kz-add[data-list="' + L[0] + '"]').classList.toggle('full', full);
+          kzWin.querySelectorAll('.kz-sugg[data-list="' + L[0] + '"] button').forEach(function (b) { b.hidden = kz[L[0]].indexOf(b.textContent) >= 0; b.disabled = full; });
+        });
+      }
+      function kzAdd(list, t) { t = t.trim(); if (!t || kz[list].length >= 3 || kz[list].indexOf(t) >= 0) return false; kz[list].push(t); kzLists(); kzTick(); return true; }
+      kzWin.querySelectorAll('.kz-add').forEach(function (f) {
+        f.addEventListener('submit', function (e) { e.preventDefault(); var i = f.querySelector('input'); if (kzAdd(f.dataset.list, i.value)) i.value = ''; i.focus(); });
+      });
+      kzWin.querySelectorAll('.kz-sugg[data-list] button').forEach(function (b) { b.addEventListener('click', function () { kzAdd(b.parentNode.dataset.list, b.textContent); }); });
+
+      // 2. One improvement: "Next time I'll ___ so that ___"
+      function kzImpPrep() { $('kzImpHint').textContent = kz.bad.length ? 'Pick one thing that would help with: ' + kz.bad.join(', ') + '.' : 'Just one. Small is good.'; }
+      $('kzImpSugg').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; $('kzI1').value = b.textContent; kzTick(); $('kzI2').focus(); });
+
+      // 3. Smallest action: something doable in 2 minutes, then a big Done tick
+      function kzActPrep() { $('kzActFor').textContent = kz.imp ? 'Your improvement: ' + kz.imp + '.' : 'Make it tiny, so it is easy to start.'; }
+      $('kzActSugg').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; $('kzA1').value = b.textContent; kzTick(); });
+      $('kzDone').addEventListener('click', function () {
+        var d = $('kzDone');
+        if (!$('kzA1').value.trim()) { $('kzA1').focus(); $('kzA1').classList.remove('shake'); void $('kzA1').offsetWidth; say('Write or pick an action first'); return; }
+        kz.done = !kz.done; d.classList.toggle('on', kz.done); d.setAttribute('aria-pressed', String(kz.done));
+        if (kz.done) {
+          d.classList.remove('pop'); void d.offsetWidth; d.classList.add('pop');
+          tone(523, .5, .04); setTimeout(function () { tone(659, .5, .04); }, 110); setTimeout(function () { tone(784, .9, .045); }, 220);
+          if (!reduce && d.animate) { var r = d.getBoundingClientRect(), cx = r.left + 36, cy = r.top + r.height / 2;
+            for (var i = 0; i < 14; i++) { var p = document.createElement('i'), a = i / 14 * Math.PI * 2, dist = 50 + Math.random() * 40; p.className = 'kz-burst'; p.style.left = cx - 4 + 'px'; p.style.top = cy - 4 + 'px'; body.appendChild(p);
+              p.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 }, { transform: 'translate(' + Math.cos(a) * dist + 'px,' + Math.sin(a) * dist + 'px) scale(.2)', opacity: 0 }], { duration: 700 + Math.random() * 300, easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = (function (q) { return function () { q.remove(); }; })(p); } }
+        }
+      });
+
+      // 4. Iterate: pick when to come back
+      kzWin.querySelectorAll('.kz-pick button').forEach(function (b) {
+        b.addEventListener('click', function () { kzWin.querySelectorAll('.kz-pick button').forEach(function (o) { o.setAttribute('aria-checked', String(o === b)); }); kz.when = b.textContent; kzTick(); });
+      });
+
+      // the end: one summary card, only the parts that were filled in
+      function kzRows() {
+        return [['Getting better at', kz.goal], ['What\u2019s working', kz.good.join(', ')], ['What\u2019s not', kz.bad.join(', ')],
+          ['One improvement', kz.imp ? 'Next time I\u2019ll ' + kz.imp + (kz.why ? ' so that ' + kz.why : '') : ''],
+          ['Smallest action', kz.act ? kz.act + (kz.done ? ' \u2713 done' : '') : ''], ['Review again', kz.when]].filter(function (x) { return x[1]; });
+      }
+      function kzSummary() {
+        var dl = $('kzSum'); dl.textContent = '';
+        kzRows().forEach(function (x) { var w = document.createElement('div'), t = document.createElement('dt'), d = document.createElement('dd'); t.textContent = x[0]; d.textContent = x[1]; w.appendChild(t); w.appendChild(d); dl.appendChild(w); });
+        chime();
+      }
+      $('kzCopy').addEventListener('click', function () {
+        var txt = 'My kaizen loop\n' + kzRows().map(function (x) { return x[0] + ': ' + x[1]; }).join('\n');
+        if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function () { say('Copied'); }, function () { say('Could not copy'); }); else say('Could not copy');
+      });
 
       function openKaizen() { setMode(null); if (!kzWin.classList.contains('show')) kzStart(); KW.open(kzWin); }
       function closeKaizen() { KW.close(kzWin); }
