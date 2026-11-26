@@ -150,7 +150,7 @@
   body.drawing.P-fine { cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Cg%20transform%3D%22rotate%2845%2016%2016%29%22%3E%3Crect%20x%3D%2213.5%22%20y%3D%22-2%22%20width%3D%225%22%20height%3D%2222%22%20rx%3D%222.5%22%20fill%3D%22%23111%22%20stroke%3D%22%23e5b84c%22%20stroke-width%3D%221%22/%3E%3Cpath%20d%3D%22M13.5%2020%20L18.5%2020%20L16%2030%20Z%22%20fill%3D%22%23e5b84c%22/%3E%3C/g%3E%3C/svg%3E") 5 27, crosshair; }
   body.drawing.P-brush { cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Cg%20transform%3D%22rotate%2845%2016%2016%29%22%3E%3Crect%20x%3D%2214%22%20y%3D%22-4%22%20width%3D%224%22%20height%3D%2218%22%20rx%3D%222%22%20fill%3D%22%232a1e0c%22%20stroke%3D%22%23e5b84c%22%20stroke-width%3D%22.8%22/%3E%3Crect%20x%3D%2213%22%20y%3D%2213%22%20width%3D%226%22%20height%3D%223%22%20fill%3D%22%23e5b84c%22/%3E%3Cpath%20d%3D%22M13%2016%20Q12%2024%2016%2031%20Q20%2024%2019%2016%20Z%22%20fill%3D%22%23111%22%20stroke%3D%22%23e5b84c%22%20stroke-width%3D%22.8%22/%3E%3C/g%3E%3C/svg%3E") 5 27, crosshair; }
   body.drawing.P-nib { cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2232%22%20height%3D%2232%22%3E%3Cg%20transform%3D%22rotate%2845%2016%2016%29%22%3E%3Crect%20x%3D%2212.5%22%20y%3D%22-3%22%20width%3D%227%22%20height%3D%2216%22%20rx%3D%223%22%20fill%3D%22%230d0d0d%22%20stroke%3D%22%23e5b84c%22%20stroke-width%3D%221%22/%3E%3Cpath%20d%3D%22M12.5%2013%20L19.5%2013%20L17%2026%20L16%2031%20L15%2026%20Z%22%20fill%3D%22%23e5b84c%22/%3E%3Cline%20x1%3D%2216%22%20y1%3D%2218%22%20x2%3D%2216%22%20y2%3D%2230%22%20stroke%3D%22%230d0d0d%22%20stroke-width%3D%22.7%22/%3E%3Ccircle%20cx%3D%2216%22%20cy%3D%2218%22%20r%3D%221%22%20fill%3D%22%230d0d0d%22/%3E%3C/g%3E%3C/svg%3E") 5 27, crosshair; }
-  body.cracking { cursor:crosshair; }
+  body.cracking, body.drawing.P-line, body.drawing.P-stamp { cursor:crosshair; }
   .pill { position:fixed; left:50%; top:calc(10px + env(safe-area-inset-top)); transform:translateX(-50%); z-index:45; background:#0d0d0d; border:1px solid var(--gold); border-radius:18px; padding:6px; display:none; flex-wrap:wrap; gap:6px; justify-content:center; width:max-content; max-width:94vw; cursor:default; }
   body.drawing .pill { display:flex; }
   .pill button { background:#1a1a1a; color:#fff; border:1px solid #444; border-radius:999px; padding:0 16px; min-height:44px; font:inherit; font-size:.95rem; cursor:pointer; }
@@ -190,6 +190,9 @@
   .devview .kw-body a { color:#e8e8e8; }
   .term { margin-top:14px; border-top:1px dashed #333; padding-top:10px; }
   .tout { color:#dcdcdc; }
+  .dsec { display:grid; grid-template-columns:max-content 1fr; gap:2px 2.5ch; padding-left:2ch; white-space:normal; }
+  .dsec dd { margin:0; }
+  @media (max-width:600px) { .dsec { grid-template-columns:1fr; gap:0; } .dsec dd { padding-left:2ch; margin-bottom:6px; } }
   .tout b { color:var(--gold); font-weight:400; }
   .tout .err { color:#e08a6f; }
   #tf { display:flex; gap:8px; align-items:center; padding-top:6px; }
@@ -369,21 +372,14 @@
   <button type="button" class="mini" id="mini" aria-label="Open the lab remote"><img src="logo.webp" alt="" draggable="false"></button>
 
   <div class="pill" id="pens" role="toolbar" aria-label="Draw">
-    <button type="button" data-p="fine" class="on" aria-pressed="true">Fine-liner</button><button type="button" data-p="brush" aria-pressed="false">Sumi brush</button><button type="button" data-p="nib" aria-pressed="false">Gold nib</button><span class="sep"></span><button type="button" id="undo">Undo</button><button type="button" id="clr">Clear</button><button type="button" id="done">Done</button>
+    <button type="button" data-p="fine" class="on" aria-pressed="true">Fine-liner</button><button type="button" data-p="brush" aria-pressed="false">Sumi brush</button><button type="button" data-p="nib" aria-pressed="false">Gold nib</button><button type="button" data-p="line" aria-pressed="false">Straight line</button><button type="button" data-p="stamp" aria-pressed="false">Seal stamp</button><span class="sep"></span><button type="button" id="undo">Undo</button><button type="button" id="clr">Clear</button><button type="button" id="save">Save image</button><button type="button" id="done">Done</button>
   </div>
 
   <section class="kwin devview" id="dev" role="dialog" aria-label="Terminal"><div class="kw-bar"><span class="kw-t">TERMINAL</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b txt" data-kw="close" id="devX" aria-label="Exit the terminal">Exit</button></div><div class="kw-body" id="devBody"><div>KaizenLabAI
 AI experiments. A little better every day.
 
-Sections
-  Learning      Educational AI videos on YouTube
-                Video: <a href="https://www.youtube.com/watch?v=KcCbkGVCFFU">21 Layers from the Edge of the Universe</a>
-  Agents        AI workers (coming soon)
-  Automations   For small businesses (coming soon)
-  Open Source   <a href="https://github.com/jeffreyaifudenna">github.com/jeffreyaifudenna</a>
-
-Commands
-<div class="tout" id="devHelp"></div></div><div class="term"><div class="tout" id="tout">Type a command below. Esc or "exit" to leave.
+Sections<dl class="dsec"><dt>Learning</dt><dd>Educational AI videos on YouTube<br>Video: <a href="https://www.youtube.com/watch?v=KcCbkGVCFFU">21 Layers from the Edge of the Universe</a></dd><dt>Agents</dt><dd>AI workers (coming soon)</dd><dt>Automations</dt><dd>For small businesses (coming soon)</dd><dt>Open Source</dt><dd><a href="https://github.com/jeffreyaifudenna">github.com/jeffreyaifudenna</a></dd></dl>
+Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class="tout" id="tout">Type a command below. Esc or "exit" to leave.
 </div><form id="tf" autocomplete="off"><label for="tin">kaizen@lab:~$</label><input id="tin" spellcheck="false" autocapitalize="off" autocorrect="off" enterkeyhint="go"></form></div></div>
   </section>
 
@@ -517,7 +513,7 @@ Commands
       var led = $('led');
       function blink() { led.classList.add('on'); setTimeout(function () { led.classList.remove('on'); }, 150); }
 
-      // ---- Draw: three pens (Fine-liner, Sumi brush, Gold nib). Line weight is fixed (INK).
+      // ---- Draw: Fine-liner, Sumi brush, Gold nib, Straight line, Seal stamp; Save image. Line weight is fixed (INK).
       var GOLD = '#e5b84c';
       function penStyle() { ctx.strokeStyle = ctx.fillStyle = GOLD; ctx.lineCap = ctx.lineJoin = 'round'; }
       function segment(s, i) {
@@ -532,7 +528,13 @@ Commands
         }
       }
       function render(s) {
-        var p = s.p; if (p.length < 2) return; penStyle();
+        var p = s.p; penStyle();
+        if (s.k === 'stamp') {
+          var x = p[0].x, y = p[0].y, r = 22; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.roundRect(x - r, y - r, r * 2, r * 2, 6); ctx.stroke();
+          ctx.font = '700 28px Georgia, serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('改', x, y + 1); return;
+        }
+        if (p.length < 2) return;
+        if (s.k === 'line') { ctx.lineWidth = 2.2 * s.w; ctx.beginPath(); ctx.moveTo(p[0].x, p[0].y); ctx.lineTo(p[p.length - 1].x, p[p.length - 1].y); ctx.stroke(); return; }
         if (s.k === 'fine') {
           ctx.lineWidth = 1.8 * s.w; ctx.beginPath(); ctx.moveTo(p[0].x, p[0].y);
           for (var i = 1; i < p.length - 1; i++) ctx.quadraticCurveTo(p[i].x, p[i].y, (p[i].x + p[i + 1].x) / 2, (p[i].y + p[i + 1].y) / 2);
@@ -542,13 +544,19 @@ Commands
       }
       function redraw() { ctx.clearRect(0, 0, W(), H()); strokes.forEach(render); }
       function setPen(p) {
-        pen = p; body.classList.remove('P-fine', 'P-brush', 'P-nib'); body.classList.add('P-' + p);
+        pen = p; body.classList.remove('P-fine', 'P-brush', 'P-nib', 'P-line', 'P-stamp'); body.classList.add('P-' + p);
         Array.prototype.forEach.call(document.querySelectorAll('#pens [data-p]'), function (b) { var on = b.dataset.p === p; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
       }
       $('pens').addEventListener('click', function (e) { var b = e.target.closest('[data-p]'); if (b) setPen(b.dataset.p); });
       $('undo').addEventListener('click', function () { strokes.pop(); redraw(); });
       $('clr').addEventListener('click', function () { strokes = []; redraw(); });
       $('done').addEventListener('click', function () { setMode(null); });
+      // Save image: the drawing and any gold cracks on black, as a PNG
+      $('save').addEventListener('click', function () {
+        var c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; var x = c.getContext('2d');
+        x.fillStyle = '#050505'; x.fillRect(0, 0, c.width, c.height); x.drawImage(cv, 0, 0); x.drawImage(fxc, 0, 0);
+        var a = document.createElement('a'); a.download = 'kaizenlabai-drawing.png'; a.href = c.toDataURL('image/png'); a.click(); say('Image saved');
+      });
 
       // ---- Kintsugi: tap the page to grow gold cracks; SEAMS cracks per tap; Reset clears them
       function crackFrom(x, y) {
@@ -596,12 +604,12 @@ Commands
       document.addEventListener('pointerdown', function (e) {
         if (body.classList.contains('zen')) { body.classList.remove('zen'); return; }
         if (!onPage(e)) return;
-        if (body.classList.contains('drawing')) { cur = { k: pen, w: INK / 2, p: [{ x: e.clientX, y: e.clientY }] }; strokes.push(cur); e.preventDefault(); }
+        if (body.classList.contains('drawing')) { cur = { k: pen, w: INK / 2, p: [{ x: e.clientX, y: e.clientY }] }; strokes.push(cur); e.preventDefault(); if (pen === 'stamp') { cur = null; redraw(); } }
         else if (body.classList.contains('cracking')) { crackFrom(e.clientX, e.clientY); blink(); }
       });
       document.addEventListener('pointermove', function (e) {
         if (!cur) return; cur.p.push({ x: e.clientX, y: e.clientY });
-        if (cur.k === 'fine') redraw(); else { penStyle(); segment(cur, cur.p.length - 1); }
+        if (cur.k === 'fine' || cur.k === 'line') redraw(); else { penStyle(); segment(cur, cur.p.length - 1); }
       });
       function penUp() { if (cur) { cur = null; redraw(); } }
       document.addEventListener('pointerup', penUp); document.addEventListener('pointercancel', penUp);
