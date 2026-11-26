@@ -372,7 +372,7 @@
   <button type="button" class="mini" id="mini" aria-label="Open the lab remote"><img src="logo.webp" alt="" draggable="false"></button>
 
   <div class="pill" id="pens" role="toolbar" aria-label="Draw">
-    <button type="button" data-p="fine" class="on" aria-pressed="true">Fine-liner</button><button type="button" data-p="brush" aria-pressed="false">Sumi brush</button><button type="button" data-p="nib" aria-pressed="false">Gold nib</button><button type="button" data-p="line" aria-pressed="false">Straight line</button><button type="button" data-p="stamp" aria-pressed="false">Seal stamp</button><span class="sep"></span><button type="button" id="undo">Undo</button><button type="button" id="clr">Clear</button><button type="button" id="save">Save image</button><button type="button" id="done">Done</button>
+    <button type="button" data-p="fine" class="on" aria-pressed="true">Fine-liner</button><button type="button" data-p="brush" aria-pressed="false">Sumi brush</button><button type="button" data-p="nib" aria-pressed="false">Gold nib</button><button type="button" data-p="line" aria-pressed="false">Straight line</button><button type="button" data-p="stamp" aria-pressed="false">Seal stamp</button><span class="sep"></span><button type="button" id="undo">Undo</button><button type="button" id="clr">Clear</button><button type="button" id="save">Save image</button><button type="button" id="mir" aria-pressed="false">Mirror: off</button><button type="button" id="done">Done</button>
   </div>
 
   <section class="kwin devview" id="dev" role="dialog" aria-label="Terminal"><div class="kw-bar"><span class="kw-t">TERMINAL</span><button type="button" class="kw-b" data-kw="min" aria-label="Minimize" title="Minimize"><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 13h12"/></svg></button><button type="button" class="kw-b" data-kw="max" aria-label="Expand" title="Expand"><svg viewBox="0 0 18 18" aria-hidden="true"><rect class="r1" x="3" y="3" width="12" height="12" rx="1"/><path class="r2" d="M6 3h9v9M3 6h9v9H3z"/></svg></button><button type="button" class="kw-b txt" data-kw="close" id="devX" aria-label="Exit the terminal">Exit</button></div><div class="kw-body" id="devBody"><div>KaizenLabAI
@@ -514,7 +514,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       function blink() { led.classList.add('on'); setTimeout(function () { led.classList.remove('on'); }, 150); }
 
       // ---- Draw: Fine-liner, Sumi brush, Gold nib, Straight line, Seal stamp; Save image. Line weight is fixed (INK).
-      var GOLD = '#e5b84c';
+      var GOLD = '#e5b84c', mirror = 0;
       function penStyle() { ctx.strokeStyle = ctx.fillStyle = GOLD; ctx.lineCap = ctx.lineJoin = 'round'; }
       function segment(s, i) {
         var a = s.p[i - 1], b = s.p[i], dx = b.x - a.x, dy = b.y - a.y, m = s.w;
@@ -527,10 +527,19 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
           ctx.beginPath(); ctx.moveTo(a.x - ox, a.y - oy); ctx.lineTo(a.x + ox, a.y + oy); ctx.lineTo(b.x + ox, b.y + oy); ctx.lineTo(b.x - ox, b.y - oy); ctx.closePath(); ctx.fill();
         }
       }
+      // Mirror: 8-way repeats each stroke as a mandala (4 turns, each with a mirror image); 2-way is a left-right mirror
+      function mirrors(n) { var out = [[0, 1]]; if (n === 2) out.push([0, -1]); if (n === 8) { out = []; for (var i = 0; i < 4; i++) out.push([i * Math.PI / 2, 1], [i * Math.PI / 2, -1]); } return out; }
       function render(s) {
+        mirrors(s.m).forEach(function (t) {
+          ctx.save(); ctx.translate(W() / 2, H() / 2); ctx.rotate(t[0]); ctx.scale(t[1], 1); ctx.translate(-W() / 2, -H() / 2);
+          renderOne(s); ctx.restore();
+        });
+      }
+      function renderOne(s) {
         var p = s.p; penStyle();
         if (s.k === 'stamp') {
-          var x = p[0].x, y = p[0].y, r = 22; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.roundRect(x - r, y - r, r * 2, r * 2, 6); ctx.stroke();
+          var q = ctx.getTransform().transformPoint(new DOMPoint(p[0].x, p[0].y)); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+          var x = q.x / dpr, y = q.y / dpr, r = 22; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.roundRect(x - r, y - r, r * 2, r * 2, 6); ctx.stroke();
           ctx.font = '700 28px Georgia, serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('改', x, y + 1); return;
         }
         if (p.length < 2) return;
@@ -551,6 +560,8 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       $('undo').addEventListener('click', function () { strokes.pop(); redraw(); });
       $('clr').addEventListener('click', function () { strokes = []; redraw(); });
       $('done').addEventListener('click', function () { setMode(null); });
+      function setMirror(n) { mirror = n; var b = $('mir'); b.textContent = 'Mirror: ' + (n ? n + '-way' : 'off'); b.classList.toggle('on', !!n); b.setAttribute('aria-pressed', String(!!n)); }
+      $('mir').addEventListener('click', function () { setMirror(mirror === 0 ? 8 : mirror === 8 ? 2 : 0); });
       // Save image: the drawing and any gold cracks on black, as a PNG
       $('save').addEventListener('click', function () {
         var c = document.createElement('canvas'); c.width = cv.width; c.height = cv.height; var x = c.getContext('2d');
@@ -595,7 +606,7 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       // Draw and Kintsugi are page modes; only one at a time
       function keyOn(a, on) { var k = document.querySelector('.k[data-a="' + a + '"]'); if (k) { k.classList.toggle('on', on); k.setAttribute('aria-pressed', String(on)); } }
       function setMode(m) {
-        body.classList.remove('drawing', 'cracking'); if (m) body.classList.add(m);
+        body.classList.remove('drawing', 'cracking'); if (m) body.classList.add(m); if (m !== 'drawing') setMirror(0);
         keyOn('draw', m === 'drawing'); keyOn('kintsugi', m === 'cracking'); mini.classList.toggle('on', !!m);
         if (m === 'drawing') { setPen(pen); say('Pick a pen, then draw anywhere'); }
         if (m === 'cracking') say('Tap anywhere to crack the page with gold');
@@ -604,12 +615,12 @@ Commands<div class="tout" id="devHelp"></div></div><div class="term"><div class=
       document.addEventListener('pointerdown', function (e) {
         if (body.classList.contains('zen')) { body.classList.remove('zen'); return; }
         if (!onPage(e)) return;
-        if (body.classList.contains('drawing')) { cur = { k: pen, w: INK / 2, p: [{ x: e.clientX, y: e.clientY }] }; strokes.push(cur); e.preventDefault(); if (pen === 'stamp') { cur = null; redraw(); } }
+        if (body.classList.contains('drawing')) { cur = { k: pen, w: INK / 2, m: mirror, p: [{ x: e.clientX, y: e.clientY }] }; strokes.push(cur); e.preventDefault(); if (pen === 'stamp') { cur = null; redraw(); } }
         else if (body.classList.contains('cracking')) { crackFrom(e.clientX, e.clientY); blink(); }
       });
       document.addEventListener('pointermove', function (e) {
         if (!cur) return; cur.p.push({ x: e.clientX, y: e.clientY });
-        if (cur.k === 'fine' || cur.k === 'line') redraw(); else { penStyle(); segment(cur, cur.p.length - 1); }
+        if (cur.k === 'fine' || cur.k === 'line' || cur.m) redraw(); else { penStyle(); segment(cur, cur.p.length - 1); }
       });
       function penUp() { if (cur) { cur = null; redraw(); } }
       document.addEventListener('pointerup', penUp); document.addEventListener('pointercancel', penUp);
